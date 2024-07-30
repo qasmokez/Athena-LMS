@@ -2,7 +2,7 @@
 \connect account
 
 -- Create account table
-DROP TABLE IF EXISTS account;
+DROP TABLE IF EXISTS account CASCADE;
 CREATE TABLE account (
     id UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
