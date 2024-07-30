@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  account-service:
+    container_name: account-service
+    build:
+      context: ./Services/AccountService
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  postgres:
+    container_name: databases
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./sql/databases.sql:/docker-entrypoint-initdb.d/1.databases.sql
+      - ./Services/AccountService/sql/databases.sql:/docker-entrypoint-initdb.d/2.databases.sql
+      - ./Services/AccountService/sql/schema.sql:/docker-entrypoint-initdb.d/3.schema.sql
+      - ./Services/AccountService/sql/data.sql:/docker-entrypoint-initdb.d/4.data.sql
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
