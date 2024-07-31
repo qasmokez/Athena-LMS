@@ -18,7 +18,8 @@
     "js-yaml": "*",
     "jsonwebtoken": "*",
     "pg": "*",
-    "swagger-ui-express": "*"
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -37,4 +38,3 @@
     "test": "echo \"Error: no test specified for account-service\" && exit 1"
   }
 }
-
