@@ -1,23 +1,29 @@
 -- accounts Data --
-DELETE FROM "account";
+\connect accountdb
 
-INSERT INTO "account"(data)
+DELETE FROM account;
+
+INSERT INTO account(id, data)
 VALUES (
-    '{
-        "name": "Jason Zhang",
-        "chinese_name": "",
-        "email": "jason@mail.com",
-        "pwhash": crypt('jasonzhang','tudou')
-    }'
+    '11111111-1111-1111-1111-111111111111',
+    jsonb_build_object(
+        'name', 'Jason Zhang',
+        'chinese_name', 'none',
+        'email', 'jason@mail.com',
+        'pwhash', crypt('jasonzhang', gen_salt('bf')),
+        'role', '["student"]'
+    )
 );
 
-INSERT INTO "account"(data)
+INSERT INTO account(id, data)
 VALUES (
-    '{
-        "name": "Tony",
-        "chinese_name": "",
-        "email": "tony@mail.com",
-        "pwhash": crypt('tony','tudou')
-    }'
+    '22222222-2222-2222-2222-222222222222',
+    jsonb_build_object(
+        'name', 'Tony Wang',
+        'chinese_name', 'none',
+        'email', 'tony@mail.com',
+        'pwhash', crypt('tonywang', gen_salt('bf')),
+        'role', '["student"]'
+    )
 );
 

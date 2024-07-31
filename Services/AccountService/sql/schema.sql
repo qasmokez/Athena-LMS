@@ -1,5 +1,7 @@
 -- Setup Tables
-\connect account
+\connect accountdb
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Create account table
 DROP TABLE IF EXISTS account CASCADE;
