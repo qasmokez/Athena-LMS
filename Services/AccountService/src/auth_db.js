@@ -8,18 +8,18 @@ const pool = new Pool({
   password: process.env.POSTGRES_PASSWORD,
 });
 
-exports.selectUserByEmail = async (userEmail) => {
-  let select = 'SELECT user_id, user_data FROM "user*"';
-  select += ` WHERE user_data ->> 'user_email' = $1`;
+exports.selectUserByStudentId = async (studentid) => {
+  let select = 'SELECT id, data FROM account';
+  select += ` WHERE studentid = $1`;
   const query = {
     text: select,
-    values: [userEmail],
+    values: [studentid],
   };
   const dbOutput = await pool.query(query);
   // console.log('==========');
   // console.log(dbOutput.rows);
   if (dbOutput.rows.length > 0) {
-    return [dbOutput.rows[0].user_id, dbOutput.rows[0].user_data];
+    return [dbOutput.rows[0].id, dbOutput.rows[0].data];
   } else {
     return [null];
   }

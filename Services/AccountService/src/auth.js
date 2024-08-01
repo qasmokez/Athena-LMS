@@ -5,23 +5,22 @@ const secrets = require('./data/secrets');
 const db = require('./auth_db');
 
 exports.login = async (req, res) => {
-  const {email, password} = req.body;
-  const [userId, user] = await db.selectUserByEmail(email);
-  // console.log(user);
-  // console.log(user['last_visited']);
-  if (user && bcrypt.compareSync(password, user.user_password)) {
+  const {studentid, password} = req.body;
+  const [id, data] = await db.selectUserByStudentId(studentid);
+
+  if (data && bcrypt.compareSync(password, data.pwhash)) {
     const accessToken = jwt.sign(
-      {userId: userId},
+      {userId: id},
       secrets.accessToken, {
         expiresIn: '30m',
         algorithm: 'HS256',
       });
     res.status(200).json({
-      name: user.user_name,
+      name: data.name, // or maybe chinese name?
       accessToken: accessToken,
     });
   } else {
-    res.status(401).send('Invalid credentials');
+    res.status(401).send('Invalid Credentials');
   }
 };
 

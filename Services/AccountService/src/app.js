@@ -1,41 +1,36 @@
 const express = require('express');
 const cors = require('cors');
-const swaggerJsdoc = require('swagger-jsdoc');
+const yaml = require('js-yaml');
 const swaggerUi = require('swagger-ui-express');
+const fs = require('fs');
+const path = require('path');
+const OpenApiValidator = require('express-openapi-validator');
 
 const auth = require('./auth');
-// const user = require('./user');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-// Swagger setup
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Account Service API',
-      version: '0.0.1',
-    },
-  },
-  apis: ['./routes/*.js'], // Path to the API docs
-};
+const apiSpec = path.join(__dirname, '../api/openapi.yaml');
+const apidoc = yaml.load(fs.readFileSync(apiSpec, 'utf8'));
 
-const specs = swaggerJsdoc(options);
+app.use(
+  '/v0/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(apidoc),
+);
 
-app.use('/v0/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use(
+  OpenApiValidator.middleware({
+    apiSpec: apiSpec,
+    validateRequests: true,
+    validateResponses: true,
+  }),
+);
 
-/**
- * @swagger
- * /v0/login:
- *   post:
- *     summary: Logs in a user
- *     responses:
- *       200:
- *         description: Successful login
- */
+// Your routes go here
 app.post('/v0/login', auth.login);
 
 app.use((err, req, res, next) => {
