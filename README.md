@@ -4,8 +4,8 @@
 ### Instructions
 1. Clone Repo
 2. In the root dir, to start entire containerized app, run the following
-  - `docker-compose build`
-  - `docker-compose up -d`
+    - `docker-compose build`
+    - `docker-compose up -d`
 4. in progress
 
 ### Structure
