@@ -9,3 +9,8 @@
 ### Structure
 - Microservices/Backend inside `/Services`, including sql dbs.
 - (In Progress) Frontend inside `/Apps`.
+
+### API
+- Account Service
+  - localhost:3000
+  - http://localhost:3000/v0/api-docs/
