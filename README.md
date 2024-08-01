@@ -3,8 +3,10 @@
 
 ### Instructions
 1. Clone Repo
-2. In the root dir, run `docker-compose up -d` to start entire containerized app.
-3. in progress
+2. In the root dir, to start entire containerized app, run the following
+  1. `docker-compose build`
+  2. `docker-compose up -d`
+4. in progress
 
 ### Structure
 - Microservices/Backend inside `/Services`, including sql dbs.
