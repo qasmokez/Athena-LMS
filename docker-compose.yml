@@ -12,6 +12,18 @@ services:
     networks:
       - backend
 
+  studentapp:
+    container_name: studentapp
+    build:
+      context: ./Apps/StudentApp
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - account-service
+    networks:
+      - frontend
+
   postgres:
     container_name: databases
     image: postgres:alpine
