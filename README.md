@@ -16,6 +16,9 @@
 - Account Service
   - localhost:3010
   - http://localhost:3010/v0/api-docs/
+- Student Service
+  - localhost:3011
+  - http://localhost:3011/v0/api-docs/
 
 
 
