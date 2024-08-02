@@ -24,7 +24,7 @@
 1. Make sure you have installed Node.js (LTS). If Node.js is already installed in your system, make sure the installed version is LTS (and not the latest version)
 2. Navigate to the `javascript-version` folder and run following command to install our local dependencies listed in `package.json`.
 
-> It is recommended to use yarn for better dependency management
+> Note: Deployment currently uses npm
 
 ```bash
 # For npm
