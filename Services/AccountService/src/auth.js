@@ -10,7 +10,9 @@ exports.login = async (req, res) => {
 
   if (data && bcrypt.compareSync(password, data.pwhash)) {
     const accessToken = jwt.sign(
-      {userId: id},
+      { // payload 'user'
+        userId: id
+      },
       secrets.accessToken, {
         expiresIn: '30m',
         algorithm: 'HS256',

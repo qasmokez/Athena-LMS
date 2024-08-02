@@ -7,6 +7,7 @@ const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 
 const auth = require('./auth');
+const user = require('./user');
 
 const app = express();
 app.use(cors());
@@ -32,6 +33,8 @@ app.use(
 
 // Your routes go here
 app.post('/v0/login', auth.login);
+// app.get('/v0/user/profile', auth.check, user.profile);
+app.get('/v0/user/profile', auth.check, user.profile);
 
 app.use((err, req, res, next) => {
   res.status(err.status).json({

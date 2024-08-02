@@ -6,7 +6,7 @@ info:
   title: Athena-LMS Account Service
 
 servers:
-  - url: http://localhost:3000/v0
+  - url: http://localhost:3010/v0
 
 paths:
   /login:
@@ -32,9 +32,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
+  /user/profile:
+    get:
+      security:
+        - bearerAuth: []         
+      description: Get all channels by workspace ID
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/testObject'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
 
 components:
   schemas:
+    testObject:
+      type: object
+      additionalProperties: true
     UnexpectedError:
       required:
         - code
@@ -68,3 +91,9 @@ components:
         - studentid
         - password
       additionalProperties: false
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

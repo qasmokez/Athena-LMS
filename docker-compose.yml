@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   account-service:
     container_name: account-service
