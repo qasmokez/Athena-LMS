@@ -14,8 +14,8 @@
 
 ### API
 - Account Service
-  - localhost:3000
-  - http://localhost:3000/v0/api-docs/
+  - localhost:3010
+  - http://localhost:3010/v0/api-docs/
 
 
 
