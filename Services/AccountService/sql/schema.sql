@@ -36,12 +36,13 @@ $$ LANGUAGE plpgsql;
 -- Create account table
 DROP TABLE IF EXISTS account CASCADE;
 CREATE TABLE account (
-    id UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(),
-    studentid VARCHAR(7) UNIQUE DEFAULT generate_student_id(),
+    id UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(),       -- internal id
+    studentid VARCHAR(7) UNIQUE DEFAULT generate_student_id(),  -- external id for login
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data jsonb
 );
 
+-- Additional
 GRANT SELECT ON account TO admin;
 GRANT UPDATE ON account TO admin;
 GRANT SELECT ON account TO accountpool;

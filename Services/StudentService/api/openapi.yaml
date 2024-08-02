@@ -1,31 +1,28 @@
 openapi: '3.0.3'
 
 info:
-  description: Athena-LMS Account Service
+  description: Athena-LMS Student Service
   version: 0.0.1
-  title: Athena-LMS Account Service
+  title: Athena-LMS Student Service
 
 servers:
-  - url: http://localhost:3010/v0
+  - url: http://localhost:3011/v0
 
 paths:
-  /login:
-    post:
-      description: Login Info
-      requestBody:
-        description: Request Body
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Credentials'
+  /user/profile:
+    get:
+      security:
+        - bearerAuth: []         
+      description: Get all channels by workspace ID
       responses:
         200:
-          description: Login Success
+          description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/testObject'
+        403:
+          description: Unauthorized
         default:
           description: Unexpected Error
           content:
