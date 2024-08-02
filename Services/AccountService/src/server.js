@@ -9,7 +9,7 @@ require('dotenv').config();
 
 const app = require('./app.js');
 
-app.listen(3000, () => {
-  console.log(`account-service server running on port 3000`);
-  console.log('account-service API Testing UI: http://localhost:3000/v0/api-docs/');
+app.listen(3010, () => {
+  console.log(`account-service server running on port 3010`);
+  console.log('account-service API Testing UI: http://localhost:3010/v0/api-docs/');
 });
