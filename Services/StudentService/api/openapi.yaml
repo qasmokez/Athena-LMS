@@ -1,0 +1,76 @@
+openapi: '3.0.3'
+
+info:
+  description: Athena-LMS Student Service
+  version: 0.0.1
+  title: Athena-LMS Student Service
+
+servers:
+  - url: http://localhost:3011/v0
+
+paths:
+  /user/profile:
+    get:
+      security:
+        - bearerAuth: []         
+      description: Get all channels by workspace ID
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/testObject'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+components:
+  schemas:
+    testObject:
+      type: object
+      additionalProperties: true
+    UnexpectedError:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        accessToken:
+          type: string
+      required:
+        - name
+        - accessToken
+    Credentials:
+      type: object
+      properties:
+        studentid:
+          type: string
+          pattern: '^\d{7}$'
+          example: '1234567'
+        password:
+          type: string
+      required:
+        - studentid
+        - password
+      additionalProperties: false
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

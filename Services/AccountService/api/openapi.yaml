@@ -6,7 +6,7 @@ info:
   title: Athena-LMS Account Service
 
 servers:
-  - url: http://localhost:3000/v0
+  - url: http://localhost:3010/v0
 
 paths:
   /login:
@@ -35,6 +35,9 @@ paths:
 
 components:
   schemas:
+    testObject:
+      type: object
+      additionalProperties: true
     UnexpectedError:
       required:
         - code
@@ -68,3 +71,9 @@ components:
         - studentid
         - password
       additionalProperties: false
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

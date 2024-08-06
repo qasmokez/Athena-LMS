@@ -1,0 +1,40 @@
+{
+  "name": "account-service",
+  "version": "0.0.1",
+  "description": "Athena-LMS account-service dev build",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "*",
+    "nodemon": "*"
+  },
+  "dependencies": {
+    "bcrypt": "*",
+    "body-parser": "*",
+    "cors": "*",
+    "dotenv": "*",
+    "express": "*",
+    "express-openapi-validator": "*",
+    "express-session": "*",
+    "js-yaml": "*",
+    "jsonwebtoken": "*",
+    "pg": "*",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 14
+    },
+    "rules": {
+      "indent": [
+        "warn",
+        2
+      ]
+    }
+  },
+  "scripts": {
+    "start": "nodemon src/server.js",
+    "lint": "eslint ./src/**/*.[jt]s --fix",
+    "test": "echo \"Error: no test specified for account-service\" && exit 1"
+  }
+}

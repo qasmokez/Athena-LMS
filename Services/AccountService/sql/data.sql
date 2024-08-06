@@ -28,4 +28,3 @@ VALUES (
         'role', '["student"]'
     )
 );
-
