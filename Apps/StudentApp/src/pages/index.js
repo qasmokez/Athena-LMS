@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useProfile } from 'src/@core/context/settingsContext';
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
@@ -29,11 +30,15 @@ import RadarChart from 'src/views/dashboard/RadarChart'
 const Dashboard = () => {
   const { profile, setProfile } = useProfile();
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem('token');
-      if (!token) return;
+      if (!token) {
+        router.push('/pages/login');
+        return;
+      }
 
       try {
         const response = await axios.get('http://localhost:3011/v0/user/profile', {
@@ -54,7 +59,7 @@ const Dashboard = () => {
     return <div>{error}</div>;
   }
 
-  if (!profile) {
+ if (!profile) {
     return <div>Loading...</div>;
   }
 
