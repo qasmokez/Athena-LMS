@@ -116,9 +116,9 @@ const LoginPage = () => {
           </Box>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Welcome to {themeConfig.templateName}! 👋🏻
+              欢迎来到 {themeConfig.templateName}! 👋🏻
             </Typography>
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>请登入你的帐号！</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={handleLogin}>
             <TextField
@@ -160,11 +160,11 @@ const LoginPage = () => {
             <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
               <FormControlLabel control={<Checkbox />} label='Remember Me' />
               <Link passHref href='/'>
-                <LinkStyled onClick={(e) => e.preventDefault()}>Forgot Password?</LinkStyled>
+                <LinkStyled onClick={(e) => e.preventDefault()}>忘记密码?</LinkStyled>
               </Link>
             </Box>
             <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} type='submit'>
-              Login
+              登入
             </Button>
           </form>
         </CardContent>

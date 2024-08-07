@@ -55,11 +55,6 @@ const Dashboard = () => {
     fetchProfile();
   }, [setProfile]);
 
-  if (error) {
-    router.push('/401.js');
-    return 
-  }
-
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
