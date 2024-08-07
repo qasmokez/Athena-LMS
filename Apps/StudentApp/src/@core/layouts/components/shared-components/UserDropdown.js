@@ -23,6 +23,8 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
+import { useProfile } from 'src/@core/context/settingsContext'
+
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
   width: 8,
@@ -39,12 +41,19 @@ const UserDropdown = () => {
   // ** Hooks
   const router = useRouter()
 
+  const { profile } = useProfile();
+
   const handleDropdownOpen = event => {
     setAnchorEl(event.currentTarget)
   }
 
   const handleDropdownClose = url => {
     if (url) {
+      if (url === '/pages/login') {
+        //clear localStorage when logging out
+        localStorage.removeItem('token');
+        localStorage.removeItem('name');
+      }
       router.push(url)
     }
     setAnchorEl(null)
@@ -74,7 +83,7 @@ const UserDropdown = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Avatar
-          alt='John Doe'
+          alt={profile ? profile.data.name : 'User'}
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
           src='/images/avatars/1.png'
@@ -95,13 +104,10 @@ const UserDropdown = () => {
               badgeContent={<BadgeContentSpan />}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt={profile ? profile.data.name : 'User'} src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', marginLeft: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
-              <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                Admin
-              </Typography>
+              <Typography sx={{ fontWeight: 600 }}>{profile ? profile.data.name : 'User'}</Typography>
             </Box>
           </Box>
         </Box>

@@ -1,3 +1,7 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useProfile } from 'src/@core/context/settingsContext';
+
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 
@@ -23,6 +27,37 @@ import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 import RadarChart from 'src/views/dashboard/RadarChart' 
 
 const Dashboard = () => {
+  const { profile, setProfile } = useProfile();
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      try {
+        const response = await axios.get('http://localhost:3011/v0/user/profile', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProfile(response.data);
+      } catch (err) {
+        setError('Failed to fetch profile');
+      }
+    };
+
+    fetchProfile();
+  }, [setProfile]);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!profile) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
