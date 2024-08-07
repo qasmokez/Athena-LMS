@@ -49,14 +49,15 @@ const UserDropdown = () => {
 
   const handleDropdownClose = url => {
     if (url) {
-      if (url === '/pages/login') {
-        //clear localStorage when logging out
-        localStorage.removeItem('token');
-        localStorage.removeItem('name');
-      }
       router.push(url)
     }
     setAnchorEl(null)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('name');
+    router.push('/')
   }
 
   const styles = {
@@ -150,7 +151,7 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
+        <MenuItem sx={{ py: 2 }} onClick={() => handleLogout()}>
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
         </MenuItem>
