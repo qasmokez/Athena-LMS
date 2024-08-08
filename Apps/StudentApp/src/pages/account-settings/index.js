@@ -1,5 +1,7 @@
 // ** React Imports
 import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { useProfile } from 'src/@core/context/settingsContext';
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -44,6 +46,13 @@ const TabName = styled('span')(({ theme }) => ({
 const AccountSettings = () => {
   // ** State
   const [value, setValue] = useState('account')
+  const router = useRouter();
+  const { profile } = useProfile();
+
+  if (!profile) {
+    router.push('/');
+    return;
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
