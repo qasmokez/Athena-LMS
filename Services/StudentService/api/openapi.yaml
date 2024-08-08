@@ -13,7 +13,7 @@ paths:
     get:
       security:
         - bearerAuth: []         
-      description: Get all channels by workspace ID
+      description: Get profile by student ID
       responses:
         200:
           description: Success
@@ -33,7 +33,7 @@ paths:
       get:
         security:
           - bearerAuth: []         
-        description: Get all channels by workspace ID
+        description: Get honors by student ID
         responses:
           200:
             description: Success
