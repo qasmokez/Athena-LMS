@@ -60,7 +60,7 @@ paths:
             content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/testObject'
+                  $ref: '#/components/schemas/testArray'
           403:
             description: Unauthorized
           default:
@@ -75,6 +75,11 @@ components:
     testObject:
       type: object
       additionalProperties: true
+    testArray:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
     UnexpectedError:
       required:
         - code

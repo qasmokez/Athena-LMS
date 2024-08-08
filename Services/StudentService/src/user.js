@@ -15,6 +15,7 @@ exports.honors = async (req, res) => {
 exports.parents = async (req, res) => {
   const userId = req.user.userId;
   const output = await db.getParents(userId);
+  console.log(output)
   res.status(200).json(output);
 };
 

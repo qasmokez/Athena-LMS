@@ -40,6 +40,6 @@ exports.getParents = async (userId) => {
     values: [userId],
   };
   const dbOutput = await pool.query(query);
-  const output = dbOutput.rows[0];
+  const output = dbOutput.rows;
   return output;
 };
