@@ -16,9 +16,21 @@ CREATE TABLE attendance (
     data jsonb
 );
 
+DROP TABLE IF EXISTS honors;
+CREATE TABLE honors (
+    studentid UUID, -- internal id
+    data jsonb
+);
+
 -- Additional
 GRANT SELECT ON student TO admin;
 GRANT UPDATE ON student TO admin;
+GRANT SELECT ON honors TO admin;
+GRANT UPDATE ON honors TO admin;
 GRANT SELECT ON student TO studentpool;
 GRANT INSERT ON student TO studentpool;
 GRANT UPDATE ON student TO studentpool;
+GRANT SELECT ON honors TO studentpool;
+GRANT INSERT ON honors TO studentpool;
+GRANT UPDATE ON honors TO studentpool;
+

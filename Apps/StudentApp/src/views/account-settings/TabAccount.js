@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState } from 'react'
+import { useProfile } from 'src/@core/context/settingsContext';
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -49,6 +50,7 @@ const TabAccount = () => {
   // ** State
   const [openAlert, setOpenAlert] = useState(true)
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
+  const { profile } = useProfile();
 
   const onChange = file => {
     const reader = new FileReader()
@@ -88,39 +90,39 @@ const TabAccount = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Username' placeholder='johnDoe' defaultValue='johnDoe' />
+            <TextField fullWidth label='Class' defaultValue={profile ? profile.data.class : 'User'} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Name' placeholder='John Doe' defaultValue='John Doe' />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              type='email'
-              label='Email'
-              placeholder='johnDoe@example.com'
-              defaultValue='johnDoe@example.com'
-            />
+            <TextField fullWidth label='Name' defaultValue={profile ? profile.data.name : 'User'}/>
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
-              <InputLabel>Role</InputLabel>
-              <Select label='Role' defaultValue='admin'>
-                <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='author'>Author</MenuItem>
-                <MenuItem value='editor'>Editor</MenuItem>
-                <MenuItem value='maintainer'>Maintainer</MenuItem>
-                <MenuItem value='subscriber'>Subscriber</MenuItem>
+              <InputLabel>Grade</InputLabel>
+              <Select label='Grade' defaultValue={profile ? profile.data.grade : 'User'}>
+                <MenuItem value='1'>一年级</MenuItem>
+                <MenuItem value='2'>二年级</MenuItem>
+                <MenuItem value='3'>三年级</MenuItem>
+                <MenuItem value='4'>四年级</MenuItem>
+                <MenuItem value='5'>五年级</MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select label='Status' defaultValue='active'>
-                <MenuItem value='active'>Active</MenuItem>
-                <MenuItem value='inactive'>Inactive</MenuItem>
-                <MenuItem value='pending'>Pending</MenuItem>
+              <InputLabel>职位</InputLabel>
+              <Select label='Role' defaultValue='student'>
+                <MenuItem value='student'>学生</MenuItem>
+                <MenuItem value='teacher'>老师</MenuItem>
+                <MenuItem value='admin'>管理人员</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Gender</InputLabel>
+              <Select label='Gender' defaultValue={profile ? profile.data.gender : 'User'}>
+                <MenuItem value='male'>Male</MenuItem>
+                <MenuItem value='female'>Female</MenuItem>
               </Select>
             </FormControl>
           </Grid>

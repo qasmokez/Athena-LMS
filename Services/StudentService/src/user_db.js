@@ -18,3 +18,14 @@ exports.getProfile = async (userId) => {
   const output = dbOutput.rows[0];
   return output;
 };
+exports.getHonors = async (userId) => {
+  let select = `SELECT data FROM honors`;
+  select += ` WHERE studentid = $1`;
+  const query = {
+    text: select,
+    values: [userId],
+  };
+  const dbOutput = await pool.query(query);
+  const output = dbOutput.rows[0];
+  return output;
+};

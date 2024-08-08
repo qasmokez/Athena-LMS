@@ -13,7 +13,7 @@ paths:
     get:
       security:
         - bearerAuth: []         
-      description: Get all channels by workspace ID
+      description: Get profile by student ID
       responses:
         200:
           description: Success
@@ -29,6 +29,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
+  /user/honors:
+      get:
+        security:
+          - bearerAuth: []         
+        description: Get honors by student ID
+        responses:
+          200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/testObject'
+          403:
+            description: Unauthorized
+          default:
+            description: Unexpected Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/UnexpectedError'
 
 components:
   schemas:
