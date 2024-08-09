@@ -70,7 +70,7 @@ const TabAccount = () => {
               <ImgStyled src={imgSrc} alt='Profile Pic' />
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
-                  Upload New Photo
+                  更换头像
                   <input
                     hidden
                     type='file'
@@ -80,54 +80,32 @@ const TabAccount = () => {
                   />
                 </ButtonStyled>
                 <ResetButtonStyled color='error' variant='outlined' onClick={() => setImgSrc('/images/avatars/1.png')}>
-                  Reset
+                  重置
                 </ResetButtonStyled>
                 <Typography variant='body2' sx={{ marginTop: 5 }}>
-                  Allowed PNG or JPEG. Max size of 800K.
+                  支持 PNG or JPEG格式. 最大尺寸800K.
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Class' defaultValue={profile ? profile.data.class : 'User'} />
-          </Grid>
-          <Grid item xs={12} sm={6}>
             <TextField fullWidth label='Name' defaultValue={profile ? profile.data.name : 'User'}/>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Grade</InputLabel>
-              <Select label='Grade' defaultValue={profile ? profile.data.grade : 'User'}>
-                <MenuItem value='1'>一年级</MenuItem>
-                <MenuItem value='2'>二年级</MenuItem>
-                <MenuItem value='3'>三年级</MenuItem>
-                <MenuItem value='4'>四年级</MenuItem>
-                <MenuItem value='5'>五年级</MenuItem>
-              </Select>
-            </FormControl>
+            <TextField fullWidth label='Class' defaultValue={profile ? profile.data.class : 'User'} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>职位</InputLabel>
-              <Select label='Role' defaultValue='student'>
-                <MenuItem value='student'>学生</MenuItem>
-                <MenuItem value='teacher'>老师</MenuItem>
-                <MenuItem value='admin'>管理人员</MenuItem>
-              </Select>
-            </FormControl>
+            <TextField fullWidth label='Grade' defaultValue={profile ? profile.data.grade : 'User'} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Gender</InputLabel>
-              <Select label='Gender' defaultValue={profile ? profile.data.gender : 'User'}>
-                <MenuItem value='male'>Male</MenuItem>
-                <MenuItem value='female'>Female</MenuItem>
-              </Select>
-            </FormControl>
+            <TextField fullWidth label='Role' defaultValue='student'/>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Company' placeholder='ABC Pvt. Ltd.' defaultValue='ABC Pvt. Ltd.' />
+            <TextField fullWidth label='Gender' defaultValue={profile ? profile.data.gender : 'User'}/>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label='Company' placeholder='Athena Education' defaultValue='Athena Education' />
           </Grid>
 
           {openAlert ? (

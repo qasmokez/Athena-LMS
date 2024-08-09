@@ -14,7 +14,7 @@ const navigation = () => {
       path: '/dashboard'
     },
     {
-      title: '设置/Settings',
+      title: '我/Profile',
       icon: AccountCogOutline,
       path: '/account-settings'
     },
