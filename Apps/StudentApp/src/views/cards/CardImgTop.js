@@ -9,7 +9,18 @@ import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useState } from 'react'
 
-const CardImgTop = ({ title, body, color }) => {
+// Predefined light colors
+const lightColors = [
+  'lightblue',
+  'lightgreen',
+  'lightcoral',
+  'lightgoldenrodyellow',
+  'lightpink',
+  'lightsalmon',
+  'lightseagreen'
+]
+
+const CardImgTop = ({ title, body, color, bodyStyle }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const [bgColor, setBgColor] = useState(color)
 
@@ -32,7 +43,7 @@ const CardImgTop = ({ title, body, color }) => {
         <CardMedia 
           // avoid warning of no image
           component="div" // Use a div as a placeholder
-          sx={{ height: '14.5625rem', backgroundColor: bgColor }} 
+          sx={{ height: '12rem', backgroundColor: bgColor }} 
         />
         <IconButton 
           aria-label="settings" 
@@ -46,7 +57,7 @@ const CardImgTop = ({ title, body, color }) => {
         <Typography variant='h6' sx={{ marginBottom: 2 }}>
           {title}
         </Typography>
-        <Typography variant='body2'>
+        <Typography variant='body2' style={bodyStyle}>
           {body}
         </Typography>
       </CardContent>
@@ -56,9 +67,11 @@ const CardImgTop = ({ title, body, color }) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleColorChange('red')}>Red</MenuItem>
-        <MenuItem onClick={() => handleColorChange('blue')}>Blue</MenuItem>
-        <MenuItem onClick={() => handleColorChange('green')}>Green</MenuItem>
+       {lightColors.map((color, index) => (
+          <MenuItem key={index} onClick={() => handleColorChange(color)}>
+            {color.charAt(0).toUpperCase() + color.slice(1)}
+          </MenuItem>
+       ))}
       </Menu>
     </Card>
   )

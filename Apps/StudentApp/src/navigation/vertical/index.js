@@ -33,7 +33,7 @@ const navigation = () => {
     {
       title: '我的荣誉/Honors',
       icon:  EmojiEventsIcon,
-      path: '/honor'
+      path: '/honors'
     },
     {
       sectionTitle: 'User Interface'
