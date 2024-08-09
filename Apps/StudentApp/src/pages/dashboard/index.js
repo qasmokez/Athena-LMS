@@ -10,10 +10,11 @@ import Grid from '@mui/material/Grid'
 import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 
 // ** Demo Components Imports
-import Trophy from 'src/views/dashboard/Trophy'
+import Welcome from 'src/views/dashboard/Welcome'
 import ToDoList from 'src/views/dashboard/ToDoList'
-import StatisticsCard from 'src/views/dashboard/StatisticsCard'
+import HonorsCard from 'src/views/dashboard/HonorsCard'
 import RadarChart from 'src/views/dashboard/RadarChart' 
+import RecentFeedback from 'src/views/dashboard/RecentFeedback'
 
 const Dashboard = () => {
   const { profile, setProfile } = useProfile();
@@ -47,16 +48,19 @@ const Dashboard = () => {
     <ApexChartWrapper>
       <Grid container spacing={6}>
         <Grid item xs={12} md={4}>
-          <Trophy />
+          <Welcome />
         </Grid>
         <Grid item xs={12} md={8}>
-          <StatisticsCard />
+          <HonorsCard />
+        </Grid>
+        <Grid item xs={12} md={6} lg={4}>
+          <RadarChart /> 
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
           <ToDoList />
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
-          <RadarChart /> 
+          <RecentFeedback />
         </Grid>
       </Grid>
     </ApexChartWrapper>

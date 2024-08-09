@@ -16,7 +16,7 @@ const FooterContent = () => {
           ❤️
         </Box>
         {` by `}
-        <Link target='_blank' href='https://github.com/Zhicheng-wan'>
+        <Link target='_blank' href='https://github.com/qasmokez/Athena-LMS'>
           Athena
         </Link>
       </Typography>
@@ -24,13 +24,7 @@ const FooterContent = () => {
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
           <Link
             target='_blank'
-            href='https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/blob/main/LICENSE'
-          >
-            MIT License
-          </Link>
-          <Link
-            target='_blank'
-            href='https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/issues'
+            href='https://github.com/qasmokez/Athena-LMS/issues'
           >
             Support
           </Link>

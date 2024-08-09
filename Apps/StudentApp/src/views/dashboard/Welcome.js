@@ -22,7 +22,7 @@ const TrophyImg = styled('img')({
   position: 'absolute'
 })
 
-const Trophy = () => {
+const Welcome = () => {
   // ** Hook
   const theme = useTheme()
   const imageSrc = theme.palette.mode === 'light' ? 'triangle-light.png' : 'triangle-dark.png'
@@ -33,10 +33,10 @@ const Trophy = () => {
       <CardContent>
         <Typography variant='h6'>欢迎{profile ? profile.data.name : 'User'}! 🥳</Typography>
         <Typography variant='h5' sx={{ my: 4, color: 'primary.main' }}>
-          $42.8k
+          一年三班
         </Typography>
         <Button size='small' variant='contained'>
-          View Sales
+          查看分数
         </Button>
         <TriangleImg alt='triangle background' src={`/images/misc/${imageSrc}`} />
         <TrophyImg alt='trophy' src='/images/misc/trophy.png' />
@@ -45,4 +45,4 @@ const Trophy = () => {
   )
 }
 
-export default Trophy
+export default Welcome

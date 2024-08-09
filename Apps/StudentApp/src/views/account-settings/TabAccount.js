@@ -90,24 +90,66 @@ const TabAccount = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Name' defaultValue={profile ? profile.data.name : 'User'}/>
+            <TextField
+              fullWidth
+              label='Name'
+              defaultValue={profile ? profile.data.name : 'User'}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Class' defaultValue={profile ? profile.data.class : 'User'} />
+            <TextField
+              fullWidth
+              label='Class'
+              defaultValue={profile ? profile.data.class : 'User'}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Grade' defaultValue={profile ? profile.data.grade : 'User'} />
+            <TextField
+              fullWidth
+              label='Grade'
+              defaultValue={profile ? profile.data.grade : 'User'}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Role' defaultValue='student'/>
+            <TextField
+              fullWidth
+              label='Role'
+              defaultValue='student'
+              InputProps={{
+                readOnly: true,
+              }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Gender' defaultValue={profile ? profile.data.gender : 'User'}/>
+            <TextField
+              fullWidth
+              label='Gender'
+              defaultValue={profile ? profile.data.gender : 'User'}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Company' placeholder='Athena Education' defaultValue='Athena Education' />
+            <TextField
+              fullWidth
+              label='Company'
+              placeholder='Athena Education'
+              defaultValue='Athena Education'
+              InputProps={{
+                readOnly: true,
+              }}
+            />
           </Grid>
-
           {openAlert ? (
             <Grid item xs={12} sx={{ mb: 3 }}>
               <Alert

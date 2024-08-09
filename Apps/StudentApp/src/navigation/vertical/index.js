@@ -4,7 +4,9 @@ import CubeOutline from 'mdi-material-ui/CubeOutline'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
 import AccountCogOutline from 'mdi-material-ui/AccountCogOutline'
 import CreditCardOutline from 'mdi-material-ui/CreditCardOutline'
+import GradeIcon from '@mui/icons-material/Grade';
 import BookOpenOutline from 'mdi-material-ui/BookOpenOutline'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 const navigation = () => {
   return [
@@ -22,6 +24,16 @@ const navigation = () => {
       title: '我的课堂/Courses',
       icon: BookOpenOutline,
       path: '/courses'
+    },
+    {
+      title: '我的分数/Grades',
+      icon:  GradeIcon,
+      path: '/grades'
+    },
+    {
+      title: '我的荣誉/Honors',
+      icon:  EmojiEventsIcon,
+      path: '/honor'
     },
     {
       sectionTitle: 'User Interface'
