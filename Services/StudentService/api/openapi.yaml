@@ -49,12 +49,37 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/UnexpectedError'
+  /user/parents:
+      get:
+        security:
+          - bearerAuth: []         
+        description: Get all parents by student ID
+        responses:
+          200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/testArray'
+          403:
+            description: Unauthorized
+          default:
+            description: Unexpected Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/UnexpectedError'
 
 components:
   schemas:
     testObject:
       type: object
       additionalProperties: true
+    testArray:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
     UnexpectedError:
       required:
         - code

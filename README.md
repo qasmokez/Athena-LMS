@@ -10,7 +10,7 @@
 
 ### Structure
 - Microservices/Backend inside `/Services`, including sql dbs.
-- (In Progress) Frontend inside `/Apps`.
+- Frontend inside `/Apps`.
 
 ### API
 - Account Service
@@ -23,6 +23,8 @@
 
 
 ### Frontend 
+- Student App
+    - http://localhost:3000
 
 1. Make sure you have installed Node.js (LTS). If Node.js is already installed in your system, make sure the installed version is LTS (and not the latest version)
 2. Navigate to the `javascript-version` folder and run following command to install our local dependencies listed in `package.json`.
