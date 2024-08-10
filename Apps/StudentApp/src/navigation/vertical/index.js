@@ -4,9 +4,10 @@ import CubeOutline from 'mdi-material-ui/CubeOutline'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
 import AccountCogOutline from 'mdi-material-ui/AccountCogOutline'
 import CreditCardOutline from 'mdi-material-ui/CreditCardOutline'
-import GradeIcon from '@mui/icons-material/Grade';
 import BookOpenOutline from 'mdi-material-ui/BookOpenOutline'
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import Icon from '@mdi/react';
+import { mdiSealVariant } from '@mdi/js';
+import { mdiStarOutline } from '@mdi/js';
 
 const navigation = () => {
   return [
@@ -27,12 +28,12 @@ const navigation = () => {
     },
     {
       title: '我的分数/Grades',
-      icon:  GradeIcon,
+      icon:  () => <Icon path={mdiStarOutline} size={1} />,
       path: '/grades'
     },
     {
       title: '我的荣誉/Honors',
-      icon:  EmojiEventsIcon,
+      icon:  () => <Icon path={mdiSealVariant} size={1} />,
       path: '/honors'
     },
     {

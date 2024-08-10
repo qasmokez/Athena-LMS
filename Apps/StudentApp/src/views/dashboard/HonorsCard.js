@@ -3,99 +3,34 @@ import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-import Avatar from '@mui/material/Avatar'
 import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
+import Icon from '@mdi/react'
+import LinearProgress from '@mui/material/LinearProgress'
+import { mdiStar } from '@mdi/js'
 
 // ** Icons Imports
-import EmojiEvents from '@mui/icons-material/EmojiEvents';
-import Star from '@mui/icons-material/Star';
-import MilitaryTech from '@mui/icons-material/MilitaryTech';
 import DotsVertical from 'mdi-material-ui/DotsVertical'
 
-const honorsData = [
-  {
-    title: '数学之星 lv4',
-    description: 'Awarded for exceptional performance',
-    color: 'primary',
-    icon: <EmojiEvents sx={{ fontSize: '1.75rem' }} />
-  },
-  {
-    title: '三好学生',
-    description: 'Recognized for outstanding leadership',
-    color: 'success',
-    icon: <Star sx={{ fontSize: '1.75rem' }} />
-  },
-  {
-    title: '科技创新奖',
-    description: 'For innovative project contributions',
-    color: 'warning',
-    icon: <MilitaryTech sx={{ fontSize: '1.75rem' }} />
-  },
-  {
-    title: '优秀班干部',  
-    description: 'Recognized for outstanding leadership',
-    // ** picke a color for medal
-    color: 'info',
-    icon: <Star sx={{ fontSize: '1.75rem' }} />
-  },
-]
 
-const renderHonors = () => {
-  return honorsData.map((item, index) => (
-    <Grid item xs={12} sm={3} key={index}>
-      <Box 
-        key={index} 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center',  // Ensures alignment of the icon and text
-          textAlign: 'center',  // Ensures the text is centered horizontally within the text box
-        }}
-      >
-        <Avatar
-          variant='rounded'
-          sx={{
-            mr: 2,  // Reduced margin to ensure closer alignment with text
-            width: 40,
-            height: 40,
-            boxShadow: 3,
-            color: 'common.white',
-            backgroundColor: `${item.color}.main`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {item.icon}
-        </Avatar>
-        <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
-          <Typography variant='subtitle2' sx={{ fontWeight: 'bold' }}>
-            {item.title}
-          </Typography>
-          <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-            {item.description}
-          </Typography>
-        </Box>
-      </Box>
-    </Grid>
-  ))
-}
+const levelingUp = [
+  { id: 1, name: '数学之星', currentLevel: 4, nextLevel: 5, experience: 75, icon: mdiStar },
+]
 
 const HonorsCard = () => {
   const router = useRouter();
 
   const handleRedirect = () => {
-    router.push('/Honors'); 
+    router.push('/honors'); 
   };
 
   return (
     <Card>
       <CardHeader
-        title='部分荣誉'
+        title='荣誉进度'
         action={
           <IconButton 
             onClick={handleRedirect}
@@ -107,11 +42,20 @@ const HonorsCard = () => {
           </IconButton>
         }
       />
-      <CardContent sx={{ pt: theme => `${theme.spacing(3)} !important` }}>
-        <Grid container spacing={[5, 0]}>
-          {renderHonors()}
-        </Grid>
-      </CardContent>
+      <Card>
+        <CardContent>
+            {levelingUp.map(level => (
+              <Box key={level.id} sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+                <Icon path={level.icon} size={1} color="gold" />
+                <Box sx={{ ml: 2, flexGrow: 1 }}>
+                  <Typography variant='h6'>{level.name} - Level {level.currentLevel} to {level.nextLevel}</Typography>
+                  <LinearProgress variant="determinate" value={level.experience} sx={{ height: 10, borderRadius: 5, marginTop: 1 }} />
+                  <Typography variant='body2' sx={{ marginTop: 1 }}>经验条: {level.experience}%</Typography>
+                </Box>
+              </Box>
+            ))}
+          </CardContent>
+         </Card>
     </Card>
   )
 }
