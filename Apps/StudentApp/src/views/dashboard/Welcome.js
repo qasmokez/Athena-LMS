@@ -31,7 +31,7 @@ const Welcome = () => {
   return (
     <Card sx={{ position: 'relative' }}>
       <CardContent>
-        <Typography variant='h6'>欢迎{profile ? profile.data.name : 'User'}! 🥳</Typography>
+        <Typography variant='h6'>欢迎回来{profile ? profile.data.name : 'User'}! 🥳</Typography>
         <Typography variant='h5' sx={{ my: 4, color: 'primary.main' }}>
           一年三班
         </Typography>

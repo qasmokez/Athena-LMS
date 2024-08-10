@@ -160,7 +160,12 @@ const LoginPage = () => {
             <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
               <FormControlLabel control={<Checkbox />} label='Remember Me' />
               <Link passHref href='/'>
-                <LinkStyled onClick={(e) => e.preventDefault()}>忘记密码?</LinkStyled>
+                <LinkStyled onClick={(e) => {
+                  e.preventDefault();
+                  router.push('/pages/resetPassword');
+                }}>
+                忘记密码?
+                </LinkStyled>
               </Link>
             </Box>
             <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} type='submit'>
