@@ -3,7 +3,10 @@ import dynamic from 'next/dynamic'
 import { useTheme } from '@mui/material/styles'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
+import CardHeader from '@mui/material/CardHeader'
+import IconButton from '@mui/material/IconButton'
+
+import DotsVertical from 'mdi-material-ui/DotsVertical'
 
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
@@ -55,6 +58,15 @@ const RadarChart = () => {
 
   return (
     <Card sx={{ position: 'relative', p: 0 }}>
+      <CardHeader
+        title='表现'
+        titleTypographyProps={{ sx: { lineHeight: '1.6 !important', letterSpacing: '0.15px !important' } }}
+        action={
+          <IconButton size='small' aria-label='settings' className='card-more-options' sx={{ color: 'text.secondary' }}>
+            <DotsVertical />
+          </IconButton>
+        }
+      />
       <CardContent sx={{ textAlign: 'center' }}>
         <Chart options={options} series={series} type='radar' height={350} />
       </CardContent>

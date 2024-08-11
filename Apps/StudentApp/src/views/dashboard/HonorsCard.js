@@ -42,20 +42,18 @@ const HonorsCard = () => {
           </IconButton>
         }
       />
-      <Card>
-        <CardContent>
-            {levelingUp.map(level => (
-              <Box key={level.id} sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                <Icon path={level.icon} size={1} color="gold" />
-                <Box sx={{ ml: 2, flexGrow: 1 }}>
-                  <Typography variant='h6'>{level.name} - Level {level.currentLevel} to {level.nextLevel}</Typography>
-                  <LinearProgress variant="determinate" value={level.experience} sx={{ height: 10, borderRadius: 5, marginTop: 1 }} />
-                  <Typography variant='body2' sx={{ marginTop: 1 }}>经验条: {level.experience}%</Typography>
-                </Box>
+      <CardContent>
+          {levelingUp.map(level => (
+            <Box key={level.id} sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+              <Icon path={level.icon} size={1} color="gold" />
+              <Box sx={{ ml: 2, flexGrow: 1 }}>
+                <Typography variant='h6'>{level.name} - Level {level.currentLevel} to {level.nextLevel}</Typography>
+                <LinearProgress variant="determinate" value={level.experience} sx={{ height: 10, borderRadius: 5, marginTop: 1 }} />
+                <Typography variant='body2' sx={{ marginTop: 1 }}>经验条: {level.experience}%</Typography>
               </Box>
-            ))}
-          </CardContent>
-         </Card>
+            </Box>
+          ))}
+      </CardContent>
     </Card>
   )
 }

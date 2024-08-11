@@ -9,6 +9,8 @@ import MenuItem from '@mui/material/MenuItem'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useState } from 'react'
 
+import { useRouter } from 'next/router';
+
 // Predefined light colors
 const lightColors = [
   'lightblue',
@@ -24,6 +26,8 @@ const CardImgTop = ({ title, body, color, bodyStyle }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const [bgColor, setBgColor] = useState(color)
 
+  const router = useRouter();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -37,8 +41,14 @@ const CardImgTop = ({ title, body, color, bodyStyle }) => {
     handleClose()
   }
 
+  const handleCardClick = () => {
+    const encodedTitle = encodeURIComponent(title.toLowerCase());
+    router.push(`/courses/${encodedTitle}/home`);
+  }
+  
+
   return (
-    <Card>
+    <Card >
       <div style={{ position: 'relative' }}>
         <CardMedia 
           // avoid warning of no image
@@ -53,7 +63,7 @@ const CardImgTop = ({ title, body, color, bodyStyle }) => {
           <MoreVertIcon />
         </IconButton>
       </div>
-      <CardContent>
+      <CardContent onClick={handleCardClick} sx={{ cursor: 'pointer' }}>
         <Typography variant='h6' sx={{ marginBottom: 2 }}>
           {title}
         </Typography>
