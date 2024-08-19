@@ -48,11 +48,14 @@
     "@emotion/react": "^11.7.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.6.0",
+    "@mdi/js": "^7.4.47",
+    "@mdi/react": "^1.6.1",
     "@mui/icons-material": "^5.16.6",
     "@mui/lab": "^5.0.0-alpha.70",
     "@mui/material": "^5.4.3",
     "@popperjs/core": "^2.11.2",
     "apexcharts-clevision": "3.28.5",
+    "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",
     "clsx": "^1.1.1",
     "eslint-plugin-react": "^7.29.4",
@@ -64,8 +67,7 @@
     "react-datepicker": "^4.5.0",
     "react-dom": "17.0.2",
     "react-perfect-scrollbar": "^1.5.8",
-    "react-popper": "^2.2.5",
-    "axios": "^0.21.1"
+    "react-popper": "^2.2.5"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

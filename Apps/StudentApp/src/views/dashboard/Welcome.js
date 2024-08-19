@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import { styled, useTheme } from '@mui/material/styles'
+import { useProfile } from 'src/@core/context/settingsContext';
 
 // Styled component for the triangle shaped background image
 const TriangleImg = styled('img')({
@@ -21,23 +22,21 @@ const TrophyImg = styled('img')({
   position: 'absolute'
 })
 
-const Trophy = () => {
+const Welcome = () => {
   // ** Hook
   const theme = useTheme()
   const imageSrc = theme.palette.mode === 'light' ? 'triangle-light.png' : 'triangle-dark.png'
+  const { profile } = useProfile();
 
   return (
     <Card sx={{ position: 'relative' }}>
       <CardContent>
-        <Typography variant='h6'>恭喜sb王某畅! 🥳</Typography>
-        <Typography variant='body2' sx={{ letterSpacing: '0.25px' }}>
-          本月最欢迎的鸭王
-        </Typography>
+        <Typography variant='h6'>欢迎回来{profile ? profile.data.name : 'User'}! 🥳</Typography>
         <Typography variant='h5' sx={{ my: 4, color: 'primary.main' }}>
-          $42.8k
+          一年三班
         </Typography>
         <Button size='small' variant='contained'>
-          View Sales
+          查看分数
         </Button>
         <TriangleImg alt='triangle background' src={`/images/misc/${imageSrc}`} />
         <TrophyImg alt='trophy' src='/images/misc/trophy.png' />
@@ -46,4 +45,4 @@ const Trophy = () => {
   )
 }
 
-export default Trophy
+export default Welcome
