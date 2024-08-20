@@ -35,6 +35,19 @@ services:
       - account-service
     networks:
       - frontend
+  
+  adminapp:
+    container_name: adminapp
+    build:
+      context: ./Apps/AdminApp
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001
+    depends_on:
+      - account-service
+    networks:
+      - frontend
+
 
   postgres:
     container_name: databases
