@@ -2,12 +2,18 @@
 import AccountCogOutline from 'mdi-material-ui/AccountCogOutline'
 import Icon from '@mdi/react';
 import { mdiSealVariant } from '@mdi/js';
+import SchoolIcon from '@mui/icons-material/School'
 import { mdiStarOutline } from '@mdi/js';
 
 const navigation = () => {
   return [
     {
-      title: '我/Profile',
+      title: '学生档案',
+      icon: SchoolIcon,
+      path: '/student-documents'
+    },
+    {
+      title: '个人设置/Settings',
       icon: AccountCogOutline,
       path: '/account-settings'
     },

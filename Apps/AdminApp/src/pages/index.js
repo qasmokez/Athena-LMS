@@ -76,6 +76,7 @@ const LoginPage = () => {
     event.preventDefault()
   }
 
+  // admin login -> student-documents
   const handleLogin = async (e) => {
     e.preventDefault();
     /* try {
@@ -88,7 +89,7 @@ const LoginPage = () => {
       localStorage.setItem('token', accessToken);
       localStorage.setItem('name', name);
       // Redirect to a protected route
-      router.push('/dashboard');
+      router.push('/student-documents');
     } catch (error) {
       console.log(error);
       setValues({ ...values, errorMessage: '密码或用户名错误' });

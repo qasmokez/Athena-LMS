@@ -5,22 +5,11 @@ import { useProfile } from 'src/@core/context/settingsContext';
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
-import Alert from '@mui/material/Alert'
-import Select from '@mui/material/Select'
 import { styled } from '@mui/material/styles'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import AlertTitle from '@mui/material/AlertTitle'
-import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
-
-// ** Icons Imports
-import Close from 'mdi-material-ui/Close'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -92,7 +81,7 @@ const TabAccount = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Name'
+              label='用户名'
               defaultValue={profile ? profile.data.name : 'User'}
               InputProps={{
                 readOnly: true,
@@ -102,8 +91,8 @@ const TabAccount = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Class'
-              defaultValue={profile ? profile.data.class : 'User'}
+              label='密码'
+              defaultValue={profile ? profile.data.password : 'User'}
               InputProps={{
                 readOnly: true,
               }}
@@ -112,8 +101,8 @@ const TabAccount = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Grade'
-              defaultValue={profile ? profile.data.grade : 'User'}
+              label='ID'
+              defaultValue={profile ? profile.data.id : 'User'}
               InputProps={{
                 readOnly: true,
               }}
@@ -122,52 +111,13 @@ const TabAccount = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Role'
-              defaultValue='student'
+              label='登录名'
+              defaultValue={profile ? profile.data.loginName : 'User'}
               InputProps={{
                 readOnly: true,
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Gender'
-              defaultValue={profile ? profile.data.gender : 'User'}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Company'
-              placeholder='Athena Education'
-              defaultValue='Athena Education'
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          {openAlert ? (
-            <Grid item xs={12} sx={{ mb: 3 }}>
-              <Alert
-                severity='warning'
-                sx={{ '& a': { fontWeight: 400 } }}
-                action={
-                  <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
-                    <Close fontSize='inherit' />
-                  </IconButton>
-                }
-              >
-                <AlertTitle>Your email is not confirmed. Please check your inbox.</AlertTitle>
-                <Link href='/' onClick={e => e.preventDefault()}>
-                  Resend Confirmation
-                </Link>
-              </Alert>
-            </Grid>
-          ) : null}
 
           <Grid item xs={12}>
             <Button variant='contained' sx={{ marginRight: 3.5 }}>
