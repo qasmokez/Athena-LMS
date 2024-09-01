@@ -81,27 +81,14 @@ const TabAccount = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='用户名'
+              label='管理员名称'
               defaultValue={profile ? profile.data.name : 'User'}
-              InputProps={{
-                readOnly: true,
-              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='密码'
-              defaultValue={profile ? profile.data.password : 'User'}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='ID'
+              label='管理员ID'
               defaultValue={profile ? profile.data.id : 'User'}
               InputProps={{
                 readOnly: true,
@@ -111,8 +98,8 @@ const TabAccount = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='登录名'
-              defaultValue={profile ? profile.data.loginName : 'User'}
+              label='管理员绑定手机号'
+              defaultValue={profile ? profile.data.phone : 'User'}
               InputProps={{
                 readOnly: true,
               }}
@@ -121,10 +108,10 @@ const TabAccount = () => {
 
           <Grid item xs={12}>
             <Button variant='contained' sx={{ marginRight: 3.5 }}>
-              Save Changes
+              保存更改
             </Button>
             <Button type='reset' variant='outlined' color='secondary'>
-              Reset
+              重置
             </Button>
           </Grid>
         </Grid>

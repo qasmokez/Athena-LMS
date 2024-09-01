@@ -18,6 +18,7 @@ import Popover from '@mui/material/Popover';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
+import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
@@ -52,7 +53,7 @@ const students = [
   {
     id: '003',
     姓: '王',
-    名: '伟',
+    名: '大卫',
     性别: '男',
     班级: '6班',
     年级: '五年级',
@@ -93,7 +94,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { order, orderBy, onRequestSort } = props;
+  const { order, orderBy, onRequestSort, onSelectAllClick, numSelected, rowCount} = props;
   const createSortHandler = (property) => (event) => {
     // Prevent sorting for '名', '年级', '班级', and '姓' columns
     if (property === '名' || property === '年级' || property === '班级' || property === '姓') return;
@@ -103,6 +104,14 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{ 'aria-label': 'select all students' }}
+          />
+        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -137,13 +146,18 @@ EnhancedTableHead.propTypes = {
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
+  numSelected: PropTypes.number.isRequired,
+  onSelectAllClick: PropTypes.func.isRequired,
+  rowCount: PropTypes.number.isRequired,
 };
 
 function EnhancedTableToolbar({
+  numSelected,
   selectedClasses,
   setSelectedClasses,
   selectedGrades,
   setSelectedGrades,
+  handleDeleteSelected,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -178,6 +192,13 @@ function EnhancedTableToolbar({
       <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
         学生信息
       </Typography>
+      {numSelected > 0 && (
+        <Tooltip title="Delete">
+          <IconButton onClick={handleDeleteSelected}>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      )}
       <Tooltip title="Filter list">
         <IconButton onClick={handleFilterClick}>
           <FilterListIcon />
@@ -266,10 +287,12 @@ function EnhancedTableToolbar({
 }
 
 EnhancedTableToolbar.propTypes = {
+  numSelected: PropTypes.number.isRequired,
   selectedClasses: PropTypes.array.isRequired,
   setSelectedClasses: PropTypes.func.isRequired,
   selectedGrades: PropTypes.array.isRequired,
   setSelectedGrades: PropTypes.func.isRequired,
+  handleDeleteSelected: PropTypes.func.isRequired,
 };
 
 export default function EnhancedTable() {
@@ -277,6 +300,8 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState('id');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const [selected, setSelected] = React.useState([]);
 
   const [selectedClasses, setSelectedClasses] = React.useState([]);
   const [selectedGrades, setSelectedGrades] = React.useState([]);
@@ -287,6 +312,41 @@ export default function EnhancedTable() {
     setOrderBy(property);
   };
 
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = students.map((n) => n.id);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleCheckboxClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
+  // request the selected students to be deleted from the backend
+  const handleDeleteSelected = () => {
+    // Implement the delete functionality here
+    console.log('Selected students to delete:', selected);
+  };
+  
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -295,6 +355,8 @@ export default function EnhancedTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
   const visibleRows = React.useMemo(() => {
     let filteredStudents = [...students];
@@ -322,29 +384,58 @@ export default function EnhancedTable() {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar
+          numSelected={selected.length}
           selectedClasses={selectedClasses}
           setSelectedClasses={setSelectedClasses}
           selectedGrades={selectedGrades}
           setSelectedGrades={setSelectedGrades}
+          handleDeleteSelected={handleDeleteSelected}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={students.length}
+            />
             <TableBody>
-              {visibleRows.map((row) => (
-                <TableRow hover key={row.id} sx={{ cursor: 'pointer' }}>
-                  <TableCell component="th" scope="row" padding="none">{row.姓}</TableCell>
-                  <TableCell>{row.名}</TableCell>
-                  <TableCell>{row.性别}</TableCell>
-                  <TableCell>{row.班级}</TableCell>
-                  <TableCell>{row.年级}</TableCell>
-                  <TableCell>{row.出生日期}</TableCell>
-                  <TableCell>{row.民族}</TableCell>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell align="right">{row.年龄}</TableCell>
-                  <TableCell>{row.入学时间}</TableCell>
-                </TableRow>
-              ))}
+              {visibleRows.map((row) => {
+                const isItemSelected = isSelected(row.id);
+                return (
+                  <TableRow
+                    hover
+                    // wait to be implemented add side panel when cliking on a row
+                    onClick={(event) => event.preventDefault()}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.id}
+                    selected={isItemSelected}
+                    sx={{ cursor: 'pointer' }}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isItemSelected}
+                        onClick={(event) => handleCheckboxClick(event, row.id)}
+                        inputProps={{ 'aria-labelledby': `enhanced-table-checkbox-${row.id}` }}
+                      />
+                    </TableCell>
+                    <TableCell component="th" scope="row" padding="none">{row.姓}</TableCell>
+                    <TableCell>{row.名}</TableCell>
+                    <TableCell>{row.性别}</TableCell>
+                    <TableCell>{row.班级}</TableCell>
+                    <TableCell>{row.年级}</TableCell>
+                    <TableCell>{row.出生日期}</TableCell>
+                    <TableCell>{row.民族}</TableCell>
+                    <TableCell>{row.id}</TableCell>
+                    <TableCell align="right">{row.年龄}</TableCell>
+                    <TableCell>{row.入学时间}</TableCell>
+                  </TableRow>
+                );
+              })}
               {emptyRows > 0 && (
                 <TableRow
                   style={{
