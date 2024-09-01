@@ -1,30 +1,14 @@
 // pages/student-document/index.js
 
 import React, { useState } from 'react'
-import CollapsibleTable from 'src/views/student-documents/collapsibleTable'
-import FilterOptions from 'src/views/student-documents/filterOptions'
+import StudentTable from 'src/views/student-documents/studentTable'
 
 const StudentDocumentPage = () => {
-  const [selectedClass, setSelectedClass] = useState('')
-  const [selectedGrade, setSelectedGrade] = useState('')
-
-  const handleClassChange = (event) => {
-    setSelectedClass(event.target.value)
-  }
-
-  const handleGradeChange = (event) => {
-    setSelectedGrade(event.target.value)
-  }
-
+  
   return (
     <div>
-      <FilterOptions
-        selectedClass={selectedClass}
-        handleClassChange={handleClassChange}
-        selectedGrade={selectedGrade}
-        handleGradeChange={handleGradeChange}
-      />
-      <CollapsibleTable selectedClass={selectedClass} selectedGrade={selectedGrade} />
+      <h1>学生信息表</h1>
+      <StudentTable />
     </div>
   )
 }
