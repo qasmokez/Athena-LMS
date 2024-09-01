@@ -21,6 +21,9 @@ import FormGroup from '@mui/material/FormGroup';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
+// 登陆后 向后端请求学生信息
+// 如果按照【手机号，父母名，小组id】查询则从新向后端请求
+// 目前包含基础查询 除了 【姓】- 还未确定后端输出中文名还是英文名
 const students = [
   {
     id: '001',
