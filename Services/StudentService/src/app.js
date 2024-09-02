@@ -35,6 +35,7 @@ app.use(
 app.get('/v0/user/profile', auth.check, user.profile);
 app.get('/v0/user/honors', auth.check, user.honors);
 app.get('/v0/user/parents', auth.check, user.parents);
+app.get('/v0/student/list', auth.check, student.list);
 
 app.use((err, req, res, next) => {
   res.status(err.status).json({
