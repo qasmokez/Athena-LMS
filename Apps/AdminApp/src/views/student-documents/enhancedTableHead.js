@@ -11,8 +11,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { visuallyHidden } from '@mui/utils';
 
 const headCells = [
-  { id: '姓', numeric: false, disablePadding: true, label: '姓' },
-  { id: '名', numeric: false, disablePadding: false, label: '名' },
+  { id: '姓名', numeric: false, disablePadding: true, label: '姓名' },
   { id: '性别', numeric: false, disablePadding: false, label: '性别' },
   { id: '班级', numeric: false, disablePadding: false, label: '班级' },
   { id: '年级', numeric: false, disablePadding: false, label: '年级' },
@@ -26,7 +25,7 @@ const headCells = [
 function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort, onSelectAllClick, numSelected, rowCount } = props;
   const createSortHandler = (property) => (event) => {
-    if (property === '名' || property === '年级' || property === '班级' || property === '姓') return;
+    if (property === '年级' || property === '班级' || property === '姓名') return;
     onRequestSort(event, property);
   };
 
@@ -48,7 +47,7 @@ function EnhancedTableHead(props) {
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id !== '名' && headCell.id !== '年级' && headCell.id !== '班级' && headCell.id !== '姓' ? (
+            {headCell.id !== '年级' && headCell.id !== '班级' && headCell.id !== '姓名' ? (
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}

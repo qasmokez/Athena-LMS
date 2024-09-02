@@ -1,6 +1,4 @@
-// filtering and deletion functionality.
-
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -8,21 +6,24 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
 import Box from '@mui/material/Box';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
+import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function EnhancedTableToolbar({
+export default function EnhancedTableToolbar({
   numSelected,
-  selectedClasses,
-  setSelectedClasses,
-  selectedGrades,
-  setSelectedGrades,
   handleDeleteSelected,
+  filters,
+  setFilters,
+  fetchFilteredData, // Function to fetch data from backend
 }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [newFilterField, setNewFilterField] = useState('');
+  const [newFilterValue, setNewFilterValue] = useState('');
 
   const handleFilterClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,22 +33,22 @@ function EnhancedTableToolbar({
     setAnchorEl(null);
   };
 
-  const handleClassChange = (event) => {
-    const value = event.target.value;
-    setSelectedClasses((prev) =>
-      prev.includes(value)
-        ? prev.filter((item) => item !== value)
-        : [...prev, value]
-    );
+  const handleAddFilter = () => {
+    if (newFilterField && newFilterValue) {
+      setFilters((prev) => [...prev, { field: newFilterField, value: newFilterValue }]);
+      setNewFilterField('');
+      setNewFilterValue('');
+      handleFilterClose();
+      fetchFilteredData(); // Simulate backend call
+    }
   };
 
-  const handleGradeChange = (event) => {
-    const value = event.target.value;
-    setSelectedGrades((prev) =>
-      prev.includes(value)
-        ? prev.filter((item) => item !== value)
-        : [...prev, value]
-    );
+  const handleDeleteFilter = (index) => {
+    setFilters((prev) => {
+      const newFilters = prev.filter((_, i) => i !== index);
+      fetchFilteredData(); // Update backend call when a filter is removed
+      return newFilters;
+    });
   };
 
   return (
@@ -62,7 +63,15 @@ function EnhancedTableToolbar({
           </IconButton>
         </Tooltip>
       )}
-      <Tooltip title="Filter list">
+      {filters.map((filter, index) => (
+        <Chip
+          key={index}
+          label={`${filter.field}: ${filter.value}`}
+          onDelete={() => handleDeleteFilter(index)}
+          sx={{ m: 1 }}
+        />
+      ))}
+      <Tooltip title="Add filter">
         <IconButton onClick={handleFilterClick}>
           <FilterListIcon />
         </IconButton>
@@ -76,73 +85,40 @@ function EnhancedTableToolbar({
           horizontal: 'left',
         }}
       >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="subtitle1">按班级过滤</Typography>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={selectedClasses.includes('1班')}
-                  onChange={handleClassChange}
-                  value="1班"
-                />
-              }
-              label="1班"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={selectedClasses.includes('2班')}
-                  onChange={handleClassChange}
-                  value="2班"
-                />
-              }
-              label="2班"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={selectedClasses.includes('6班')}
-                  onChange={handleClassChange}
-                  value="6班"
-                />
-              }
-              label="6班"
-            />
-          </FormGroup>
-          <Typography variant="subtitle1">按年级过滤</Typography>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={selectedGrades.includes('三年级')}
-                  onChange={handleGradeChange}
-                  value="三年级"
-                />
-              }
-              label="三年级"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={selectedGrades.includes('二年级')}
-                  onChange={handleGradeChange}
-                  value="二年级"
-                />
-              }
-              label="二年级"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={selectedGrades.includes('五年级')}
-                  onChange={handleGradeChange}
-                  value="五年级"
-                />
-              }
-              label="五年级"
-            />
-          </FormGroup>
+        <Box sx={{ p: 2, minWidth: 200 }}>
+          <Typography variant="subtitle1" gutterBottom>
+            添加筛选条件
+          </Typography>
+          <Select
+            value={newFilterField}
+            onChange={(e) => setNewFilterField(e.target.value)}
+            displayEmpty
+            fullWidth
+            sx={{ mb: 2 }}
+          >
+            <MenuItem value="" disabled>
+              筛选条件...
+            </MenuItem>
+            <MenuItem value="性别">性别</MenuItem>
+            <MenuItem value="班级">班级</MenuItem>
+            <MenuItem value="年级">年级</MenuItem>
+            <MenuItem value="民族">民族 </MenuItem>
+            <MenuItem value="出生日期">出生日期</MenuItem>
+            <MenuItem value="年龄">年龄</MenuItem>
+            <MenuItem value="入学时间">入学时间 </MenuItem>
+            {/* Add more filter options as needed */}
+          </Select>
+          <TextField
+            label="输入筛选值"
+            value={newFilterValue}
+            onChange={(e) => setNewFilterValue(e.target.value)}
+            variant="outlined"
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+          <IconButton onClick={handleAddFilter} color="primary">
+            <AddIcon />
+          </IconButton>
         </Box>
       </Popover>
     </Toolbar>
@@ -151,11 +127,8 @@ function EnhancedTableToolbar({
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
-  selectedClasses: PropTypes.array.isRequired,
-  setSelectedClasses: PropTypes.func.isRequired,
-  selectedGrades: PropTypes.array.isRequired,
-  setSelectedGrades: PropTypes.func.isRequired,
   handleDeleteSelected: PropTypes.func.isRequired,
+  filters: PropTypes.array.isRequired,
+  setFilters: PropTypes.func.isRequired,
+  fetchFilteredData: PropTypes.func.isRequired,
 };
-
-export default EnhancedTableToolbar;
