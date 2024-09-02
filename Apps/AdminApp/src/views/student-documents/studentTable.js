@@ -10,6 +10,18 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import EnhancedTableHead from './enhancedTableHead';
 import EnhancedTableToolbar from './enhancedTableTool';
+import Drawer from '@mui/material/Drawer';
+import Typography from '@mui/material/Typography';
+import Avatar from '@mui/material/Avatar';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import BadgeIcon from '@mui/icons-material/Badge';
+import PersonIcon from '@mui/icons-material/Person';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 // 登陆后 向后端请求学生信息
 // 如果按照【手机号，父母名，小组id】查询则从新向后端请求
@@ -27,6 +39,18 @@ const students = [
     民族: '汉族',
     年龄: 14,
     入学时间: '2017-09-01',
+    拓展信息: {
+      身份证号: '110101200001011234',
+      父亲姓名: '张三',
+      父亲联系手机号: '13800138000',
+      母亲姓名: '李四',
+      母亲联系手机号: '13900139000',
+      紧急联系人姓名: '王五',
+      紧急联系人手机号: '13600136000',
+      家庭住址: '北京市海淀区中关村大街1号',
+      个人照片: '/images/avatars/1.png',
+      体检报告: '暂无',
+    },
   },
   {
     id: '002',
@@ -39,6 +63,18 @@ const students = [
     民族: '满族',
     年龄: 12,
     入学时间: '2018-09-01',
+    拓展信息: {
+      身份证号: '110102200002022345',
+      父亲姓名: '李五',
+      父亲联系手机号: '13800238000',
+      母亲姓名: '张六',
+      母亲联系手机号: '13900239000',
+      紧急联系人姓名: '陈七',
+      紧急联系人手机号: '13600236000',
+      家庭住址: '上海市浦东新区陆家嘴路2号',
+      个人照片: '/images/avatars/1.png',
+      体检报告: '暂无',
+    },
   },
   {
     id: '003',
@@ -51,6 +87,18 @@ const students = [
     民族: '汉族',
     年龄: 14,
     入学时间: '2019-09-01',
+    拓展信息: {
+      身份证号: '110101200001011234',
+      父亲姓名: '张三',
+      父亲联系手机号: '13800138000',
+      母亲姓名: '李四',
+      母亲联系手机号: '13900139000',
+      紧急联系人姓名: '王五',
+      紧急联系人手机号: '13600136000',
+      家庭住址: '北京市海淀区中关村大街1号',
+      个人照片: '/images/avatars/1.png',
+      体检报告: '暂无',
+    },
   },
 ];
 
@@ -71,13 +119,20 @@ function getComparator(order, orderBy) {
 }
 
 export default function EnhancedTable() {
+  // 排序
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('id');
+  // 分页
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // 选择的行 -> 用于删除
   const [selected, setSelected] = React.useState([]);
+  // 筛选条件 -> 班级、年级 后续添加....
   const [selectedClasses, setSelectedClasses] = React.useState([]);
   const [selectedGrades, setSelectedGrades] = React.useState([]);
+  // 右侧panel
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [selectedStudent, setSelectedStudent] = React.useState(null);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -95,6 +150,7 @@ export default function EnhancedTable() {
   };
 
   const handleCheckboxClick = (event, id) => {
+    event.stopPropagation();
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
@@ -112,6 +168,16 @@ export default function EnhancedTable() {
     }
 
     setSelected(newSelected);
+  };
+
+  const handleRowClick = (student) => {
+    setSelectedStudent(student);
+    setDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+    setSelectedStudent(null);
   };
 
   const handleDeleteSelected = () => {
@@ -177,18 +243,19 @@ export default function EnhancedTable() {
                 const isItemSelected = isSelected(row.id);
                 return (
                   <TableRow
-                    hover
+                    hover 
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: 'default' }}
+                    onClick={() => handleRowClick(row)}
+                    sx={{ cursor: 'pointer' }}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
-                        onChange={(event) => handleCheckboxClick(event, row.id)}
+                        onClick={(event) => handleCheckboxClick(event, row.id)}
                         inputProps={{ 'aria-labelledby': `enhanced-table-checkbox-${row.id}` }}
                       />
                     </TableCell>
@@ -227,6 +294,150 @@ export default function EnhancedTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      {/* Side Panel (Drawer) */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        sx={{ width: 300, flexShrink: 0, '& .MuiDrawer-paper': { width: 300 } }}
+      >
+        {selectedStudent && (
+          <Box sx={{ p: 2 }}>
+            {/* User Profile Section */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Avatar
+                alt="学生照片"
+                src={selectedStudent.拓展信息.个人照片}
+                sx={{ width: 56, height: 56, mr: 2 }}
+              />
+              <Box>
+                <Typography variant="h6">{selectedStudent.姓}{selectedStudent.名}</Typography>
+                <Typography variant="body2">{selectedStudent.id}</Typography>
+              </Box>
+            </Box>
+            {/* Expanded Information with Icons and Bold Titles */}
+            <List>
+              <ListItem>
+                <ListItemIcon><BadgeIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        身份证号:
+                      </Typography>
+                      {selectedStudent.拓展信息.身份证号}
+                    </>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon><PersonIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        父亲姓名:
+                      </Typography>
+                      {selectedStudent.拓展信息.父亲姓名}
+                    </>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon><PhoneIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        父亲联系手机号:
+                      </Typography>
+                      {selectedStudent.拓展信息.父亲联系手机号}
+                    </>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon><PersonIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        母亲姓名:
+                      </Typography>
+                      {selectedStudent.拓展信息.母亲姓名}
+                    </>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon><PhoneIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        母亲联系手机号:
+                      </Typography>
+                      {selectedStudent.拓展信息.母亲联系手机号}
+                    </>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon><PersonIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        紧急联系人姓名:
+                      </Typography>
+                      {selectedStudent.拓展信息.紧急联系人姓名}
+                    </>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon><PhoneIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        紧急联系人手机号:
+                      </Typography>
+                      {selectedStudent.拓展信息.紧急联系人手机号}
+                    </>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon><LocationOnIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        家庭住址:
+                      </Typography>
+                      {selectedStudent.拓展信息.家庭住址}
+                    </>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon><AssignmentIcon /></ListItemIcon>
+                <ListItemText
+                  primary={
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        体检报告:
+                      </Typography>
+                      {selectedStudent.拓展信息.体检报告}
+                    </>
+                  }
+                />
+              </ListItem>
+            </List>
+          </Box>
+        )}
+      </Drawer>
     </Box>
   );
 }
