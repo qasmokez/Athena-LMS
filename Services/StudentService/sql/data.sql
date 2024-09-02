@@ -9,9 +9,8 @@ VALUES (
         'grade', '10',
         'class', '1',
         'gender', 'male',
-        'dob', '2003-01-01', -- date of birth
-        'address', '123 Nosh Mabollocks Ave.',
-        'govtID', '110101200301018618'
+        'created_at': '2024-09-02',
+        'updated_at': '2024-09-02',
     )
 );
 
@@ -22,9 +21,68 @@ VALUES (
         'grade', '12',
         'class', '3',
         'gender', 'female',
-        'dob', '2003-01-02',
-        'address', 'no.1 Beijing Street',
-        'govtID', '110101200301028618'
+        'created_at': '2024-09-02',
+        'updated_at': '2024-09-02',
+    )
+);
+
+INSERT INTO student(studentid, data)
+VALUES (
+    '33333333-3333-3333-3333-333333333333',
+    jsonb_build_object(
+        'grade', '11',
+        'class', '2',
+        'gender', 'female',
+        'created_at', '2024-09-02',
+        'updated_at', '2024-09-02'
+    )
+);
+
+INSERT INTO student(studentid, data)
+VALUES (
+    '44444444-4444-4444-4444-444444444444',
+    jsonb_build_object(
+        'grade', '10',
+        'class', '1',
+        'gender', 'male',
+        'created_at', '2024-09-02',
+        'updated_at', '2024-09-02'
+    )
+);
+
+INSERT INTO student(studentid, data)
+VALUES (
+    '55555555-5555-5555-5555-555555555555',
+    jsonb_build_object(
+        'grade', '12',
+        'class', '3',
+        'gender', 'female',
+        'created_at', '2024-09-02',
+        'updated_at', '2024-09-02'
+    )
+);
+
+INSERT INTO student(studentid, data)
+VALUES (
+    '66666666-6666-6666-6666-666666666666',
+    jsonb_build_object(
+        'grade', '11',
+        'class', '2',
+        'gender', 'male',
+        'created_at', '2024-09-02',
+        'updated_at', '2024-09-02'
+    )
+);
+
+INSERT INTO student(studentid, data)
+VALUES (
+    '77777777-7777-7777-7777-777777777777',
+    jsonb_build_object(
+        'grade', '9',
+        'class', '1',
+        'gender', 'female',
+        'created_at', '2024-09-02',
+        'updated_at', '2024-09-02'
     )
 );
 

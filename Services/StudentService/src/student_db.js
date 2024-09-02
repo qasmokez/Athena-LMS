@@ -12,12 +12,16 @@ exports.getList = async (class_id, grade_id, page, limit) => {
   // TODO: write the sql query here, skeleton code provided below
   // hint: refer to /StudentService/sql/schema to see how our database is structured
   // look at 'student' table in particular
-  let select = `SELECT data FROM student WHERE $1 AND $2`;
+  const offset = (page - 1) * limit;
+  let select = `SELECT data FROM student 
+  WHERE grade = $1 AND class = $2
+  LIMIT $3 OFFSET $4`;
   const query = {
     text: select,
-    values: [arg1, arg2],
+    values: [class_id, grade_id, limit, offset],
   };
   const dbOutput = await pool.query(query);
+  
   const output = dbOutput.rows[0];
   return output;
 };
