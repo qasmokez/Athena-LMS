@@ -77,22 +77,18 @@ paths:
       parameters:
         - name: page
           in: query
-          required: false
           schema:
             $ref: '#/components/schemas/StudentList/properties/page'
         - name: limit
           in: query
-          required: false
           schema:
             $ref: '#/components/schemas/StudentList/properties/limit'
         - name: class_id
           in: query
-          required: true
           schema:
             $ref: '#/components/schemas/StudentList/properties/class_id'
         - name: grade_id
           in: query
-          required: true
           schema:
             $ref: '#/components/schemas/StudentList/properties/grade_id'
       responses:
@@ -168,9 +164,6 @@ components:
           type: string
         grade_id:
           type: string
-      required:
-        - class_id
-        - grade_id
 
   securitySchemes:
     bearerAuth:
