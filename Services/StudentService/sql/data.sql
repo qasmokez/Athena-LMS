@@ -9,8 +9,8 @@ VALUES (
         'grade', '10',
         'class', '1',
         'gender', 'male',
-        'created_at': '2024-09-02',
-        'updated_at': '2024-09-02',
+        'created_at', '2024-09-02',
+        'updated_at', '2024-09-02'
     )
 );
 
@@ -21,8 +21,8 @@ VALUES (
         'grade', '12',
         'class', '3',
         'gender', 'female',
-        'created_at': '2024-09-02',
-        'updated_at': '2024-09-02',
+        'created_at', '2024-09-02',
+        'updated_at', '2024-09-02'
     )
 );
 

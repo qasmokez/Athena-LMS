@@ -13,15 +13,18 @@ exports.getList = async (class_id, grade_id, page, limit) => {
   // hint: refer to /StudentService/sql/schema to see how our database is structured
   // look at 'student' table in particular
   const offset = (page - 1) * limit;
-  let select = `SELECT data FROM student 
-  WHERE grade = $1 AND class = $2
-  LIMIT $3 OFFSET $4`;
+  let select = `
+    SELECT data 
+    FROM student 
+    WHERE data->>'grade' = $1 
+    AND data->>'class' = $2
+    LIMIT $3 OFFSET $4`;
+
   const query = {
     text: select,
-    values: [class_id, grade_id, limit, offset],
+    values: [grade_id, class_id, limit, offset],
   };
+
   const dbOutput = await pool.query(query);
-  
-  const output = dbOutput.rows[0];
-  return output;
+  return dbOutput;
 };

@@ -69,6 +69,50 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/UnexpectedError'
+  /student/list:
+    get:
+      security:
+        - bearerAuth: []
+      description: Get a paginated list of students by class and grade
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/StudentList/properties/page'
+        - name: limit
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/StudentList/properties/limit'
+        - name: class_id
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/StudentList/properties/class_id'
+        - name: grade_id
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/StudentList/properties/grade_id'
+      responses:
+        200:
+          description: A paginated list of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
 
 components:
   schemas:
@@ -113,6 +157,20 @@ components:
         - studentid
         - password
       additionalProperties: false
+    StudentList:
+      type: object
+      properties:
+        page:
+          type: string
+        limit:
+          type: string
+        class_id: 
+          type: string
+        grade_id:
+          type: string
+      required:
+        - class_id
+        - grade_id
 
   securitySchemes:
     bearerAuth:
