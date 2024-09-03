@@ -87,12 +87,12 @@ paths:
             $ref: '#/components/schemas/StudentList/properties/limit'
         - name: class_id
           in: query
-          required: false
+          required: true
           schema:
             $ref: '#/components/schemas/StudentList/properties/class_id'
         - name: grade_id
           in: query
-          required: false
+          required: true
           schema:
             $ref: '#/components/schemas/StudentList/properties/grade_id'
       responses:

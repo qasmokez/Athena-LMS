@@ -26,5 +26,6 @@ exports.getList = async (class_id, grade_id, page, limit) => {
   };
 
   const dbOutput = await pool.query(query);
-  return dbOutput;
+  const response = dbOutput.rows
+  return response;
 };
