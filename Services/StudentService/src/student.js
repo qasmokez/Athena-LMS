@@ -14,3 +14,16 @@ exports.getBasicStudentInfo = async (req, res, next) => {
   }
 };
 
+exports.getExpandStudentInfo = async (req, res, next) => {
+  try {
+    const studentUUId = req.params.uuid;
+    const output = await db.getExpandStudentInfo(studentUUId);
+    if (output) {
+      res.status(200).json(output);
+    } else {
+      res.status(404).json({ message: "Student not found" });
+    }
+  } catch (err) {
+    next(err);
+  }
+};

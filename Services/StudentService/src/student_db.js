@@ -14,7 +14,7 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
   // Base query
   let select = `
     SELECT 
-      studentid AS id,
+      student_uuid AS uuid,
       sex,
       CONCAT(first_name, ' ', last_name) AS name,
       classes_id,
@@ -93,3 +93,32 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
   const dbOutput = await pool.query(query);
   return dbOutput.rows;
 };
+
+exports.getExpandStudentInfo = async (student_uuid) => {
+  const query = {
+    text: `
+      SELECT 
+        student_uuid,
+        family_address,
+        father,
+        father_tel,
+        mother,
+        mother_tel,
+        photo,
+        id_number,
+        emergency,
+        emergency_tel
+      FROM student_expand
+      WHERE student_uuid = $1;
+    `,
+    values: [student_uuid],
+  };
+
+  const dbOutput = await pool.query(query);
+  if (dbOutput.rows.length > 0) {
+    return dbOutput.rows;
+  } else {
+    return null;
+  }
+};
+

@@ -114,16 +114,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
 
+  /student/expandInfo/{uuid}:
+    get:
+      security:
+        - bearerAuth: []
+      description: Get expanded student information by student UUID
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The UUID of the student
+      responses:
+        200:
+          description: Success - Returns expanded student information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpandStudentInfo'
+        404:
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentNotFound'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
 components:
   schemas:
     testObject:
       type: object
       additionalProperties: true
+
     testArray:
       type: array
       items:
         type: object
         additionalProperties: true
+
     UnexpectedError:
       required:
         - code
@@ -134,6 +169,14 @@ components:
           format: int32
         message:
           type: string
+
+    StudentNotFound:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
     User:
       type: object
       properties:
@@ -144,6 +187,7 @@ components:
       required:
         - name
         - accessToken
+
     Credentials:
       type: object
       properties:
@@ -190,9 +234,48 @@ components:
           ethnic:
             type: string
             description: The ethnic of the student.
-          id:
+          uuid:
             type: string
+            format: uuid
             description: The internal UUID of the student.
+
+    ExpandStudentInfo:
+      type: array
+      description: Expanded information about a student
+      items:
+        type: object
+        properties:
+          student_uuid:
+            type: string
+            format: uuid
+            description: The internal UUID of the student
+          family_address:
+            type: string
+            description: The family address of the student
+          father:
+            type: string
+            description: The name of the student's father
+          father_tel:
+            type: string
+            description: The phone number of the student's father
+          mother:
+            type: string
+            description: The name of the student's mother
+          mother_tel:
+            type: string
+            description: The phone number of the student's mother
+          photo:
+            type: string
+            description: The URL of the student's photo
+          id_number:
+            type: string
+            description: The GovtID number of the student
+          emergency:
+            type: string
+            description: The emergency contact name
+          emergency_tel:
+            type: string
+            description: The emergency contact phone number
 
   securitySchemes:
     bearerAuth:
