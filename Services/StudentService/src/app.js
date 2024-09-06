@@ -36,7 +36,7 @@ app.use(
 app.get('/v0/user/profile', auth.check, user.profile);
 app.get('/v0/user/honors', auth.check, user.honors);
 app.get('/v0/user/parents', auth.check, user.parents);
-app.get('/v0/student/list', auth.check, student.list);
+app.get('/v0/student/basicInfo', auth.check, student.getBasicStudentInfo);
 
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;

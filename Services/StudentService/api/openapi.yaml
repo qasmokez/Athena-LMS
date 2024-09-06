@@ -69,38 +69,42 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/UnexpectedError'
-  /student/list:
+  
+  /student/basicInfo:
     get:
       security:
         - bearerAuth: []
-      description: Get a paginated list of students by class and grade
+      description: Get a paginated list of students with filter and order
       parameters:
+        - name: order
+          in: query
+          description: JSON object to specify ordering (e.g., '{"sex":"desc","classes_id":"asc"}')
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: JSON object to specify filters (e.g., '{"classes_id":[1,2], "sex":["male"], "first_name":["tony"]}')
+          schema:
+            type: string
         - name: page
           in: query
+          description: Page number for pagination
           schema:
-            $ref: '#/components/schemas/StudentList/properties/page'
+            type: integer
+            default: 1
         - name: limit
           in: query
+          description: Number of students to retrieve per page
           schema:
-            $ref: '#/components/schemas/StudentList/properties/limit'
-        - name: class_id
-          in: query
-          schema:
-            $ref: '#/components/schemas/StudentList/properties/class_id'
-        - name: grade_id
-          in: query
-          schema:
-            $ref: '#/components/schemas/StudentList/properties/grade_id'
+            type: integer
+            default: 10
       responses:
         200:
           description: A paginated list of students
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  additionalProperties: true
+                $ref: '#/components/schemas/BasicInfoResponse'
         403:
           description: Unauthorized
         default:
@@ -153,17 +157,42 @@ components:
         - studentid
         - password
       additionalProperties: false
-    StudentList:
-      type: object
-      properties:
-        page:
-          type: string
-        limit:
-          type: string
-        class_id: 
-          type: string
-        grade_id:
-          type: string
+
+    BasicInfoResponse:
+      type: array
+      description: The response containing basic information of students.
+      items:
+        type: object
+        properties:
+          sex:
+            type: string
+            description: The gender of the student.
+          name:
+            type: string
+            description: The full name of the student.
+          classes_id:
+            type: integer
+            description: The class ID the student belongs to.
+          grade_id:
+            type: integer
+            description: The grade ID of the student.
+          birth_date:
+            type: string
+            format: date
+            description: The birth date of the student.
+          enroll_date:
+            type: string
+            format: date
+            description: The enrollment date of the student.
+          student_id:
+            type: string
+            description: The student ID.
+          ethnic:
+            type: string
+            description: The ethnic of the student.
+          id:
+            type: string
+            description: The internal UUID of the student.
 
   securitySchemes:
     bearerAuth:

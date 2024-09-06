@@ -43,7 +43,7 @@ VALUES (
 INSERT INTO student(studentid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
 VALUES (
     '33333333-3333-3333-3333-333333333333',
-    '2',
+    '3',
     '11',
     'liu',
     'anna',
