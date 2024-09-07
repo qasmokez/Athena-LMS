@@ -147,7 +147,7 @@ export default function EnhancedTableToolbar({
   const parseStudentInfo = (studentExcel)=> {
       const toAdd = [];
       for(let index=0; index<studentExcel.length; index++){
-        let tempStudentInfo = defaultForm;
+        let tempStudentInfo = { ...defaultForm }
         tempStudentInfo['id'] = studentExcel[index]['学生号'];
         tempStudentInfo['姓名'] = studentExcel[index]['姓'] + studentExcel[index]['名'];
         tempStudentInfo['性别'] = studentExcel[index]['性别'];
@@ -168,7 +168,7 @@ export default function EnhancedTableToolbar({
         tempStudentInfo['拓展信息']['个人照片'] = studentExcel[index][''];
         tempStudentInfo['拓展信息']['体检报告'] = studentExcel[index]['']; */
         toAdd.push(tempStudentInfo);
-      }
+      } 
       return toAdd;
   }
 

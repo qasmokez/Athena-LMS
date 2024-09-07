@@ -23,7 +23,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
       onClose={onClose}
       sx={{ width: 300, flexShrink: 0, '& .MuiDrawer-paper': { width: 300 } }}
     >
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2 }}> 
         {/* User Profile Section */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
           <Avatar
