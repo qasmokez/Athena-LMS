@@ -27,3 +27,13 @@ exports.getExpandStudentInfo = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.addBasicStudentInfo = async (req, res, next) => {
+  try {
+    const studentData = req.body;
+    const output = await db.addBasicStudentInfo(studentData);
+    res.status(201).json({ message: "Student added successfully", student_uuid: output.student_uuid });
+  } catch (err) {
+    next(err);
+  }
+};

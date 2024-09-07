@@ -122,3 +122,36 @@ exports.getExpandStudentInfo = async (student_uuid) => {
   }
 };
 
+exports.addBasicStudentInfo = async (studentData) => {
+  const query = {
+    text: `
+      INSERT INTO student (student_uuid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
+      VALUES (
+        gen_random_uuid(), 
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 
+        jsonb_build_object(
+          'created_at', COALESCE($11::timestamp, NOW()), 
+          'updated_at', COALESCE($12::timestamp, NOW())
+        )
+      )
+      RETURNING student_uuid;
+    `,
+    values: [
+      studentData.classes_id,
+      studentData.grade_id,
+      studentData.last_name,
+      studentData.first_name,
+      studentData.birth_date,
+      studentData.sex,
+      studentData.ethnic,
+      studentData.student_id,
+      studentData.active || true,
+      studentData.enroll_date,
+      studentData.created_at || null,
+      studentData.updated_at || null
+    ]
+  };
+
+  const dbOutput = await pool.query(query);
+  return dbOutput.rows[0];
+};

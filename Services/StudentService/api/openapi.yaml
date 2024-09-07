@@ -113,6 +113,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
+    post:
+      security:
+        - bearerAuth: []
+      summary: Add a new student's basic information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasicStudentInfoRequest'
+      responses:
+        201:
+          description: Student added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicStudentInfoResponse'
+        # 400:
+        #   description: Bad Request - Invalid data
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
 
   /student/expandInfo/{uuid}:
     get:
@@ -276,6 +303,72 @@ components:
           emergency_tel:
             type: string
             description: The emergency contact phone number
+
+    BasicStudentInfoRequest:
+      type: object
+      required:
+        - classes_id
+        - grade_id
+        - last_name
+        - first_name
+        - ethnic
+        - birth_date
+        - sex
+        - student_id
+        - active
+        - enroll_date
+      properties:
+        classes_id:
+          type: integer
+          description: ID of the class
+        grade_id:
+          type: integer
+          description: ID of the grade
+        last_name:
+          type: string
+          description: Last name of the student
+        first_name:
+          type: string
+          description: First name of the student
+        birth_date:
+          type: string
+          format: date
+          description: Birth date of the student
+        sex:
+          type: string
+          description: Gender of the student
+        ethnic:
+          type: string
+          description: Ethnic group of the student
+        student_id:
+          type: string
+          description: ID assigned to the student
+        active:
+          type: boolean
+          description: Whether the student is active (default is true)
+        enroll_date:
+          type: string
+          format: date
+          description: Enrollment date of the student
+        created_at:
+          type: string
+          format: date
+          description: The timestamp when the student was created
+        updated_at:
+          type: string
+          format: date
+          description: The timestamp when the student was last updated
+
+    BasicStudentInfoResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Student added successfully
+        student_uuid:
+          type: string
+          format: uuid
+          description: UUID of the newly added student
 
   securitySchemes:
     bearerAuth:
