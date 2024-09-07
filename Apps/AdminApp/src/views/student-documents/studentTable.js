@@ -244,20 +244,6 @@ export default function EnhancedTable() {
                   <TableCell colSpan={11} />
                 </TableRow>
               )}
-              <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={11} onClick={()=>{console.log(students)}}>students</TableCell>
-                </TableRow>
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={11} onClick={()=>{console.log(visibleRows)}}>visible row</TableCell>
-                </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
