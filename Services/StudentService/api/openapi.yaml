@@ -173,6 +173,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
+    post:
+      security:
+        - bearerAuth: []
+      summary: Add a new student's expand information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentExpandInfoRequest'
+      responses:
+        201:
+          description: Student expand info added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentExpandInfoResponse'
+        404:
+          description: Bad Request - UUID does not exist in student table
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentNotExist'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
 
 components:
   schemas:
@@ -369,6 +400,76 @@ components:
           type: string
           format: uuid
           description: UUID of the newly added student
+
+    StudentExpandInfoRequest:
+      type: object
+      required:
+        - student_uuid
+        - family_address
+        - father
+        - father_tel
+        - mother
+        - mother_tel
+        - photo
+        - id_number
+        - emergency
+        - emergency_tel
+      properties:
+        student_uuid:
+          type: string
+          format: uuid
+          description: The UUID of the student
+        family_address:
+          type: string
+          description: The family address of the student
+        father:
+          type: string
+          description: Father's name
+        father_tel:
+          type: string
+          description: Father's telephone number
+        mother:
+          type: string
+          description: Mother's name
+        mother_tel:
+          type: string
+          description: Mother's telephone number
+        photo:
+          type: string
+          description: URL of the student's photo
+        id_number:
+          type: string
+          description: Student's ID number (身份证号)
+        emergency:
+          type: string
+          description: Emergency contact name
+        emergency_tel:
+          type: string
+          description: Emergency contact telephone number
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the student info was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the student info was last updated
+
+    StudentExpandInfoResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Student expand info added successfully
+        id:
+          type: string
+          format: uuid
+
+    StudentNotExist:
+      type: object
+      properties:
+        message:
+          type: string
 
   securitySchemes:
     bearerAuth:

@@ -155,3 +155,46 @@ exports.addBasicStudentInfo = async (studentData) => {
   const dbOutput = await pool.query(query);
   return dbOutput.rows[0];
 };
+
+exports.addExpandStudentInfo = async (studentExpandData) => {
+  // Check if the student_uuid exists in the student table
+  const checkQuery = {
+    text: 'SELECT 1 FROM student WHERE student_uuid = $1',
+    values: [studentExpandData.student_uuid],
+  };
+  const checkResult = await pool.query(checkQuery);
+
+  if (checkResult.rowCount === 0) {
+    // If the student_uuid does not exist, throw an error
+    throw new Error(`Student with UUID ${studentExpandData.student_uuid} does not exist.`);
+  }
+
+  const query = {
+    text: `
+      INSERT INTO student_expand 
+      (student_uuid, family_address, father, father_tel, mother, mother_tel, photo, id_number, emergency, emergency_tel, created_at, updated_at)
+      VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 
+        COALESCE($11::timestamp, NOW()), COALESCE($12::timestamp, NOW())
+      )
+      RETURNING student_uuid;
+    `,
+    values: [
+      studentExpandData.student_uuid,
+      studentExpandData.family_address,
+      studentExpandData.father,
+      studentExpandData.father_tel,
+      studentExpandData.mother,
+      studentExpandData.mother_tel,
+      studentExpandData.photo,
+      studentExpandData.id_number,
+      studentExpandData.emergency,
+      studentExpandData.emergency_tel,
+      studentExpandData.created_at || null,
+      studentExpandData.updated_at || null
+    ]
+  };
+
+  const dbOutput = await pool.query(query);
+  return dbOutput.rows[0];
+};

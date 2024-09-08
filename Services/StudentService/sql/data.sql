@@ -204,18 +204,18 @@ VALUES (
 );
 
 DELETE FROM student_expand;
-INSERT INTO student_expand (student_uuid, family_address, father, father_tel, mother, mother_tel, photo, id_number, emergency, emergency_tel, created_at, updated_at)
-VALUES (
-    '22222222-2222-2222-2222-222222222222', 
-    '123 Wang Street, Beijing',
-    'Dad Wang', 
-    '123-456-6666', 
-    'Mom Wang', 
-    '098-666-4321', 
-    'https://example.com/photos/tony_wang.jpg',
-    '110101200201018617', 
-    'Dad Wang', 
-    '123-456-6666', 
-    CURRENT_TIMESTAMP, 
-    CURRENT_TIMESTAMP  
-);
+-- INSERT INTO student_expand (student_uuid, family_address, father, father_tel, mother, mother_tel, photo, id_number, emergency, emergency_tel, created_at, updated_at)
+-- VALUES (
+--     '22222222-2222-2222-2222-222222222222', 
+--     '123 Wang Street, Beijing',
+--     'Dad Wang', 
+--     '123-456-6666', 
+--     'Mom Wang', 
+--     '098-666-4321', 
+--     'https://example.com/photos/tony_wang.jpg',
+--     '110101200201018617', 
+--     'Dad Wang', 
+--     '123-456-6666', 
+--     CURRENT_TIMESTAMP, 
+--     CURRENT_TIMESTAMP  
+-- );
