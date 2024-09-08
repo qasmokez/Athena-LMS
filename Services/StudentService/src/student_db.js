@@ -27,7 +27,7 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
   `;
 
   // Filter construction
-  let whereConditions = [];
+  let whereConditions = [`active = true`];
   let queryParams = [];
 
   if (filter.classes_id) {
@@ -145,7 +145,7 @@ exports.addBasicStudentInfo = async (studentData) => {
       studentData.sex,
       studentData.ethnic,
       studentData.student_id,
-      studentData.active || true,
+      studentData.active,
       studentData.enroll_date,
       studentData.created_at || null,
       studentData.updated_at || null
