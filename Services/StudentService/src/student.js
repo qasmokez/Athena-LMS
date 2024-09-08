@@ -51,3 +51,19 @@ exports.addExpandStudentInfo = async (req, res, next) => {
   }
 };
 
+exports.deactivateStudent = async (req, res, next) => {
+  try {
+    const studentUUId = req.params.uuid;
+    const output = await db.deactivateStudent(studentUUId);
+
+    if (output) {
+      res.status(200).json({ message: "Student deactivated successfully", student_uuid: studentUUId });
+    } else {
+      res.status(404).json({ message: "Student not found" });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+

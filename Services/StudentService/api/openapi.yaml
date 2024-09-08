@@ -205,6 +205,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
 
+  /student/deactivate/{uuid}:
+    put:
+      security:
+        - bearerAuth: []
+      description: Set a student's active status to false, effectively deactivating them
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The UUID of the student to deactivate
+      responses:
+        200:
+          description: Student deactivated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeactivateStudentResponse'
+        404:
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentNotFound'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
 components:
   schemas:
     testObject:
@@ -470,6 +505,17 @@ components:
       properties:
         message:
           type: string
+
+    DeactivateStudentResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Student deactivated successfully
+        student_uuid:
+          type: string
+          format: uuid
+          description: UUID of the deactivated student
 
   securitySchemes:
     bearerAuth:

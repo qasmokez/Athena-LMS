@@ -40,6 +40,7 @@ app.get('/v0/student/basicInfo', auth.check, student.getBasicStudentInfo);
 app.get('/v0/student/expandInfo/:uuid', auth.check, student.getExpandStudentInfo);
 app.post('/v0/student/basicInfo', auth.check, student.addBasicStudentInfo);
 app.post('/v0/student/expandInfo/:uuid', auth.check, student.addExpandStudentInfo);
+app.put('/v0/student/deactivate/:uuid', auth.check, student.deactivateStudent);
 
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;

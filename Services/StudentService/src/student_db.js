@@ -198,3 +198,30 @@ exports.addExpandStudentInfo = async (studentExpandData) => {
   const dbOutput = await pool.query(query);
   return dbOutput.rows[0];
 };
+
+exports.deactivateStudent = async (student_uuid) => {
+  const checkQuery = {
+    text: 'SELECT 1 FROM student WHERE student_uuid = $1',
+    values: [student_uuid],
+  };
+  const checkResult = await pool.query(checkQuery);
+
+  if (checkResult.rowCount === 0) {
+    return null;
+  }
+
+  const query = {
+    text: `
+      UPDATE student 
+      SET active = false, 
+          data = jsonb_set(data, '{updated_at}', to_jsonb(NOW())::jsonb)
+      WHERE student_uuid = $1
+      RETURNING student_uuid;
+    `,
+    values: [student_uuid],
+  };
+
+  const dbOutput = await pool.query(query);
+  return dbOutput.rows[0];
+};
+
