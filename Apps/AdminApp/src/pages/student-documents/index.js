@@ -7,7 +7,6 @@ const StudentDocumentPage = () => {
   
   return (
     <div>
-      <h1>学生信息表</h1>
       <StudentTable />
     </div>
   )

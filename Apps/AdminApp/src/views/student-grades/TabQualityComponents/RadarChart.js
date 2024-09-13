@@ -42,13 +42,10 @@ const RadarChart = () => {
         }
       }
     },
-    colors: [theme.palette.primary.main, theme.palette.secondary.main, theme.palette.error.main]
+    colors: [theme.palette.primary.main, theme.palette.error.main]
   }
 
   const series = [{
-    name: '个人能力',
-    data: [82, 53, 31, 47, 100]
-  }, {
     name: '班级平均',
     data: [24, 34, 43, 83, 97]
   }, {
@@ -59,7 +56,7 @@ const RadarChart = () => {
   return (
     <Card sx={{ position: 'relative', p: 0 }}>
       <CardHeader
-        title='表现'
+        title='雷达图'
         titleTypographyProps={{ sx: { lineHeight: '1.6 !important', letterSpacing: '0.15px !important' } }}
         action={
           <IconButton size='small' aria-label='settings' className='card-more-options' sx={{ color: 'text.secondary' }}>
@@ -68,7 +65,7 @@ const RadarChart = () => {
         }
       />
       <CardContent sx={{ textAlign: 'center' }}>
-        <Chart options={options} series={series} type='radar' height={350} />
+        <Chart options={options} series={series} type='radar' height={300} />
       </CardContent>
     </Card>
   )
