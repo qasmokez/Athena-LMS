@@ -6,6 +6,7 @@ import RadarChart from './TabStandardComponents/RadarChart.js'
 import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 import Grid from '@mui/material/Grid'
 import SelectionSection from './TabStandardComponents/SelectionSection.js'
+import StudentScore from './TabStandardComponents/StudentScoreTable.js'
 
 const TabStandardGrades = () => {
   // ** State for selections
@@ -33,9 +34,12 @@ const TabStandardGrades = () => {
 
       {/* Render the radar chart only if both examSession and grade are selected */}
       {examSession && grade && (
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={6} lg={4} sx={{ m:4 }}>
-            <RadarChart /> 
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={8} lg={8} sx={{ m:4 }}>
+              <StudentScore />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3} sx={{ m:3 }}>
+              <RadarChart /> 
           </Grid>
         </Grid>
       )}
