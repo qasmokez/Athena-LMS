@@ -22,9 +22,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
-// 登陆后 向后端请求学生信息
-// 如果按照【手机号，父母名，小组id】查询则从新向后端请求
-// 目前包含基础查询 除了 【姓】- 还未确定后端输出中文名还是英文名
 const students = [
     {
       学生姓名: '张伟',
@@ -188,7 +185,7 @@ function EnhancedTableToolbar({
   return (
     <Toolbar>
       <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-        学生信息
+        学生成绩
       </Typography>
       {numSelected > 0 && (
         <Tooltip title="Delete">
