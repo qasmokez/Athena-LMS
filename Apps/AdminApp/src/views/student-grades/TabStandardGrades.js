@@ -35,10 +35,10 @@ const TabStandardGrades = () => {
       {/* Render the radar chart only if both examSession and grade are selected */}
       {examSession && grade && (
         <Grid container spacing={1}>
-          <Grid item xs={12} md={8} lg={8} sx={{ m:4 }}>
+          <Grid item xs={12} md={8} lg={8.25} sx={{ ml:5 , mt:4, mb: 3 }}>
               <StudentScore />
           </Grid>
-          <Grid item xs={12} md={4} lg={3} sx={{ m:3 }}>
+          <Grid item xs={12} md={4} lg={3} sx={{ ml:5 , mt:4, mb: 3}}>
               <RadarChart /> 
           </Grid>
         </Grid>
