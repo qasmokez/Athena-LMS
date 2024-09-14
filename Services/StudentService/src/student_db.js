@@ -95,6 +95,25 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
 };
 
 exports.getExpandStudentInfo = async (student_uuid) => {
+  // Check if the student is active
+  const checkQuery = {
+    text: `
+      SELECT active 
+      FROM student 
+      WHERE student_uuid = $1;
+    `,
+    values: [student_uuid],
+  };
+
+  const checkResult = await pool.query(checkQuery);
+
+  if (checkResult.rowCount === 0) {
+    return null;
+  } else if (!checkResult.rows[0].active) {
+    throw new Error(`Student with UUID ${student_uuid} is deactivated and cannot access expanded info.`);
+  }
+
+  // Active, continue the query
   const query = {
     text: `
       SELECT 

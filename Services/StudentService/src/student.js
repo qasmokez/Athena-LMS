@@ -24,7 +24,11 @@ exports.getExpandStudentInfo = async (req, res, next) => {
       res.status(404).json({ message: "Student not found" });
     }
   } catch (err) {
-    next(err);
+    if (err.message.includes('deactivated')) {
+      res.status(403).json({ message: err.message });
+    } else {
+      next(err);
+    }
   }
 };
 

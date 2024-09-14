@@ -161,6 +161,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExpandStudentInfo'
+        403:
+          description: Student is deactivated and cannot access expanded info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeactivatedStudent'
         404:
           description: Student not found
           content:
@@ -517,6 +523,14 @@ components:
           format: uuid
           description: UUID of the deactivated student
 
+    DeactivatedStudent:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: "Student with UUID {uuid} is deactivated and cannot access expanded info."
+          
   securitySchemes:
     bearerAuth:
       type: http
