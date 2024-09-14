@@ -126,7 +126,8 @@ exports.getExpandStudentInfo = async (student_uuid) => {
         photo,
         id_number,
         emergency,
-        emergency_tel
+        emergency_tel,
+        data
       FROM student_expand
       WHERE student_uuid = $1;
     `,
@@ -191,10 +192,10 @@ exports.addExpandStudentInfo = async (studentExpandData) => {
   const query = {
     text: `
       INSERT INTO student_expand 
-      (student_uuid, family_address, father, father_tel, mother, mother_tel, photo, id_number, emergency, emergency_tel, created_at, updated_at)
+      (student_uuid, family_address, father, father_tel, mother, mother_tel, photo, id_number, emergency, emergency_tel, data, created_at, updated_at)
       VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 
-        COALESCE($11::timestamp, NOW()), COALESCE($12::timestamp, NOW())
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 
+        COALESCE($12::timestamp, NOW()), COALESCE($13::timestamp, NOW())
       )
       RETURNING student_uuid;
     `,
@@ -209,6 +210,7 @@ exports.addExpandStudentInfo = async (studentExpandData) => {
       studentExpandData.id_number,
       studentExpandData.emergency,
       studentExpandData.emergency_tel,
+      studentExpandData.data || {},
       studentExpandData.created_at || null,
       studentExpandData.updated_at || null
     ]

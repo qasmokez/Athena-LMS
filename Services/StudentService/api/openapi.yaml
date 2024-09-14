@@ -375,6 +375,10 @@ components:
           emergency_tel:
             type: string
             description: The emergency contact phone number
+          data:
+            type: object
+            additionalProperties: true
+            description: Custom data related to the student expand info (JSON object)
 
     BasicStudentInfoRequest:
       type: object
@@ -487,6 +491,10 @@ components:
         emergency_tel:
           type: string
           description: Emergency contact telephone number
+        data:
+          type: object
+          additionalProperties: true
+          description: Custom data related to the student expand info (JSON object)
         created_at:
           type: string
           format: date-time
@@ -530,7 +538,7 @@ components:
         message:
           type: string
           example: "Student with UUID {uuid} is deactivated and cannot access expanded info."
-          
+
   securitySchemes:
     bearerAuth:
       type: http

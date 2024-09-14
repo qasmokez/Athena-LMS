@@ -33,6 +33,7 @@ CREATE TABLE student_expand (
     id_number      varchar(18)   null, -- 身份证号
     emergency      varchar(30)   null, -- 紧急联系人
     emergency_tel  varchar(20)   null, -- 紧急联系人号码
+    data           jsonb         null, -- 自定义数据
     created_at     timestamp     null,
     updated_at     timestamp     null,
     CONSTRAINT fk_student FOREIGN KEY (student_uuid) REFERENCES student(student_uuid) ON DELETE CASCADE
