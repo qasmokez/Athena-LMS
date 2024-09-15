@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Grid } from '@mui/material';
+import { Box, Card, CardContent, CardHeader, Typography, Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 // Sample data for 三年级
 const gradeData = {
@@ -45,14 +46,34 @@ const calculateTotal = (subject) => {
   return { totalHighest, totalAverage };
 };
 
-const calculateTotalStudents = () => {
-  const totalStudents = gradeData.classes.reduce((total, c) => total + c.人数, 0);
-  return totalStudents;
+const StyledHeaderBox = styled(Box)(({ bgcolor }) => ({
+  backgroundColor: bgcolor,
+  height: '35px', 
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: '#fff',
+  fontWeight: 'bold',
+  borderTopLeftRadius: '4px',
+  borderTopRightRadius: '4px',
+}));
+
+// Function to determine the background color based on the subject
+const getColorForSubject = (subject) => {
+  switch (subject) {
+    case '英文':
+      return 'lightblue';
+    case '数学':
+      return 'lightblue';
+    case '语文':
+      return 'lightblue';
+    default:
+      return 'lightblue';
+  }
 };
 
 const GradeSubjectCards = () => {
   const subjects = ['英文', '数学', '语文'];
-  const totalStudents = calculateTotalStudents();
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -60,39 +81,33 @@ const GradeSubjectCards = () => {
         {/* Cards for each subject */}
         {subjects.map((subject) => {
           const { totalHighest, totalAverage } = calculateTotal(subject);
+          const color = getColorForSubject(subject);
 
           return (
             <Grid item xs={12} sm={4} key={subject}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    三年级 {subject}
-                  </Typography>
-                  <Typography variant="body1">最高分: {totalHighest}</Typography>
-                  <Typography variant="body1">平均分: {totalAverage}</Typography>
+              <Card sx={{mr:5, ml:-3}}>
+                {/* Header with color */}
+                <StyledHeaderBox bgcolor={color}>
+                </StyledHeaderBox>
+                {/* Content */}
+                <CardContent sx={{ textAlign: 'center', mt:-3}}>
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="body2" sx={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+                      年级{subject}最高分
+                    </Typography>
+                    <Typography variant="h5">{totalHighest}</Typography>
+                  </Box>
+                  <Box sx={{ mt: 1 }}>
+                    <Typography variant="body2" sx={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+                      {subject}平均分
+                    </Typography>
+                    <Typography variant="h5">{totalAverage}</Typography>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
           );
         })}
-        {/* Card for total students */}
-        <Grid item xs={12} sm={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                三年级 班级人数
-              </Typography>
-              {gradeData.classes.map((c) => (
-                <Typography key={c.className} variant="body1">
-                  {c.className} 人数: {c.人数}
-                </Typography>
-              ))}
-              <Typography variant="body1" sx={{ mt: 2 }}>
-                总人数: {totalStudents}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
     </Box>
   );
