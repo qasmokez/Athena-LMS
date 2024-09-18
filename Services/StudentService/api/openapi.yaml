@@ -107,6 +107,12 @@ paths:
                 $ref: '#/components/schemas/BasicInfoResponse'
         403:
           description: Unauthorized
+        409:
+          description: Duplicate student_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DuplicateError'
         default:
           description: Unexpected Error
           content:
@@ -260,12 +266,8 @@ components:
 
     UnexpectedError:
       required:
-        - code
         - message
       properties:
-        code:
-          type: integer
-          format: int32
         message:
           type: string
 
@@ -537,7 +539,13 @@ components:
       properties:
         message:
           type: string
-          example: "Student with UUID {uuid} is deactivated and cannot access expanded info."
+
+    DuplicateError:
+      required:
+        - message
+      properties:
+        message:
+          type: string
 
   securitySchemes:
     bearerAuth:

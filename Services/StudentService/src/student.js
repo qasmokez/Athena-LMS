@@ -35,6 +35,13 @@ exports.getExpandStudentInfo = async (req, res, next) => {
 exports.addBasicStudentInfo = async (req, res, next) => {
   try {
     const studentData = req.body;
+
+    // Ensure that student_id is not duplicated
+    const isDuplicate = await db.checkStudentIdDuplicate(studentData.student_id);
+    if (isDuplicate) {
+      return res.status(409).json({ message: "Student ID already exists. Duplicate entries are not allowed." });
+    }
+
     const output = await db.addBasicStudentInfo(studentData);
     res.status(201).json({ message: "Student added successfully", student_uuid: output.student_uuid });
   } catch (err) {

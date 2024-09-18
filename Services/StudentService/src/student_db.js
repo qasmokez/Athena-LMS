@@ -246,3 +246,13 @@ exports.deactivateStudent = async (student_uuid) => {
   return dbOutput.rows[0];
 };
 
+// Function to check if student_id already exists
+exports.checkStudentIdDuplicate = async (student_id) => {
+  const query = {
+    text: 'SELECT 1 FROM student WHERE student_id = $1',
+    values: [student_id],
+  };
+
+  const result = await pool.query(query);
+  return result.rowCount > 0;
+};
