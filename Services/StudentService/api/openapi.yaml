@@ -147,6 +147,75 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
 
+  # /student/expandInfo/{uuid}:
+  #   get:
+  #     security:
+  #       - bearerAuth: []
+  #     description: Get expanded student information by student UUID
+  #     parameters:
+  #       - name: uuid
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: string
+  #           format: uuid
+  #         description: The UUID of the student
+  #     responses:
+  #       200:
+  #         description: Success - Returns expanded student information
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ExpandStudentInfo'
+  #       403:
+  #         description: Student is deactivated and cannot access expanded info
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/DeactivatedStudent'
+  #       404:
+  #         description: Student not found
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/StudentNotFound'
+  #       default:
+  #         description: Unexpected Error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/UnexpectedError'
+  #   post:
+  #     security:
+  #       - bearerAuth: []
+  #     summary: Add a new student's expand information
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/StudentExpandInfoRequest'
+  #     responses:
+  #       201:
+  #         description: Student expand info added successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/StudentExpandInfoResponse'
+  #       404:
+  #         description: Bad Request - UUID does not exist in student table
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/StudentNotExist'
+  #       403:
+  #         description: Unauthorized
+  #       default:
+  #         description: Unexpected Error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/UnexpectedError'
   /student/expandInfo/{uuid}:
     get:
       security:
@@ -166,7 +235,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExpandStudentInfo'
+                type: object
+                properties:
+                  student_uuid:
+                    type: string
+                    format: uuid
+                  data:
+                    type: object
+                    additionalProperties: true
+                    description: Custom student expand info stored in JSONB
         403:
           description: Student is deactivated and cannot access expanded info
           content:
@@ -185,16 +262,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
+
     post:
       security:
         - bearerAuth: []
-      summary: Add a new student's expand information
+      summary: Add or update expand student information
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StudentExpandInfoRequest'
+              type: object
+              properties:
+                student_uuid:
+                  type: string
+                  format: uuid
+                family_address:
+                  type: string
+                father:
+                  type: string
+                father_tel:
+                  type: string
+                mother:
+                  type: string
+                mother_tel:
+                  type: string
+                photo:
+                  type: string
+                id_number:
+                  type: string
+                emergency:
+                  type: string
+                emergency_tel:
+                  type: string
+                custom_data:
+                  type: object
+                  additionalProperties: true
+                  description: Additional custom fields for expand info
       responses:
         201:
           description: Student expand info added successfully
@@ -203,7 +307,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentExpandInfoResponse'
         404:
-          description: Bad Request - UUID does not exist in student table
+          description: UUID does not exist in student table
           content:
             application/json:
               schema:

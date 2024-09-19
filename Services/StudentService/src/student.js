@@ -52,7 +52,23 @@ exports.addBasicStudentInfo = async (req, res, next) => {
 exports.addExpandStudentInfo = async (req, res, next) => {
   try {
     const studentExpandData = req.body;
-    const output = await db.addExpandStudentInfo(studentExpandData);
+    const output = await db.addExpandStudentInfo({
+      student_uuid: studentExpandData.student_uuid,
+      data: {
+        family_address: studentExpandData.family_address,
+        father: studentExpandData.father,
+        father_tel: studentExpandData.father_tel,
+        mother: studentExpandData.mother,
+        mother_tel: studentExpandData.mother_tel,
+        photo: studentExpandData.photo,
+        id_number: studentExpandData.id_number,
+        emergency: studentExpandData.emergency,
+        emergency_tel: studentExpandData.emergency_tel,
+        created_at: studentExpandData.created_at || new Date(),
+        updated_at: studentExpandData.updated_at || new Date(),
+        ...studentExpandData.custom_data
+      }
+    });
     res.status(201).json({ message: "Student expand info added successfully", student_uuid: output.student_uuid });
   } catch (err) {
     if (err.message.includes('Student with UUID')) {

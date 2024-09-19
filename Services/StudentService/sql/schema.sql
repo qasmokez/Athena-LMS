@@ -22,20 +22,8 @@ CREATE TABLE student (
 
 DROP TABLE IF EXISTS student_expand;
 CREATE TABLE student_expand (
-    id UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(),
     student_uuid UUID UNIQUE,
-    family_address varchar(100)  null, -- 家庭地址
-    father         varchar(30)   null, -- 父亲
-    father_tel     varchar(20)   null, -- 父亲电话号码
-    mother         varchar(30)   null, -- 母亲
-    mother_tel     varchar(20)   null, -- 母亲电话号码
-    photo          varchar(255)  null, -- 照片
-    id_number      varchar(18)   null, -- 身份证号
-    emergency      varchar(30)   null, -- 紧急联系人
-    emergency_tel  varchar(20)   null, -- 紧急联系人号码
-    data           jsonb         null, -- 自定义数据
-    created_at     timestamp     null,
-    updated_at     timestamp     null,
+    data jsonb,
     CONSTRAINT fk_student FOREIGN KEY (student_uuid) REFERENCES student(student_uuid) ON DELETE CASCADE
 );
 

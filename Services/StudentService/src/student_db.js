@@ -115,28 +115,13 @@ exports.getExpandStudentInfo = async (student_uuid) => {
 
   // Active, continue the query
   const query = {
-    text: `
-      SELECT 
-        student_uuid,
-        family_address,
-        father,
-        father_tel,
-        mother,
-        mother_tel,
-        photo,
-        id_number,
-        emergency,
-        emergency_tel,
-        data
-      FROM student_expand
-      WHERE student_uuid = $1;
-    `,
+    text: `SELECT student_uuid, data FROM student_expand WHERE student_uuid = $1;`,
     values: [student_uuid],
   };
 
   const dbOutput = await pool.query(query);
   if (dbOutput.rows.length > 0) {
-    return dbOutput.rows;
+    return dbOutput.rows[0];
   } else {
     return null;
   }
@@ -192,27 +177,13 @@ exports.addExpandStudentInfo = async (studentExpandData) => {
   const query = {
     text: `
       INSERT INTO student_expand 
-      (student_uuid, family_address, father, father_tel, mother, mother_tel, photo, id_number, emergency, emergency_tel, data, created_at, updated_at)
-      VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 
-        COALESCE($12::timestamp, NOW()), COALESCE($13::timestamp, NOW())
-      )
+      (student_uuid, data)
+      VALUES ($1, $2)
       RETURNING student_uuid;
     `,
     values: [
       studentExpandData.student_uuid,
-      studentExpandData.family_address,
-      studentExpandData.father,
-      studentExpandData.father_tel,
-      studentExpandData.mother,
-      studentExpandData.mother_tel,
-      studentExpandData.photo,
-      studentExpandData.id_number,
-      studentExpandData.emergency,
-      studentExpandData.emergency_tel,
       studentExpandData.data || {},
-      studentExpandData.created_at || null,
-      studentExpandData.updated_at || null
     ]
   };
 
