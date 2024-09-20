@@ -85,7 +85,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                   />
                 )
               ) : (
-                <Typography component="span">{student.拓展信息[field]}</Typography>
+                <Typography component="span" sx={{display: 'block'}}>{student.拓展信息[field]}</Typography>
               )
             }
             primaryTypographyProps={{ component: 'span' }} // Ensure primary is a <span>
