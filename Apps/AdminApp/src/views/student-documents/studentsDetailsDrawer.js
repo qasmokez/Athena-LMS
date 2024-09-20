@@ -16,9 +16,11 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
+// Third-party Imports
+import { toast } from 'react-toastify';
+
 export default function StudentDetailDrawer({ student, open, onClose }) {
   const [isEditingAll, setIsEditingAll] = useState(false);
-  const [isEditingReport, setIsEditingReport] = useState(false);
   const [editedFields, setEditedFields] = useState({});
   const [file, setFile] = useState(null); // For the 体检报告 file
 
@@ -34,11 +36,19 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
     Object.keys(editedFields).forEach(field => {
       student.拓展信息[field] = editedFields[field];
     });
+    toast.success('修改成功!');
   };
 
   const handleResetAll = () => {
     setEditedFields({ ...student.拓展信息 });
     setIsEditingAll(false);
+  };
+
+  const handleChange = (field, value) => {
+    setEditedFields((prev) => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleFileChange = (event) => {
@@ -51,7 +61,11 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
       <Grid container alignItems="center">
         <Grid item xs={12}>
           <ListItemText
-            primary={<Typography variant="body2" sx={{ fontWeight: 'bold' }}>{label}:</Typography>}
+            primary={
+              <Typography variant="body2" sx={{ fontWeight: 'bold' }} component="span">
+                {label}:
+              </Typography>
+            }
             secondary={
               isEditingAll ? (
                 isLongText ? (
@@ -71,9 +85,11 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                   />
                 )
               ) : (
-                student.拓展信息[field]
+                <Typography component="span">{student.拓展信息[field]}</Typography>
               )
             }
+            primaryTypographyProps={{ component: 'span' }} // Ensure primary is a <span>
+            secondaryTypographyProps={{ component: 'span' }} // Ensure secondary is a <span>
           />
         </Grid>
       </Grid>
@@ -84,7 +100,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
     <ListItem>
       <ListItemIcon><AssignmentIcon /></ListItemIcon>
       <ListItemText
-        primary={<Typography variant="body2" sx={{ fontWeight: 'bold' }}>体检报告:</Typography>}
+        primary={<Typography variant="body2" sx={{ fontWeight: 'bold' }} component="span">体检报告:</Typography>}
         secondary={
           <Button
             variant="outlined"
@@ -100,7 +116,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
           </Button>
         }
       />
-      {file && <Typography variant="body2">{file.name}</Typography>}
+      {file && <Typography variant="body2" component="span">{file.name}</Typography>}
     </ListItem>
   );
 
@@ -122,8 +138,8 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
               sx={{ width: 56, height: 56, mr: 2 }}
             />
             <Box>
-              <Typography variant="h6">{student.姓名}</Typography>
-              <Typography variant="body2">{student.id}</Typography>
+              <Typography variant="h6" component="div">{student.姓名}</Typography>
+              <Typography variant="body2" component="div">{student.id}</Typography>
             </Box>
           </Box>
           {/* Top-right buttons */}
@@ -133,7 +149,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                 修改
               </Button>
             ) : (
-              <Button onClick={handleSaveAll} variant="contained" size="small" color="primary" sx={{ mr: 1 }}>
+              <Button onClick={handleSaveAll} variant="contained" size="small" color='success' sx={{ mr: 1 }}>
                 保存
               </Button>
             )}
