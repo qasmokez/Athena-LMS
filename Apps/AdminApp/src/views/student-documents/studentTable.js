@@ -88,7 +88,7 @@ export default function EnhancedTable() {
     console.log('Limit:', rowsPerPage);
 
     const queryParams = new URLSearchParams({
-      order: JSON.stringify({ [orderBy]: order })
+      order: JSON.stringify({ [orderBy]: order }),
       page: page + 1,  // Backend typically uses 1-based page numbers
       limit: rowsPerPage,
       filter: JSON.stringify(filters),
@@ -101,15 +101,15 @@ export default function EnhancedTable() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${token}'
+          'Authorization': `Bearer ${token}`
         }
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setStudents(data.students); // Assuming the response includes a `students` array
-      setTotalStudents(data.total); // Assuming the response includes the total student count
+      setStudents(data || []); // Assuming the response includes a `students` array
+      // setTotalStudents(data.total); // Assuming the response includes the total student count
     } catch (error) {
       console.error("Failed to fetch students:", error);
     }
@@ -222,7 +222,7 @@ export default function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[10, 25]}
           component="div"
-          count={3} // Use the total count from backend
+          count={100} // Use the total count from backend
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
