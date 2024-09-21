@@ -69,27 +69,319 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/UnexpectedError'
+  
+  /student/basicInfo:
+    get:
+      security:
+        - bearerAuth: []
+      description: Get a paginated list of students with filter and order
+      parameters:
+        - name: order
+          in: query
+          description: JSON object to specify ordering (e.g., '{"sex":"desc","classes_id":"asc"}')
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: JSON object to specify filters (e.g., '{"classes_id":[1,2], "sex":["male"], "first_name":["tony"]}')
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Number of students to retrieve per page
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: A paginated list of students
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicInfoResponse'
+        403:
+          description: Unauthorized
+        409:
+          description: Duplicate student_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DuplicateError'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+    post:
+      security:
+        - bearerAuth: []
+      summary: Add a new student's basic information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasicStudentInfoRequest'
+      responses:
+        201:
+          description: Student added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicStudentInfoResponse'
+        # 400:
+        #   description: Bad Request - Invalid data
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+  # /student/expandInfo/{uuid}:
+  #   get:
+  #     security:
+  #       - bearerAuth: []
+  #     description: Get expanded student information by student UUID
+  #     parameters:
+  #       - name: uuid
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: string
+  #           format: uuid
+  #         description: The UUID of the student
+  #     responses:
+  #       200:
+  #         description: Success - Returns expanded student information
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ExpandStudentInfo'
+  #       403:
+  #         description: Student is deactivated and cannot access expanded info
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/DeactivatedStudent'
+  #       404:
+  #         description: Student not found
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/StudentNotFound'
+  #       default:
+  #         description: Unexpected Error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/UnexpectedError'
+  #   post:
+  #     security:
+  #       - bearerAuth: []
+  #     summary: Add a new student's expand information
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/StudentExpandInfoRequest'
+  #     responses:
+  #       201:
+  #         description: Student expand info added successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/StudentExpandInfoResponse'
+  #       404:
+  #         description: Bad Request - UUID does not exist in student table
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/StudentNotExist'
+  #       403:
+  #         description: Unauthorized
+  #       default:
+  #         description: Unexpected Error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/UnexpectedError'
+  /student/expandInfo/{uuid}:
+    get:
+      security:
+        - bearerAuth: []
+      description: Get expanded student information by student UUID
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The UUID of the student
+      responses:
+        200:
+          description: Success - Returns expanded student information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  student_uuid:
+                    type: string
+                    format: uuid
+                  data:
+                    type: object
+                    additionalProperties: true
+                    description: Custom student expand info stored in JSONB
+        403:
+          description: Student is deactivated and cannot access expanded info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeactivatedStudent'
+        404:
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentNotFound'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+    post:
+      security:
+        - bearerAuth: []
+      summary: Add or update expand student information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                student_uuid:
+                  type: string
+                  format: uuid
+                family_address:
+                  type: string
+                father:
+                  type: string
+                father_tel:
+                  type: string
+                mother:
+                  type: string
+                mother_tel:
+                  type: string
+                photo:
+                  type: string
+                id_number:
+                  type: string
+                emergency:
+                  type: string
+                emergency_tel:
+                  type: string
+                custom_data:
+                  type: object
+                  additionalProperties: true
+                  description: Additional custom fields for expand info
+      responses:
+        201:
+          description: Student expand info added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentExpandInfoResponse'
+        404:
+          description: UUID does not exist in student table
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentNotExist'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+  /student/deactivate/{uuid}:
+    put:
+      security:
+        - bearerAuth: []
+      description: Set a student's active status to false, effectively deactivating them
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The UUID of the student to deactivate
+      responses:
+        200:
+          description: Student deactivated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeactivateStudentResponse'
+        404:
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentNotFound'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
 
 components:
   schemas:
     testObject:
       type: object
       additionalProperties: true
+
     testArray:
       type: array
       items:
         type: object
         additionalProperties: true
+
     UnexpectedError:
       required:
-        - code
         - message
       properties:
-        code:
-          type: integer
-          format: int32
         message:
           type: string
+
+    StudentNotFound:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
     User:
       type: object
       properties:
@@ -100,6 +392,7 @@ components:
       required:
         - name
         - accessToken
+
     Credentials:
       type: object
       properties:
@@ -113,6 +406,250 @@ components:
         - studentid
         - password
       additionalProperties: false
+
+    BasicInfoResponse:
+      type: array
+      description: The response containing basic information of students.
+      items:
+        type: object
+        properties:
+          sex:
+            type: string
+            description: The gender of the student.
+          name:
+            type: string
+            description: The full name of the student.
+          classes_id:
+            type: integer
+            description: The class ID the student belongs to.
+          grade_id:
+            type: integer
+            description: The grade ID of the student.
+          birth_date:
+            type: string
+            format: date
+            description: The birth date of the student.
+          enroll_date:
+            type: string
+            format: date
+            description: The enrollment date of the student.
+          student_id:
+            type: string
+            description: The student ID.
+          ethnic:
+            type: string
+            description: The ethnic of the student.
+          uuid:
+            type: string
+            format: uuid
+            description: The internal UUID of the student.
+
+    ExpandStudentInfo:
+      type: array
+      description: Expanded information about a student
+      items:
+        type: object
+        properties:
+          student_uuid:
+            type: string
+            format: uuid
+            description: The internal UUID of the student
+          family_address:
+            type: string
+            description: The family address of the student
+          father:
+            type: string
+            description: The name of the student's father
+          father_tel:
+            type: string
+            description: The phone number of the student's father
+          mother:
+            type: string
+            description: The name of the student's mother
+          mother_tel:
+            type: string
+            description: The phone number of the student's mother
+          photo:
+            type: string
+            description: The URL of the student's photo
+          id_number:
+            type: string
+            description: The GovtID number of the student
+          emergency:
+            type: string
+            description: The emergency contact name
+          emergency_tel:
+            type: string
+            description: The emergency contact phone number
+          data:
+            type: object
+            additionalProperties: true
+            description: Custom data related to the student expand info (JSON object)
+
+    BasicStudentInfoRequest:
+      type: object
+      required:
+        - classes_id
+        - grade_id
+        - last_name
+        - first_name
+        - ethnic
+        - birth_date
+        - sex
+        - student_id
+        - active
+        - enroll_date
+      properties:
+        classes_id:
+          type: integer
+          description: ID of the class
+        grade_id:
+          type: integer
+          description: ID of the grade
+        last_name:
+          type: string
+          description: Last name of the student
+        first_name:
+          type: string
+          description: First name of the student
+        birth_date:
+          type: string
+          format: date
+          description: Birth date of the student
+        sex:
+          type: string
+          description: Gender of the student
+        ethnic:
+          type: string
+          description: Ethnic group of the student
+        student_id:
+          type: string
+          description: ID assigned to the student
+        active:
+          type: boolean
+          description: Whether the student is active (default is true)
+        enroll_date:
+          type: string
+          format: date
+          description: Enrollment date of the student
+        created_at:
+          type: string
+          format: date
+          description: The timestamp when the student was created
+        updated_at:
+          type: string
+          format: date
+          description: The timestamp when the student was last updated
+
+    BasicStudentInfoResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Student added successfully
+        student_uuid:
+          type: string
+          format: uuid
+          description: UUID of the newly added student
+
+    StudentExpandInfoRequest:
+      type: object
+      required:
+        - student_uuid
+        - family_address
+        - father
+        - father_tel
+        - mother
+        - mother_tel
+        - photo
+        - id_number
+        - emergency
+        - emergency_tel
+      properties:
+        student_uuid:
+          type: string
+          format: uuid
+          description: The UUID of the student
+        family_address:
+          type: string
+          description: The family address of the student
+        father:
+          type: string
+          description: Father's name
+        father_tel:
+          type: string
+          description: Father's telephone number
+        mother:
+          type: string
+          description: Mother's name
+        mother_tel:
+          type: string
+          description: Mother's telephone number
+        photo:
+          type: string
+          description: URL of the student's photo
+        id_number:
+          type: string
+          description: Student's ID number (身份证号)
+        emergency:
+          type: string
+          description: Emergency contact name
+        emergency_tel:
+          type: string
+          description: Emergency contact telephone number
+        data:
+          type: object
+          additionalProperties: true
+          description: Custom data related to the student expand info (JSON object)
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the student info was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the student info was last updated
+
+    StudentExpandInfoResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Student expand info added successfully
+        id:
+          type: string
+          format: uuid
+
+    StudentNotExist:
+      type: object
+      properties:
+        message:
+          type: string
+
+    DeactivateStudentResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Student deactivated successfully
+        student_uuid:
+          type: string
+          format: uuid
+          description: UUID of the deactivated student
+
+    DeactivatedStudent:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    DuplicateError:
+      required:
+        - message
+      properties:
+        message:
+          type: string
 
   securitySchemes:
     bearerAuth:
