@@ -24,6 +24,7 @@ const headCells = [
 
 function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort, onSelectAllClick, numSelected, rowCount } = props;
+
   const createSortHandler = (property) => (event) => {
     if (property === '年级' || property === '班级' || property === '姓名') return;
     onRequestSort(event, property);

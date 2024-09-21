@@ -95,13 +95,17 @@ export default function EnhancedTable() {
   // 排序
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('id');
+
   // 分页
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
   // 选择的行 -> 用于删除
   const [selected, setSelected] = React.useState([]);
+
   // 筛选条件 
   const [filters, setFilters] = React.useState([]);
+  
   // 右侧panel
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [selectedStudent, setSelectedStudent] = React.useState(null);
@@ -116,7 +120,8 @@ export default function EnhancedTable() {
     if (event.target.checked) {
       const newSelecteds = students.map((n) => n.id);
       setSelected(newSelecteds);
-      return;
+      
+    return;
     }
     setSelected([]);
   };
@@ -179,7 +184,8 @@ export default function EnhancedTable() {
     if (b[orderBy] > a[orderBy]) {
       return 1;
     }
-    return 0;
+    
+  return 0;
   }
 
   function getComparator(order, orderBy) {
@@ -225,7 +231,8 @@ export default function EnhancedTable() {
             <TableBody>
               {visibleRows.map((row) => {
                 const isItemSelected = isSelected(row.id);
-                return (
+                
+return (
                   <StudentTableRow
                     key={row.id}
                     row={row}

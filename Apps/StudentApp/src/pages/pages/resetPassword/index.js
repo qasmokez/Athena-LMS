@@ -72,7 +72,7 @@ const ResetPasswordPage = () => {
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src='/images/athena.png' width={35} height={35} />
+            <img src='/images/athena.svg' width={35} height={35} />
             <Typography
               variant='h6'
               sx={{

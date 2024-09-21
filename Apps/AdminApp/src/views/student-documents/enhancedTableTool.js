@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+
 /* import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -51,20 +52,24 @@ export default function EnhancedTableToolbar({
     setFilters((prev) => {
       const newFilters = prev.filter((_, i) => i !== index);
       fetchFilteredData(); // Update backend call when a filter is removed
+      
       return newFilters;
     });
   };
 
   // 添加学生
   const [addStudentOpen, setAddStudentOpen] = useState(false);
+
   const handleAddStudent = () => {
     setAddStudentOpen(true);
   };
+
   const handleClose = () => {
     // reset form content to default student info
     setFormContent(defaultForm);
     setAddStudentOpen(false);
   };
+
   const handleAdd = () =>{
     //console.log(formContent)
     data[1]([...data[0], formContent]);
@@ -73,6 +78,7 @@ export default function EnhancedTableToolbar({
   }
   const addStudentFields = ['id','姓名','性别','班级','年级','出生日期','民族','年龄','入学时间',];
   const addStudentFieldsEng = ['name','sex','class','grade','birthday','race','student id','age','enrollment date',];
+
   const defaultForm = {
     id: '',
     姓名: '',
@@ -104,6 +110,7 @@ export default function EnhancedTableToolbar({
       [field]: event.target.value, // Updates the field's value in the state object
     }));
   };
+
   // for file upload and processing for addStudent
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -163,12 +170,14 @@ export default function EnhancedTableToolbar({
         tempStudentInfo['拓展信息']['母亲姓名'] = studentExcel[index]['母亲姓名'];
         tempStudentInfo['拓展信息']['母亲联系手机号'] = studentExcel[index]['母亲手机号'];
         tempStudentInfo['拓展信息']['家庭住址'] = studentExcel[index]['家庭住址'];
+
         /* tempStudentInfo['拓展信息']['紧急联系人姓名'] = studentExcel[index][''];
         tempStudentInfo['拓展信息']['紧急联系人手机号'] = studentExcel[index][''];
         tempStudentInfo['拓展信息']['个人照片'] = studentExcel[index][''];
         tempStudentInfo['拓展信息']['体检报告'] = studentExcel[index]['']; */
         toAdd.push(tempStudentInfo);
       } 
+      
       return toAdd;
   }
 
