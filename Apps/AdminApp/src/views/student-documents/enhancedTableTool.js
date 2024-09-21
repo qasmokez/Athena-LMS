@@ -40,22 +40,25 @@ export default function EnhancedTableToolbar({
 
   const handleAddFilter = () => {
     if (newFilterField && newFilterValue) {
-      setFilters((prev) => [...prev, { field: newFilterField, value: newFilterValue }]);
+      setFilters((prev) => {
+        const newFilters = [...prev, { field: newFilterField, value: newFilterValue }];
+        fetchFilteredData(newFilters); // Pass new filters directly to fetch function
+        return newFilters;
+      });
       setNewFilterField('');
       setNewFilterValue('');
       handleFilterClose();
-      fetchFilteredData(); // Simulate backend call
     }
   };
-
+  
   const handleDeleteFilter = (index) => {
     setFilters((prev) => {
       const newFilters = prev.filter((_, i) => i !== index);
-      fetchFilteredData(); // Update backend call when a filter is removed
-      
+      fetchFilteredData(newFilters); // Pass new filters after deletion
       return newFilters;
     });
   };
+  
 
   // 添加学生
   const [addStudentOpen, setAddStudentOpen] = useState(false);

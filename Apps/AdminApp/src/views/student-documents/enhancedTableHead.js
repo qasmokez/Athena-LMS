@@ -1,5 +1,3 @@
-// sorting functionality.
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
@@ -78,6 +76,7 @@ EnhancedTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
   rowCount: PropTypes.number.isRequired,
+  filters: PropTypes.array.isRequired, // Pass filters as a prop
 };
 
 export default EnhancedTableHead;

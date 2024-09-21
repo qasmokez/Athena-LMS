@@ -23,18 +23,6 @@ services:
       - account-service
     networks:
       - backend
-
-  studentapp:
-    container_name: studentapp
-    build:
-      context: ./Apps/StudentApp
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-    depends_on:
-      - account-service
-    networks:
-      - frontend
   
   adminapp:
     container_name: adminapp

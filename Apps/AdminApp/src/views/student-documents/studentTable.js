@@ -114,6 +114,7 @@ export default function EnhancedTable() {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
+    fetchFilteredData(filters);
   };
 
   const handleSelectAllClick = (event) => {
@@ -173,26 +174,9 @@ export default function EnhancedTable() {
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
    // Fetch filtered data function
-  const fetchFilteredData = () => {
-    console.log('Fetch data with filters:', filters); // Replace this with api backend call
+  const fetchFilteredData = (filters) => {
+    console.log(`Order: ${order}, OrderBy: ${orderBy}, Filters:`, filters); // Replace this with api backend call
   };
-
-  function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    
-  return 0;
-  }
-
-  function getComparator(order, orderBy) {
-    return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
 
   const visibleRows = React.useMemo(() => {
     let filteredStudents = [...students];
@@ -200,7 +184,6 @@ export default function EnhancedTable() {
     // Apply filters if any...
     // For now, this is just a placeholder for any filtering logic.
     return filteredStudents
-      .sort(getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [order, orderBy, page, rowsPerPage, filters, students]);
 
@@ -220,19 +203,20 @@ export default function EnhancedTable() {
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-            <EnhancedTableHead
+           <EnhancedTableHead
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={students.length}
+              filters={filters}  // Pass the filters
             />
             <TableBody>
               {visibleRows.map((row) => {
                 const isItemSelected = isSelected(row.id);
                 
-return (
+                return (
                   <StudentTableRow
                     key={row.id}
                     row={row}

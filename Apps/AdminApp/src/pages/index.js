@@ -78,22 +78,23 @@ const LoginPage = () => {
 
   // admin login -> student-documents
   const handleLogin = async (e) => {
-    e.preventDefault();
-    /* try {
+    try {
       const response = await axios.post('http://localhost:3010/v0/login', {
         studentid: values.studentid,
         password: values.password,
       });
       const { accessToken, name } = response.data;
+      
       // Store the token in local storage or cookies
       localStorage.setItem('token', accessToken);
       localStorage.setItem('name', name);
+
       // Redirect to a protected route
       router.push('/student-documents');
     } catch (error) {
       console.log(error);
       setValues({ ...values, errorMessage: '密码或用户名错误' });
-    } */
+    } 
   }; 
 
 
