@@ -76,15 +76,16 @@ const LoginPage = () => {
     event.preventDefault()
   }
 
-  // admin login -> student-documents
+  // Handle form submission for login
   const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
     try {
       const response = await axios.post('http://localhost:3010/v0/login', {
         studentid: values.studentid,
         password: values.password,
       });
       const { accessToken, name } = response.data;
-      
+
       // Store the token in local storage or cookies
       localStorage.setItem('token', accessToken);
       localStorage.setItem('name', name);
@@ -95,8 +96,7 @@ const LoginPage = () => {
       console.log(error);
       setValues({ ...values, errorMessage: '密码或用户名错误' });
     } 
-  }; 
-
+  };
 
   return (
     <Box className='content-center'>
@@ -162,13 +162,8 @@ const LoginPage = () => {
             )}
             <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
               <FormControlLabel control={<Checkbox />} label='记住账号' />
-              <Link passHref href='/'>
-                <LinkStyled onClick={(e) => {
-                  e.preventDefault();
-                  router.push('/pages/resetPassword');
-                }}>
-                忘记密码?
-                </LinkStyled>
+              <Link href='/pages/resetPassword' passHref>
+                <LinkStyled>忘记密码?</LinkStyled>
               </Link>
             </Box>
             <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} type='submit'>
@@ -181,6 +176,7 @@ const LoginPage = () => {
     </Box>
   );
 }
+
 LoginPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
 
-export default LoginPage
+export default LoginPage;

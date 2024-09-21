@@ -132,7 +132,7 @@ export default function EnhancedTable() {
     console.log('Query params:', queryParams);
 
     try {
-      const response = await fetch(`http://localhost:3010/v0/students?${queryParams}`);
+      const response = await fetch(`http://localhost:3010/v0/student/info?${queryParams}`);
       const data = await response.json();
       setStudents(data.students);  // Assuming the response includes a `students` array
       // setTotalStudents(data.total);  // Assuming the response includes the total student count
@@ -227,7 +227,7 @@ export default function EnhancedTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={students.length}
+              rowCount={students?.length || 0}
               filters={filters}
             />
             <TableBody>
