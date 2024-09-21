@@ -9,15 +9,15 @@ import Checkbox from '@mui/material/Checkbox';
 import { visuallyHidden } from '@mui/utils';
 
 const headCells = [
-  { id: '姓名', numeric: false, disablePadding: true, label: '姓名' },
-  { id: '性别', numeric: false, disablePadding: false, label: '性别' },
-  { id: '班级', numeric: false, disablePadding: false, label: '班级' },
-  { id: '年级', numeric: false, disablePadding: false, label: '年级' },
-  { id: '出生日期', numeric: false, disablePadding: false, label: '出生日期' },
-  { id: '民族', numeric: false, disablePadding: false, label: '民族' },
-  { id: 'id', numeric: false, disablePadding: false, label: '学生ID' },
-  { id: '年龄', numeric: true, disablePadding: false, label: '年龄' },
-  { id: '入学时间', numeric: false, disablePadding: false, label: '入学时间' },
+  { id: 'name', numeric: false, disablePadding: true, label: '姓名' },
+  { id: 'sex', numeric: false, disablePadding: false, label: '性别' },
+  { id: 'classes_id', numeric: false, disablePadding: false, label: '班级' },
+  { id: 'grade_id', numeric: false, disablePadding: false, label: '年级' },
+  { id: 'birth_date', numeric: false, disablePadding: false, label: '出生日期' },
+  { id: 'ethnic', numeric: false, disablePadding: false, label: '民族' },
+  { id: 'student_id', numeric: false, disablePadding: false, label: '学生ID' },
+  { id: '年龄', numeric: true, disablePadding: false, label: '年龄' }, // Add Age column
+  { id: 'enroll_date', numeric: false, disablePadding: false, label: '入学时间' },
 ];
 
 function EnhancedTableHead(props) {
@@ -46,7 +46,7 @@ function EnhancedTableHead(props) {
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id !== '年级' && headCell.id !== '班级' && headCell.id !== '姓名' ? (
+            {headCell.id !== 'name' && headCell.id !== 'enroll_date' && headCell.id !== '年龄' && headCell.id !== 'student_id' && headCell.id !== 'ethnic' ? (
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}

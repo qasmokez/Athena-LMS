@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -15,100 +14,55 @@ import StudentTableRow from './studentTableRow';
 
 export default function EnhancedTable() {
   const [students, setStudents] = useState([
-    // Sample data for students
     {
-      id: '001',
-      姓名: '张伟',
-      性别: '男',
-      班级: '1班',
-      年级: '三年级',
-      出生日期: '2010-05-12',
-      民族: '汉族',
-      年龄: 14,
-      入学时间: '2017-09-01',
-
-      /*
-      拓展信息: {
-        身份证号: '110101200001011234',
-        父亲姓名: '张三',
-        父亲联系手机号: '13800138000',
-        母亲姓名: '李四',
-        母亲联系手机号: '13900139000',
-        紧急联系人姓名: '王五',
-        紧急联系人手机号: '13600136000',
-        家庭住址: '北京市海淀区中关村大街1号',
-        个人照片: '/images/avatars/1.png',
-        体检报告: '暂无',
-      },*/
+      name: 'zhang wei',
+      sex: 'male',
+      classes_id: 1,
+      grade_id: 3,
+      birth_date: '2010-05-12', // YYYY-MM-DD format
+      enroll_date: '2017-09-01',
+      student_id: 'S001',
+      ethnic: 'han',
+      uuid: '3fa85f64-5717-4562-b3fc-2c963f66afa1'
     },
     {
-      id: '002',
-      姓名: '李芳',
-      性别: '女',
-      班级: '2班',
-      年级: '二年级',
-      出生日期: '2012-08-25',
-      民族: '满族',
-      年龄: 12,
-      入学时间: '2018-09-01',
-
-      /*
-      拓展信息: {
-        身份证号: '110102200002022345',
-        父亲姓名: '李五',
-        父亲联系手机号: '13800238000',
-        母亲姓名: '张六',
-        母亲联系手机号: '13900239000',
-        紧急联系人姓名: '陈七',
-        紧急联系人手机号: '13600236000',
-        家庭住址: '上海市浦东新区陆家嘴路2号',
-        个人照片: '/images/avatars/1.png',
-        体检报告: '暂无', 
-      }, */
+      name: 'li fang',
+      sex: 'female',
+      classes_id: 2,
+      grade_id: 2,
+      birth_date: '2012-08-25',
+      enroll_date: '2018-09-01',
+      student_id: 'S002',
+      ethnic: 'man',
+      uuid: '3fa85f64-5717-4562-b3fc-2c963f66afa2'
     },
     {
-      id: '003',
-      姓名: '王大卫',
-      性别: '男',
-      班级: '6班',
-      年级: '五年级',
-      出生日期: '2012-05-12',
-      民族: '汉族',
-      年龄: 14,
-      入学时间: '2019-09-01',
-
-      /*
-      拓展信息: {
-        身份证号: '110101200001011234',
-        父亲姓名: '张三',
-        父亲联系手机号: '13800138000',
-        母亲姓名: '李四',
-        母亲联系手机号: '13900139000',
-        紧急联系人姓名: '王五',
-        紧急联系人手机号: '13600136000',
-        家庭住址: '北京市海淀区中关村大街1号',
-        个人照片: '/images/avatars/1.png',
-        体检报告: '暂无',
-      }, */
-    },
-  ]);
+      name: 'wang dawei',
+      sex: 'male',
+      classes_id: 6,
+      grade_id: 5,
+      birth_date: '2012-05-12',
+      enroll_date: '2019-09-01',
+      student_id: 'S003',
+      ethnic: 'han',
+      uuid: '3fa85f64-5717-4562-b3fc-2c963f66afa3'
+    }
+  ]);  // Empty array initially
   const [totalStudents, setTotalStudents] = useState(0);  // Total student count from backend
 
   // Sorting
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('id');
+  const [orderBy, setOrderBy] = useState('student_id');
 
   // Pagination
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Selected rows (for deletion)
   const [selected, setSelected] = useState([]);
 
   // Filtering
   const [filters, setFilters] = useState([]);
-
-  // const [filters, setFilters] = useState({});
 
   // Drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -121,7 +75,7 @@ export default function EnhancedTable() {
     console.log('Filter:', JSON.stringify(filters));
     console.log('Page:', page + 1);  // Backend typically uses 1-based page numbers
     console.log('Limit:', rowsPerPage);
-    
+
     const queryParams = new URLSearchParams({
       order: JSON.stringify({ [orderBy]: order }),
       filter: JSON.stringify(filters),
@@ -129,19 +83,16 @@ export default function EnhancedTable() {
       limit: rowsPerPage,
     }).toString();
     
-    console.log('Query params:', queryParams);
-
     try {
       const response = await fetch(`http://localhost:3010/v0/student/info?${queryParams}`);
       const data = await response.json();
       setStudents(data.students);  // Assuming the response includes a `students` array
-      // setTotalStudents(data.total);  // Assuming the response includes the total student count
+      setTotalStudents(data.total);  // Assuming the response includes the total student count
     } catch (error) {
       console.error("Failed to fetch students:", error);
     } 
   };
 
-  // Fetch data when sorting, filtering, pagination changes
   useEffect(() => {
     fetchFilteredData();
   }, [order, orderBy, page, rowsPerPage, filters]);
@@ -154,7 +105,7 @@ export default function EnhancedTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = students.map((n) => n.id);
+      const newSelecteds = students.map((n) => n.student_id);
       setSelected(newSelecteds);
       return;
     }
@@ -192,10 +143,6 @@ export default function EnhancedTable() {
     setSelectedStudent(null);
   };
 
-  const handleDeleteSelected = () => {
-    console.log('Selected students to delete:', selected);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -214,10 +161,9 @@ export default function EnhancedTable() {
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar
           numSelected={selected.length}
-          handleDeleteSelected={handleDeleteSelected}
           filters={filters}
           setFilters={setFilters}
-          fetchFilteredData={fetchFilteredData}  // Pass the fetch function
+          fetchFilteredData={fetchFilteredData}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -227,15 +173,15 @@ export default function EnhancedTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={students?.length || 0}
+              rowCount={students.length}
               filters={filters}
             />
             <TableBody>
               {students.map((row) => {
-                const isItemSelected = isSelected(row.id);
+                const isItemSelected = isSelected(row.student_id);
                 return (
                   <StudentTableRow
-                    key={row.id}
+                    key={row.student_id}
                     row={row}
                     isItemSelected={isItemSelected}
                     handleRowClick={handleRowClick}
@@ -244,11 +190,7 @@ export default function EnhancedTable() {
                 );
               })}
               {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
+                <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={11} />
                 </TableRow>
               )}
@@ -256,9 +198,9 @@ export default function EnhancedTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 25]}
           component="div"
-          count= {10000} // Use the total from backend
+          count={3} // Use the total count from backend
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
