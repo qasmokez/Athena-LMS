@@ -76,7 +76,7 @@ export default function EnhancedTableToolbar({
     setAddStudentOpen(false);
     setFormContent(defaultForm);
   }
-  const addStudentFields = ['id','姓名','性别','班级','年级','出生日期','民族','年龄','入学时间',];
+  const addStudentFields = ['id','姓名*','性别*','班级','年级','出生日期*','民族*','年龄*','入学时间*',];
   const addStudentFieldsEng = ['name','sex','class','grade','birthday','race','student id','age','enrollment date',];
 
   const defaultForm = {
@@ -253,7 +253,7 @@ export default function EnhancedTableToolbar({
       </Popover>
       <Button variant="contained" style={{whiteSpace: 'nowrap'}} onClick = {()=>{handleAddStudent()}}>添加学生</Button>
       <Dialog open={addStudentOpen} onClose={handleClose}>
-        <DialogTitle>Add Student</DialogTitle>
+        <DialogTitle>添加学生</DialogTitle>
         <DialogContent>
             <Button
               component="label"
@@ -262,7 +262,7 @@ export default function EnhancedTableToolbar({
               tabIndex={-1}
               startIcon={<CloudUploadIcon />}
             >
-              Upload Excel File
+              用Excel添加学生
               <VisuallyHiddenInput
                 type="file"
                 onChange={(event) => handleFileUpload(event)}
@@ -270,16 +270,21 @@ export default function EnhancedTableToolbar({
                 accept=".xlsx, .xls" 
               />
             </Button>
+            <a href="/images/学生信息录入模板.xlsx" download>
+              <Button>
+                下载模版
+              </Button>
+            </a>
           {addStudentFields.map((field)=>(
             <TextField margin="dense" label={field} key={field} onChange={handleChangeForm(field)} fullWidth />
           ))}
         </DialogContent>
         <DialogActions>
           <Button onClick={()=>handleClose()} color="primary">
-            Cancel
+            取消
           </Button>
           <Button onClick={(e)=>handleAdd(e)} color="primary">
-            Add
+            添加
           </Button>
         </DialogActions>
       </Dialog>
