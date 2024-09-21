@@ -8,6 +8,7 @@ const OpenApiValidator = require('express-openapi-validator');
 
 const auth = require('./auth');
 const user = require('./user');
+const student = require('./student');
 
 const app = express();
 app.use(cors());
@@ -35,12 +36,18 @@ app.use(
 app.get('/v0/user/profile', auth.check, user.profile);
 app.get('/v0/user/honors', auth.check, user.honors);
 app.get('/v0/user/parents', auth.check, user.parents);
+app.get('/v0/student/basicInfo', auth.check, student.getBasicStudentInfo);
+app.get('/v0/student/expandInfo/:uuid', auth.check, student.getExpandStudentInfo);
+app.post('/v0/student/basicInfo', auth.check, student.addBasicStudentInfo);
+app.post('/v0/student/expandInfo/:uuid', auth.check, student.addExpandStudentInfo);
+app.put('/v0/student/deactivate/:uuid', auth.check, student.deactivateStudent);
 
 app.use((err, req, res, next) => {
-  res.status(err.status).json({
-    message: err.message,
-    errors: err.errors,
-    status: err.status,
+  const statusCode = err.status || 500;
+  res.status(statusCode).json({
+    message: err.message || 'An unexpected error occurred.',
+    errors: err.errors || [],
+    status: statusCode,
   });
 });
 
