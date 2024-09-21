@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState, useEffect} from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,16 +10,11 @@ import TablePagination from '@mui/material/TablePagination';
 import Paper from '@mui/material/Paper';
 import EnhancedTableHead from './enhancedTableHead';
 import EnhancedTableToolbar from './enhancedTableTool';
-import StudentDetailDrawer from './studentsDetailsDrawer'; 
+import StudentDetailDrawer from './studentsDetailsDrawer';
 import StudentTableRow from './studentTableRow';
 
-// 登陆后 向后端请求学生信息
-// 如果按照【手机号，父母名，小组id】查询则从新向后端请求
-// 目前包含基础查询 除了 【姓】- 还未确定后端输出中文名还是英文名
-
-
 export default function EnhancedTable() {
-  const [students,setStudents] = useState([
+  const [students, setStudents] = useState([
     // Sample data for students
     {
       id: '001',
@@ -31,6 +26,8 @@ export default function EnhancedTable() {
       民族: '汉族',
       年龄: 14,
       入学时间: '2017-09-01',
+
+      /*
       拓展信息: {
         身份证号: '110101200001011234',
         父亲姓名: '张三',
@@ -42,7 +39,7 @@ export default function EnhancedTable() {
         家庭住址: '北京市海淀区中关村大街1号',
         个人照片: '/images/avatars/1.png',
         体检报告: '暂无',
-      },
+      },*/
     },
     {
       id: '002',
@@ -54,6 +51,8 @@ export default function EnhancedTable() {
       民族: '满族',
       年龄: 12,
       入学时间: '2018-09-01',
+
+      /*
       拓展信息: {
         身份证号: '110102200002022345',
         父亲姓名: '李五',
@@ -64,8 +63,8 @@ export default function EnhancedTable() {
         紧急联系人手机号: '13600236000',
         家庭住址: '上海市浦东新区陆家嘴路2号',
         个人照片: '/images/avatars/1.png',
-        体检报告: '暂无',
-      },
+        体检报告: '暂无', 
+      }, */
     },
     {
       id: '003',
@@ -77,6 +76,8 @@ export default function EnhancedTable() {
       民族: '汉族',
       年龄: 14,
       入学时间: '2019-09-01',
+
+      /*
       拓展信息: {
         身份证号: '110101200001011234',
         父亲姓名: '张三',
@@ -88,41 +89,74 @@ export default function EnhancedTable() {
         家庭住址: '北京市海淀区中关村大街1号',
         个人照片: '/images/avatars/1.png',
         体检报告: '暂无',
-      },
+      }, */
     },
   ]);
+  const [totalStudents, setTotalStudents] = useState(0);  // Total student count from backend
 
-  // 排序
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('id');
+  // Sorting
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('id');
 
-  // 分页
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // Pagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // 选择的行 -> 用于删除
-  const [selected, setSelected] = React.useState([]);
+  // Selected rows (for deletion)
+  const [selected, setSelected] = useState([]);
 
-  // 筛选条件 
-  const [filters, setFilters] = React.useState([]);
-  
-  // 右侧panel
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [selectedStudent, setSelectedStudent] = React.useState(null);
-  
+  // Filtering
+  const [filters, setFilters] = useState([]);
+
+  // const [filters, setFilters] = useState({});
+
+  // Drawer state
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+
+  // Fetch filtered and sorted data from backend
+  const fetchFilteredData = async () => {
+    // Log the parameters before making the backend call
+    console.log('Order:', JSON.stringify({ [orderBy]: order }));
+    console.log('Filter:', JSON.stringify(filters));
+    console.log('Page:', page + 1);  // Backend typically uses 1-based page numbers
+    console.log('Limit:', rowsPerPage);
+    
+    const queryParams = new URLSearchParams({
+      order: JSON.stringify({ [orderBy]: order }),
+      filter: JSON.stringify(filters),
+      page: page + 1,  // Backend typically uses 1-based page numbers
+      limit: rowsPerPage,
+    }).toString();
+    
+    console.log('Query params:', queryParams);
+
+    try {
+      const response = await fetch(`http://localhost:3010/v0/students?${queryParams}`);
+      const data = await response.json();
+      setStudents(data.students);  // Assuming the response includes a `students` array
+      // setTotalStudents(data.total);  // Assuming the response includes the total student count
+    } catch (error) {
+      console.error("Failed to fetch students:", error);
+    } 
+  };
+
+  // Fetch data when sorting, filtering, pagination changes
+  useEffect(() => {
+    fetchFilteredData();
+  }, [order, orderBy, page, rowsPerPage, filters]);
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
-    fetchFilteredData(filters);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = students.map((n) => n.id);
       setSelected(newSelecteds);
-      
-    return;
+      return;
     }
     setSelected([]);
   };
@@ -161,34 +195,19 @@ export default function EnhancedTable() {
   const handleDeleteSelected = () => {
     console.log('Selected students to delete:', selected);
   };
-  
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(0);  // Reset to first page when rows per page changes
   };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
-   // Fetch filtered data function
-  const fetchFilteredData = (filters) => {
-    console.log(`Order: ${order}, OrderBy: ${orderBy}, Filters:`, filters); // Replace this with api backend call
-  };
-
-  const visibleRows = React.useMemo(() => {
-    let filteredStudents = [...students];
-
-    // Apply filters if any...
-    // For now, this is just a placeholder for any filtering logic.
-    return filteredStudents
-      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }, [order, orderBy, page, rowsPerPage, filters, students]);
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - visibleRows.length) : 0;
-
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - students.length) : 0;
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -198,24 +217,22 @@ export default function EnhancedTable() {
           handleDeleteSelected={handleDeleteSelected}
           filters={filters}
           setFilters={setFilters}
-          fetchFilteredData={fetchFilteredData} // Pass the fetch function
-          data = {[students,setStudents]} // temp data to test addStudent
+          fetchFilteredData={fetchFilteredData}  // Pass the fetch function
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-           <EnhancedTableHead
+            <EnhancedTableHead
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={students.length}
-              filters={filters}  // Pass the filters
+              filters={filters}
             />
             <TableBody>
-              {visibleRows.map((row) => {
+              {students.map((row) => {
                 const isItemSelected = isSelected(row.id);
-                
                 return (
                   <StudentTableRow
                     key={row.id}
@@ -241,14 +258,13 @@ export default function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={students.length}
+          count= {10000} // Use the total from backend
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      {/* Side Panel (Drawer) */}
       <StudentDetailDrawer student={selectedStudent} open={drawerOpen} onClose={handleDrawerClose} />
     </Box>
   );
