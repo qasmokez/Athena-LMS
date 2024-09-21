@@ -52,7 +52,7 @@ export default function EnhancedTable() {
 
   // Sorting
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('student_id');
+  const [orderBy, setOrderBy] = useState('enroll_date');
 
   // Pagination
   const [page, setPage] = useState(0);
@@ -70,27 +70,49 @@ export default function EnhancedTable() {
 
   // Fetch filtered and sorted data from backend
   const fetchFilteredData = async () => {
+
+    // Transform filters array into an object
+    const filterObj = filters.reduce((acc, filter) => {
+      if (!acc[filter.field]) {
+        acc[filter.field] = [];
+      }
+      acc[filter.field].push(filter.value);
+
+      return acc;
+    }, {});
+
     // Log the parameters before making the backend call
     console.log('Order:', JSON.stringify({ [orderBy]: order }));
-    console.log('Filter:', JSON.stringify(filters));
+    console.log('Filter:', JSON.stringify(filterObj));
     console.log('Page:', page + 1);  // Backend typically uses 1-based page numbers
     console.log('Limit:', rowsPerPage);
 
     const queryParams = new URLSearchParams({
-      order: JSON.stringify({ [orderBy]: order }),
-      filter: JSON.stringify(filters),
+      order: JSON.stringify({ [orderBy]: order })
       page: page + 1,  // Backend typically uses 1-based page numbers
       limit: rowsPerPage,
+      filter: JSON.stringify(filters),
     }).toString();
     
+    const token = localStorage.getItem('token');
+
     try {
-      const response = await fetch(`http://localhost:3010/v0/student/info?${queryParams}`);
+      const response = await fetch(`http://localhost:3011/v0/student/basicInfo?${queryParams}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${token}'
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
-      setStudents(data.students);  // Assuming the response includes a `students` array
-      setTotalStudents(data.total);  // Assuming the response includes the total student count
+      setStudents(data.students); // Assuming the response includes a `students` array
+      setTotalStudents(data.total); // Assuming the response includes the total student count
     } catch (error) {
       console.error("Failed to fetch students:", error);
-    } 
+    }
   };
 
   useEffect(() => {

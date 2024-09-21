@@ -42,7 +42,6 @@ export default function EnhancedTableToolbar({
     if (newFilterField && newFilterValue) {
       setFilters((prev) => {
         const newFilters = [...prev, { field: newFilterField, value: newFilterValue }];
-        fetchFilteredData(newFilters); // Pass new filters directly to fetch function
         return newFilters;
       });
       setNewFilterField('');
@@ -54,7 +53,6 @@ export default function EnhancedTableToolbar({
   const handleDeleteFilter = (index) => {
     setFilters((prev) => {
       const newFilters = prev.filter((_, i) => i !== index);
-      fetchFilteredData(newFilters); // Pass new filters after deletion
       return newFilters;
     });
   };
@@ -232,13 +230,13 @@ export default function EnhancedTableToolbar({
             <MenuItem value="" disabled>
               筛选条件...
             </MenuItem>
-            <MenuItem value="性别">性别</MenuItem>
-            <MenuItem value="班级">班级</MenuItem>
-            <MenuItem value="年级">年级</MenuItem>
-            <MenuItem value="民族">民族 </MenuItem>
-            <MenuItem value="出生日期">出生日期</MenuItem>
-            <MenuItem value="年龄">年龄</MenuItem>
-            <MenuItem value="入学时间">入学时间 </MenuItem>
+            <MenuItem value="sex">性别</MenuItem>
+            <MenuItem value="class_id">班级</MenuItem>
+            <MenuItem value="grade_id">年级</MenuItem>
+            <MenuItem value="ethnic">民族 </MenuItem>
+            <MenuItem value="birth_date">出生日期</MenuItem>
+            <MenuItem value="age">年龄</MenuItem>
+            <MenuItem value="enroll_date">入学时间 </MenuItem>
             {/* Add more filter options as needed */}
           </Select>
           <TextField
@@ -292,7 +290,6 @@ export default function EnhancedTableToolbar({
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
-  handleDeleteSelected: PropTypes.func.isRequired,
   filters: PropTypes.array.isRequired,
   setFilters: PropTypes.func.isRequired,
   fetchFilteredData: PropTypes.func.isRequired,
