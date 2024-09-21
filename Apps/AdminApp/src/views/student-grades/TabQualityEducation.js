@@ -1,10 +1,12 @@
 // ** React Imports
 import React from 'react'
-
-import RadarChart from './TabQualityComponents/RadarChart.js' 
-import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 import Grid from '@mui/material/Grid'
-import StudentScore from './TabQualityComponents/StudentScoreTable.js'
+
+import dynamic from 'next/dynamic'
+
+const RadarChart = dynamic(() => import('./TabQualityComponents/RadarChart.js'), { ssr: false })
+const StudentScore = dynamic(() => import('./TabQualityComponents/StudentScoreTable.js'), { ssr: false })
+const ApexChartWrapper = dynamic(() => import('src/@core/styles/libs/react-apexcharts'), { ssr: false })
 
 const TabQualityEducation = () => {
   return (

@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -43,6 +44,7 @@ const TabName = styled('span')(({ theme }) => ({
 const StudentGrades = () => {
     // ** State
     const [value, setValue] = useState('standard-grades')
+    const router = useRouter();
 
     const handleChange = (event, newValue) => {
         setValue(newValue)

@@ -2,16 +2,20 @@
 import React from 'react'
 import { useState } from 'react'
 
-import RadarChart from './TabStandardComponents/RadarChart.js' 
-import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 import Grid from '@mui/material/Grid'
 import SelectionSection from './TabStandardComponents/SelectionSection.js'
-import StudentScore from './TabStandardComponents/StudentScoreTable.js'
-import GradeClassBarChart from './TabStandardComponents/GradeClassBarChart.js';
-import GradeSubjectCards from './TabStandardComponents/GradeSubjectCards.js'
 import PeopleIcon from '@mui/icons-material/People'; 
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
+
+import dynamic from 'next/dynamic'
+
+// Dynamically import with no SSR
+const RadarChart = dynamic(() => import('./TabStandardComponents/RadarChart.js'), { ssr: false })
+const GradeClassBarChart = dynamic(() => import('./TabStandardComponents/GradeClassBarChart.js'), { ssr: false })
+const GradeSubjectCards = dynamic(() => import('./TabStandardComponents/GradeSubjectCards.js'), { ssr: false })
+const StudentScore = dynamic(() => import('./TabStandardComponents/StudentScoreTable.js'), { ssr: false })
+const ApexChartWrapper = dynamic(() => import('src/@core/styles/libs/react-apexcharts'), { ssr: false })
 
 const TabStandardGrades = () => {
   // ** State for selections
