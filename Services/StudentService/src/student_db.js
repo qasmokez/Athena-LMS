@@ -17,6 +17,7 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
       student_uuid AS uuid,
       sex,
       CONCAT(first_name, ' ', last_name) AS name,
+      chinese_name,
       classes_id,
       grade_id,
       birth_date,
