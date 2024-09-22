@@ -35,7 +35,7 @@ function StudentTableRow({ row, isItemSelected, handleRowClick, handleCheckboxCl
       role="checkbox"
       aria-checked={isItemSelected}
       tabIndex={-1}
-      key={row.student_id}
+      key={row.uuid} // Use uuid as the key
       selected={isItemSelected}
       onClick={() => handleRowClick(row)}
       sx={{ cursor: 'pointer' }}
@@ -43,8 +43,8 @@ function StudentTableRow({ row, isItemSelected, handleRowClick, handleCheckboxCl
       <TableCell padding="checkbox">
         <Checkbox
           checked={isItemSelected}
-          onClick={(event) => handleCheckboxClick(event, row.student_id)}
-          inputProps={{ 'aria-labelledby': `enhanced-table-checkbox-${row.student_id}` }}
+          onClick={(event) => handleCheckboxClick(event, row.uuid)}
+          inputProps={{ 'aria-labelledby': `enhanced-table-checkbox-${row.uuid}` }}
         />
       </TableCell>
       <TableCell component="th" scope="row" padding="none">{row.name}</TableCell>

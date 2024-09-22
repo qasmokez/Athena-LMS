@@ -23,7 +23,6 @@ export default function EnhancedTableToolbar({
   handleDeleteSelected,
   filters,
   setFilters,
-  fetchFilteredData, // Function to fetch data from backend
   data, //temp data used to test addStudent
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -56,7 +55,7 @@ export default function EnhancedTableToolbar({
       return newFilters;
     });
   };
-  
+
 
   // 添加学生
   const [addStudentOpen, setAddStudentOpen] = useState(false);
@@ -165,17 +164,17 @@ export default function EnhancedTableToolbar({
         tempStudentInfo['民族'] = studentExcel[index]['民族'];
         tempStudentInfo['年龄'] = studentExcel[index]['年龄'];
         tempStudentInfo['入学日期'] = studentExcel[index]['入学时间'];
-        tempStudentInfo['拓展信息']['身份证号'] = studentExcel[index]['身份证号'];
-        tempStudentInfo['拓展信息']['父亲姓名'] = studentExcel[index]['父亲姓名'];
-        tempStudentInfo['拓展信息']['父亲联系手机号'] = studentExcel[index]['父亲手机号'];
-        tempStudentInfo['拓展信息']['母亲姓名'] = studentExcel[index]['母亲姓名'];
-        tempStudentInfo['拓展信息']['母亲联系手机号'] = studentExcel[index]['母亲手机号'];
-        tempStudentInfo['拓展信息']['家庭住址'] = studentExcel[index]['家庭住址'];
+        tempStudentInfo['身份证号'] = studentExcel[index]['身份证号'];
+        tempStudentInfo['父亲姓名'] = studentExcel[index]['父亲姓名'];
+        tempStudentInfo['父亲联系手机号'] = studentExcel[index]['父亲手机号'];
+        tempStudentInfo['母亲姓名'] = studentExcel[index]['母亲姓名'];
+        tempStudentInfo['母亲联系手机号'] = studentExcel[index]['母亲手机号'];
+        tempStudentInfo['家庭住址'] = studentExcel[index]['家庭住址'];
 
-        /* tempStudentInfo['拓展信息']['紧急联系人姓名'] = studentExcel[index][''];
-        tempStudentInfo['拓展信息']['紧急联系人手机号'] = studentExcel[index][''];
-        tempStudentInfo['拓展信息']['个人照片'] = studentExcel[index][''];
-        tempStudentInfo['拓展信息']['体检报告'] = studentExcel[index]['']; */
+        /* tempStudentInfo['紧急联系人姓名'] = studentExcel[index][''];
+        tempStudentInfo['紧急联系人手机号'] = studentExcel[index][''];
+        tempStudentInfo['个人照片'] = studentExcel[index][''];
+        tempStudentInfo['体检报告'] = studentExcel[index]['']; */
         toAdd.push(tempStudentInfo);
       } 
       

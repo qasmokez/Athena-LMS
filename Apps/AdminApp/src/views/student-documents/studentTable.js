@@ -119,6 +119,44 @@ export default function EnhancedTable() {
     fetchFilteredData();
   }, [order, orderBy, page, rowsPerPage, filters]);
 
+  const handleDeleteSelected = async () => {
+    console.log('Selected UUIDs:', selected); // Log the array of selected UUIDs
+  
+    const token = localStorage.getItem('token');
+  
+    try {
+      // Loop through each selected UUID and make a PUT request
+      const promises = selected.map(async (uuid) => {
+        const response = await fetch(`http://localhost:3011/v0/student/deactivate/${uuid}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Failed to deactivate student with UUID: ${uuid}`);
+        }
+        return response;
+      });
+  
+      // Wait for all the requests to complete
+      await Promise.all(promises);
+  
+      console.log('Selected students deactivated successfully');
+
+      // Remove the deactivated students from the frontend
+      setStudents((prev) => prev.filter((student) => !selected.includes(student.uuid)));
+      setSelected([]); // Clear selection after deactivation
+
+      // Refetch the data to update the total count
+      await fetchFilteredData();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -127,20 +165,21 @@ export default function EnhancedTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = students.map((n) => n.student_id);
+      const newSelecteds = students.map((n) => n.uuid); // Use uuid instead of student_id
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
+  
 
-  const handleCheckboxClick = (event, id) => {
+  const handleCheckboxClick = (event, uuid) => {
     event.stopPropagation();
-    const selectedIndex = selected.indexOf(id);
+    const selectedIndex = selected.indexOf(uuid);
     let newSelected = [];
-
+  
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
+      newSelected = newSelected.concat(selected, uuid);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -151,9 +190,10 @@ export default function EnhancedTable() {
         selected.slice(selectedIndex + 1)
       );
     }
-
+  
     setSelected(newSelected);
   };
+  
 
   const handleRowClick = (student) => {
     setSelectedStudent(student);
@@ -174,7 +214,7 @@ export default function EnhancedTable() {
     setPage(0);  // Reset to first page when rows per page changes
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
+  const isSelected = (uuid) => selected.indexOf(uuid) !== -1;
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - students.length) : 0;
 
@@ -183,6 +223,7 @@ export default function EnhancedTable() {
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar
           numSelected={selected.length}
+          handleDeleteSelected={handleDeleteSelected}
           filters={filters}
           setFilters={setFilters}
           fetchFilteredData={fetchFilteredData}
@@ -200,10 +241,10 @@ export default function EnhancedTable() {
             />
             <TableBody>
               {students.map((row) => {
-                const isItemSelected = isSelected(row.student_id);
+                const isItemSelected = isSelected(row.uuid);
                 return (
                   <StudentTableRow
-                    key={row.student_id}
+                    key={row.uuid}
                     row={row}
                     isItemSelected={isItemSelected}
                     handleRowClick={handleRowClick}
