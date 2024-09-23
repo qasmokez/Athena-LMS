@@ -11,7 +11,6 @@ CREATE TABLE student (
     grade_id   int default 0 not null, -- 年级id
     last_name  varchar(100)  not null, -- 姓
     first_name varchar(100)  not null, -- 名
-    chinese_name varchar(100) not null,         -- 中文名 (supports simplified Chinese characters)
     birth_date timestamp     null,     -- 生日
     sex        varchar(10)   null,     -- 性别
     ethnic     varchar(100)  not null, -- 民族
