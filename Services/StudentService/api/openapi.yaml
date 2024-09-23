@@ -283,25 +283,7 @@ paths:
                 student_uuid:
                   type: string
                   format: uuid
-                family_address:
-                  type: string
-                father:
-                  type: string
-                father_tel:
-                  type: string
-                mother:
-                  type: string
-                mother_tel:
-                  type: string
-                photo:
-                  type: string
-                id_number:
-                  type: string
-                emergency:
-                  type: string
-                emergency_tel:
-                  type: string
-                custom_data:
+                data:
                   type: object
                   additionalProperties: true
                   description: Additional custom fields for expand info
@@ -357,6 +339,45 @@ paths:
           description: Unauthorized
         default:
           description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+  /student/upload:
+    post:
+      security:
+        - bearerAuth: []
+      summary: Upload XLSX file containing student data
+      description: Endpoint to upload an XLSX file containing student data and store it in the database.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The XLSX file containing student data to be uploaded.
+      responses:
+        201:
+          description: Students added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadFileResponse'
+        400:
+          description: Bad Request - File missing or validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadFileErrorResponse'
+        403:
+          description: Unauthorized
+        500:
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -475,48 +496,6 @@ components:
           type: integer
           description: The total number of students matching the query.
 
-    ExpandStudentInfo:
-      type: array
-      description: Expanded information about a student
-      items:
-        type: object
-        properties:
-          student_uuid:
-            type: string
-            format: uuid
-            description: The internal UUID of the student
-          family_address:
-            type: string
-            description: The family address of the student
-          father:
-            type: string
-            description: The name of the student's father
-          father_tel:
-            type: string
-            description: The phone number of the student's father
-          mother:
-            type: string
-            description: The name of the student's mother
-          mother_tel:
-            type: string
-            description: The phone number of the student's mother
-          photo:
-            type: string
-            description: The URL of the student's photo
-          id_number:
-            type: string
-            description: The GovtID number of the student
-          emergency:
-            type: string
-            description: The emergency contact name
-          emergency_tel:
-            type: string
-            description: The emergency contact phone number
-          data:
-            type: object
-            additionalProperties: true
-            description: Custom data related to the student expand info (JSON object)
-
     BasicStudentInfoRequest:
       type: object
       required:
@@ -597,64 +576,6 @@ components:
                 format: uuid
                 description: The internal UUID of the student.
 
-    StudentExpandInfoRequest:
-      type: object
-      required:
-        - student_uuid
-        - family_address
-        - father
-        - father_tel
-        - mother
-        - mother_tel
-        - photo
-        - id_number
-        - emergency
-        - emergency_tel
-      properties:
-        student_uuid:
-          type: string
-          format: uuid
-          description: The UUID of the student
-        family_address:
-          type: string
-          description: The family address of the student
-        father:
-          type: string
-          description: Father's name
-        father_tel:
-          type: string
-          description: Father's telephone number
-        mother:
-          type: string
-          description: Mother's name
-        mother_tel:
-          type: string
-          description: Mother's telephone number
-        photo:
-          type: string
-          description: URL of the student's photo
-        id_number:
-          type: string
-          description: Student's ID number (身份证号)
-        emergency:
-          type: string
-          description: Emergency contact name
-        emergency_tel:
-          type: string
-          description: Emergency contact telephone number
-        data:
-          type: object
-          additionalProperties: true
-          description: Custom data related to the student expand info (JSON object)
-        created_at:
-          type: string
-          format: date-time
-          description: Timestamp when the student info was created
-        updated_at:
-          type: string
-          format: date-time
-          description: Timestamp when the student info was last updated
-
     StudentExpandInfoResponse:
       type: object
       properties:
@@ -703,6 +624,60 @@ components:
             msg:
               type: string
               description: A message describing the result.
+
+    UploadFileResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: HTTP status code
+            msg:
+              type: string
+              description: Response message
+        added_uuids:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: string
+                format: uuid
+                description: List of UUIDs of the students added
+        total_added:
+          type: integer
+          description: Total number of students added
+
+    UploadFileErrorResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: HTTP status code
+            msg:
+              type: string
+              description: Response message
+        errors:
+          type: array
+          description: List of rows number and required fields not filled
+          items:
+            type: object
+            properties:
+              row:
+                type: integer
+                description: Row number with error
+              missingFields:
+                type: array
+                items:
+                  type: string
+                description: List of missing field names
+      required:
+        - status
 
   securitySchemes:
     bearerAuth:

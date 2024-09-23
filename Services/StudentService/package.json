@@ -19,7 +19,8 @@
     "jsonwebtoken": "*",
     "pg": "*",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "exceljs": "^4.3.0"
   },
   "eslintConfig": {
     "parserOptions": {

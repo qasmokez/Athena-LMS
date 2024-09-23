@@ -29,6 +29,9 @@ app.use(
     apiSpec: apiSpec,
     validateRequests: true,
     validateResponses: true,
+    fileUploader: {
+      dest: 'uploads/',
+    },
   }),
 );
 
@@ -41,6 +44,7 @@ app.get('/v0/student/expandInfo/:uuid', auth.check, student.getExpandStudentInfo
 app.post('/v0/student/basicInfo', auth.check, student.addBasicStudentInfo);
 app.post('/v0/student/expandInfo/:uuid', auth.check, student.addExpandStudentInfo);
 app.put('/v0/student/deactivate/:uuid', auth.check, student.deactivateStudent);
+app.post('/v0/student/upload', auth.check, student.uploadStudentXlsx);
 
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;
