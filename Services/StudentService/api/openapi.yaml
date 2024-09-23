@@ -78,12 +78,12 @@ paths:
       parameters:
         - name: order
           in: query
-          description: JSON object to specify ordering (e.g., '{"sex":"desc","classes_id":"asc"}')
+          description: JSON object to specify ordering (e.g., '{"birth_date":"desc","enroll_date":"asc"}')
           schema:
             type: string
         - name: filter
           in: query
-          description: JSON object to specify filters (e.g., '{"classes_id":[1,2], "sex":["male"], "first_name":["tony"]}')
+          description: JSON object to specify filters (e.g., '{"classes_id":[1,2], "sex":["男"], "birth_date":{"start":"2002-01-01", "end":"2003-12-31"}, "ethnic":["汉族"]}')
           schema:
             type: string
         - name: page

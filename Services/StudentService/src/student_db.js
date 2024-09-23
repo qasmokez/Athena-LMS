@@ -45,20 +45,48 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
     queryParams.push(filter.sex);
   }
 
-  if (filter.first_name && filter.first_name.length > 0) {
-    let firstNameConditions = filter.first_name.map((name, index) => {
-      return `first_name ILIKE $${queryParams.length + index + 1}`;
-    });
-    whereConditions.push(`(${firstNameConditions.join(' OR ')})`);
-    queryParams = queryParams.concat(filter.first_name.map(name => `%${name}%`));
+  if (filter.ethnic) {
+    whereConditions.push(`ethnic = ANY($${queryParams.length + 1})`);
+    queryParams.push(filter.ethnic);
   }
 
-  if (filter.last_name && filter.last_name.length > 0) {
-    let lastNameConditions = filter.last_name.map((name, index) => {
-      return `last_name ILIKE $${queryParams.length + index + 1}`;
-    });
-    whereConditions.push(`(${lastNameConditions.join(' OR ')})`);
-    queryParams = queryParams.concat(filter.last_name.map(name => `%${name}%`));
+  // if (filter.first_name && filter.first_name.length > 0) {
+  //   let firstNameConditions = filter.first_name.map((name, index) => {
+  //     return `first_name ILIKE $${queryParams.length + index + 1}`;
+  //   });
+  //   whereConditions.push(`(${firstNameConditions.join(' OR ')})`);
+  //   queryParams = queryParams.concat(filter.first_name.map(name => `%${name}%`));
+  // }
+
+  // if (filter.last_name && filter.last_name.length > 0) {
+  //   let lastNameConditions = filter.last_name.map((name, index) => {
+  //     return `last_name ILIKE $${queryParams.length + index + 1}`;
+  //   });
+  //   whereConditions.push(`(${lastNameConditions.join(' OR ')})`);
+  //   queryParams = queryParams.concat(filter.last_name.map(name => `%${name}%`));
+  // }
+
+  // Filter ranges for birth_date and enroll_date
+  if (filter.birth_date) {
+    if (filter.birth_date.start) {
+      whereConditions.push(`birth_date >= $${queryParams.length + 1}`);
+      queryParams.push(filter.birth_date.start);
+    }
+    if (filter.birth_date.end) {
+      whereConditions.push(`birth_date <= $${queryParams.length + 1}`);
+      queryParams.push(filter.birth_date.end);
+    }
+  }
+
+  if (filter.enroll_date) {
+    if (filter.enroll_date.start) {
+      whereConditions.push(`enroll_date >= $${queryParams.length + 1}`);
+      queryParams.push(filter.enroll_date.start);
+    }
+    if (filter.enroll_date.end) {
+      whereConditions.push(`enroll_date <= $${queryParams.length + 1}`);
+      queryParams.push(filter.enroll_date.end);
+    }
   }
 
   if (whereConditions.length > 0) {
@@ -66,7 +94,7 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
   }
 
   // Safety measure
-  const validOrderColumns = ['sex', 'classes_id', 'grade_id', 'birth_date']; // allowed fields to order by
+  const validOrderColumns = ['enroll_date', 'birth_date']; // allowed fields to order by
   const validOrderDirections = ['ASC', 'DESC'];
 
   // Order construction
