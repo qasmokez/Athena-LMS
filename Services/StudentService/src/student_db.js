@@ -26,6 +26,12 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
     FROM student
   `;
 
+  // Base query for counting total students
+    let countQuery = `
+    SELECT COUNT(*) as total
+    FROM student
+  `;
+
   // Filter construction
   let whereConditions = [`active = true`];
   let queryParams = [];
@@ -50,21 +56,21 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
     queryParams.push(filter.ethnic);
   }
 
-  // if (filter.first_name && filter.first_name.length > 0) {
-  //   let firstNameConditions = filter.first_name.map((name, index) => {
-  //     return `first_name ILIKE $${queryParams.length + index + 1}`;
-  //   });
-  //   whereConditions.push(`(${firstNameConditions.join(' OR ')})`);
-  //   queryParams = queryParams.concat(filter.first_name.map(name => `%${name}%`));
-  // }
+  if (filter.first_name && filter.first_name.length > 0) {
+    let firstNameConditions = filter.first_name.map((name, index) => {
+      return `first_name ILIKE $${queryParams.length + index + 1}`;
+    });
+    whereConditions.push(`(${firstNameConditions.join(' OR ')})`);
+    queryParams = queryParams.concat(filter.first_name.map(name => `%${name}%`));
+  }
 
-  // if (filter.last_name && filter.last_name.length > 0) {
-  //   let lastNameConditions = filter.last_name.map((name, index) => {
-  //     return `last_name ILIKE $${queryParams.length + index + 1}`;
-  //   });
-  //   whereConditions.push(`(${lastNameConditions.join(' OR ')})`);
-  //   queryParams = queryParams.concat(filter.last_name.map(name => `%${name}%`));
-  // }
+  if (filter.last_name && filter.last_name.length > 0) {
+    let lastNameConditions = filter.last_name.map((name, index) => {
+      return `last_name ILIKE $${queryParams.length + index + 1}`;
+    });
+    whereConditions.push(`(${lastNameConditions.join(' OR ')})`);
+    queryParams = queryParams.concat(filter.last_name.map(name => `%${name}%`));
+  }
 
   // Filter ranges for birth_date and enroll_date
   if (filter.birth_date) {
@@ -90,7 +96,9 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
   }
 
   if (whereConditions.length > 0) {
-    select += ` WHERE ` + whereConditions.join(' AND ');
+    const whereClause = ` WHERE ` + whereConditions.join(' AND ');
+    select += whereClause;
+    countQuery += whereClause;
   }
 
   // Safety measure
@@ -113,13 +121,11 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
   select += ` LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`;
   queryParams.push(limit, offset);
 
-  const query = {
-    text: select,
-    values: queryParams,
-  };
+  // Run the count query and the select query
+  const countResult = await pool.query({ text: countQuery, values: queryParams.slice(0, queryParams.length - 2) });
+  const dbOutput = await pool.query({ text: select, values: queryParams });
 
-  const dbOutput = await pool.query(query);
-  return dbOutput.rows;
+  return { data: dbOutput.rows, total_student: parseInt(countResult.rows[0].total, 10) };
 };
 
 exports.getExpandStudentInfo = async (student_uuid) => {

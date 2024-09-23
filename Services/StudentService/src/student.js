@@ -7,8 +7,16 @@ exports.getBasicStudentInfo = async (req, res, next) => {
     const order = JSON.parse(req.query.order || '{}');
     const filter = JSON.parse(req.query.filter || '{}');
 
-    const output = await db.getBasicStudentInfo(page, limit, order, filter);
-    res.status(200).json(output);
+    const result = await db.getBasicStudentInfo(page, limit, order, filter);
+    const response = {
+      status: {
+        code: 200,
+        msg: "Success"
+      },
+      data: result.data,
+      total_student: result.total_student
+    };
+    res.status(200).json(response);
   } catch (err) {
     next(err);
   }

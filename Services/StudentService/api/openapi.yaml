@@ -83,7 +83,7 @@ paths:
             type: string
         - name: filter
           in: query
-          description: JSON object to specify filters (e.g., '{"classes_id":[1,2], "sex":["男"], "birth_date":{"start":"2002-01-01", "end":"2003-12-31"}, "ethnic":["汉族"]}')
+          description: JSON object to specify filters (e.g., '{"classes_id":[1,2], "sex":["男"], "birth_date":{"start":"2002-01-01", "end":"2003-12-31"}, "ethnic":["汉族"], "last_name":["王"], "first_name":["托尼"]}')
           schema:
             type: string
         - name: page
@@ -408,41 +408,58 @@ components:
       additionalProperties: false
 
     BasicInfoResponse:
-      type: array
-      description: The response containing basic information of students.
-      items:
-        type: object
-        properties:
-          sex:
-            type: string
-            description: The gender of the student.
-          name:
-            type: string
-            description: The full name of the student.
-          classes_id:
-            type: integer
-            description: The class ID the student belongs to.
-          grade_id:
-            type: integer
-            description: The grade ID of the student.
-          birth_date:
-            type: string
-            format: date
-            description: The birth date of the student.
-          enroll_date:
-            type: string
-            format: date
-            description: The enrollment date of the student.
-          student_id:
-            type: string
-            description: The student ID.
-          ethnic:
-            type: string
-            description: The ethnic of the student.
-          uuid:
-            type: string
-            format: uuid
-            description: The internal UUID of the student.
+      type: object
+      description: The response containing basic information of students and additional metadata.
+      properties:
+        status:
+          type: object
+          description: The status of the response.
+          properties:
+            code:
+              type: integer
+              description: HTTP status code for the response.
+            msg:
+              type: string
+              description: A message describing the result.
+        data:
+          type: array
+          description: The list of student information.
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                format: uuid
+                description: The internal UUID of the student.
+              sex:
+                type: string
+                description: The gender of the student.
+              name:
+                type: string
+                description: The full name of the student.
+              classes_id:
+                type: integer
+                description: The class ID the student belongs to.
+              grade_id:
+                type: integer
+                description: The grade ID of the student.
+              birth_date:
+                type: string
+                format: date
+                description: The birth date of the student.
+              enroll_date:
+                type: string
+                format: date
+                description: The enrollment date of the student.
+              student_id:
+                type: string
+                description: The student ID.
+              ethnic:
+                type: string
+                description: The ethnic group of the student.
+        total_student:
+          type: integer
+          description: The total number of students matching the query.
 
     ExpandStudentInfo:
       type: array
