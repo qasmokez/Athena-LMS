@@ -113,12 +113,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StudentNotFound'
-        409:
-          description: Duplicate student_id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DuplicateError'
         default:
           description: Unexpected Error
           content:
@@ -142,6 +136,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BasicStudentInfoResponse'
+        409:
+          description: Duplicate student_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DuplicateError'
         # 400:
         #   description: Bad Request - Invalid data
         403:
@@ -574,14 +574,28 @@ components:
 
     BasicStudentInfoResponse:
       type: object
+      description: The response containing the status code of the request and uuid of the student being added
       properties:
-        message:
-          type: string
-          example: Student added successfully
-        student_uuid:
-          type: string
-          format: uuid
-          description: UUID of the newly added student
+        status:
+          type: object
+          description: The status of the response.
+          properties:
+            code:
+              type: integer
+              description: HTTP status code for the response.
+            msg:
+              type: string
+              description: A message describing the result.
+        data:
+          type: object
+          description: The list of student information.
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                format: uuid
+                description: The internal UUID of the student.
 
     StudentExpandInfoRequest:
       type: object
@@ -676,11 +690,19 @@ components:
           type: string
 
     DuplicateError:
-      required:
-        - message
+      type: object
+      description: student_id duplication error
       properties:
-        message:
-          type: string
+        status:
+          type: object
+          description: The status of the response (409).
+          properties:
+            code:
+              type: integer
+              description: HTTP status code for the response.
+            msg:
+              type: string
+              description: A message describing the result.
 
   securitySchemes:
     bearerAuth:

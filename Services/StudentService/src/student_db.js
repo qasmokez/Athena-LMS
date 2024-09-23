@@ -197,7 +197,7 @@ exports.addBasicStudentInfo = async (studentData) => {
   };
 
   const dbOutput = await pool.query(query);
-  return dbOutput.rows[0];
+  return { data: dbOutput.rows[0] }
 };
 
 exports.addExpandStudentInfo = async (studentExpandData) => {

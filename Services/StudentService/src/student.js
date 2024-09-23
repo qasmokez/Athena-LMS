@@ -57,11 +57,24 @@ exports.addBasicStudentInfo = async (req, res, next) => {
     // Ensure that student_id is not duplicated
     const isDuplicate = await db.checkStudentIdDuplicate(studentData.student_id);
     if (isDuplicate) {
-      return res.status(409).json({ message: "Student ID already exists. Duplicate entries are not allowed." });
+      const response = {
+        status: {
+          code: 409,
+          msg: "Duplicate student_id!"
+        }
+      };
+      res.status(409).json(response);
+    } else {
+      const result = await db.addBasicStudentInfo(studentData);
+      const response = {
+        status: {
+          code: 201,
+          msg: "Success Added"
+        },
+        data: result.data
+      };
+      res.status(201).json(response);
     }
-
-    const output = await db.addBasicStudentInfo(studentData);
-    res.status(201).json({ message: "Student added successfully", student_uuid: output.student_uuid });
   } catch (err) {
     next(err);
   }
