@@ -8,15 +8,25 @@ exports.getBasicStudentInfo = async (req, res, next) => {
     const filter = JSON.parse(req.query.filter || '{}');
 
     const result = await db.getBasicStudentInfo(page, limit, order, filter);
-    const response = {
-      status: {
-        code: 200,
-        msg: "Success"
-      },
-      data: result.data,
-      total_student: result.total_student
-    };
-    res.status(200).json(response);
+    if (result.total_student != 0) {
+      const response = {
+        status: {
+          code: 200,
+          msg: "Success"
+        },
+        data: result.data,
+        total_student: result.total_student
+      };
+      res.status(200).json(response);
+    } else {
+      const response = {
+        status: {
+          code: 404,
+          msg: "No Student Match!"
+        }
+      };
+      res.status(404).json(response);
+    }
   } catch (err) {
     next(err);
   }

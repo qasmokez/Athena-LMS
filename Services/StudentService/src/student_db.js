@@ -72,6 +72,11 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
     queryParams = queryParams.concat(filter.last_name.map(name => `%${name}%`));
   }
 
+  if (filter.student_id) {
+    whereConditions.push(`student_id = ANY($${queryParams.length + 1})`);
+    queryParams.push(filter.student_id);
+  }
+
   // Filter ranges for birth_date and enroll_date
   if (filter.birth_date) {
     if (filter.birth_date.start) {

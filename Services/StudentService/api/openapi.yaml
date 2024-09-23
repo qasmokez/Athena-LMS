@@ -107,6 +107,12 @@ paths:
                 $ref: '#/components/schemas/BasicInfoResponse'
         403:
           description: Unauthorized
+        404:
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentNotFound'
         409:
           description: Duplicate student_id
           content:
@@ -376,11 +382,19 @@ components:
           type: string
 
     StudentNotFound:
-      required:
-        - message
+      type: object
+      description: Student Not Found Response
       properties:
-        message:
-          type: string
+        status:
+          type: object
+          description: The status of the response (404).
+          properties:
+            code:
+              type: integer
+              description: HTTP status code for the response.
+            msg:
+              type: string
+              description: A message describing the result.
 
     User:
       type: object
