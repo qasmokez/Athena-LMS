@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -15,32 +15,62 @@ import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-
-// Third-party Imports
 import { toast } from 'react-toastify';
 
 export default function StudentDetailDrawer({ student, open, onClose }) {
+  const [expandInfo, setExpandInfo] = useState({});
   const [isEditingAll, setIsEditingAll] = useState(false);
   const [editedFields, setEditedFields] = useState({});
   const [file, setFile] = useState(null); // For the 体检报告 file
+
+  useEffect(() => {
+    const fetchExpandInfo = async () => {
+      if (!student || !open) return;
+
+      // Log the student UUID to the console
+      console.log(`Fetching expandInfo for student UUID: ${student.uuid}`);
+
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch(`http://localhost:3011/v0/student/expandInfo/${student.uuid}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch expand info');
+        }
+
+        const data = await response.json();
+        setExpandInfo(data || {});
+        setEditedFields(data || {}); // Initialize fields with expanded data
+      } catch (error) {
+        console.error('Error fetching expanded info:', error);
+      }
+    };
+
+    fetchExpandInfo();
+  }, [student, open]);
 
   if (!student) return null;
 
   const handleEditAll = () => {
     setIsEditingAll(true);
-    setEditedFields({ ...student.拓展信息 });
+    setEditedFields({ ...expandInfo });
   };
 
   const handleSaveAll = () => {
     setIsEditingAll(false);
     Object.keys(editedFields).forEach(field => {
-      student.拓展信息[field] = editedFields[field];
+      expandInfo[field] = editedFields[field];
     });
     toast.success('修改成功!');
   };
 
   const handleResetAll = () => {
-    setEditedFields({ ...student.拓展信息 });
+    setEditedFields({ ...expandInfo });
     setIsEditingAll(false);
   };
 
@@ -85,7 +115,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                   />
                 )
               ) : (
-                <Typography component="span" sx={{display: 'block'}}>{student.拓展信息[field]}</Typography>
+                <Typography component="span" sx={{ display: 'block' }}>{expandInfo[field]}</Typography>
               )
             }
             primaryTypographyProps={{ component: 'span' }} // Ensure primary is a <span>
@@ -129,20 +159,18 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
       sx={{ width: 300, flexShrink: 0, '& .MuiDrawer-paper': { width: 300 } }}
     >
       <Box sx={{ p: 2 }}>
-        {/* User Profile Section */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, ml: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Avatar
               alt="学生照片"
-              src={student.拓展信息.个人照片}
+              src={expandInfo.个人照片}
               sx={{ width: 56, height: 56, mr: 2 }}
             />
             <Box>
-              <Typography variant="h6" component="div">{student.姓名}</Typography>
-              <Typography variant="body2" component="div">{student.id}</Typography>
+              <Typography variant="h6" component="div">{student.name}</Typography>
+              <Typography variant="body2" component="div">{student.student_id}</Typography>
             </Box>
           </Box>
-          {/* Top-right buttons */}
           <Box>
             {!isEditingAll ? (
               <Button onClick={handleEditAll} variant="contained" size="small" sx={{ mr: 1 }}>
@@ -159,7 +187,6 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
           </Box>
         </Box>
 
-        {/* Expanded Information with Icons and Bold Titles */}
         <List>
           {renderListItem(<BadgeIcon />, '身份证号', '身份证号')}
           {renderListItem(<PersonIcon />, '父亲姓名', '父亲姓名')}
@@ -169,7 +196,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
           {renderListItem(<PersonIcon />, '紧急联系人姓名', '紧急联系人姓名')}
           {renderListItem(<PhoneIcon />, '紧急联系人手机号', '紧急联系人手机号')}
           {renderListItem(<LocationOnIcon />, '家庭住址', '家庭住址', true)}
-          {renderFileUpload()} {/* File upload for 体检报告 */}
+          {renderFileUpload()}
         </List>
       </Box>
     </Drawer>
