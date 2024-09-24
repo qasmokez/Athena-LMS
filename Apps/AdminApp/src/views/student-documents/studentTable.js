@@ -11,11 +11,18 @@ import EnhancedTableHead from './enhancedTableHead';
 import EnhancedTableToolbar from './enhancedTableTool';
 import StudentDetailDrawer from './studentsDetailsDrawer';
 import StudentTableRow from './studentTableRow';
+import {toast } from 'react-toastify';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 
 export default function EnhancedTable() {
   const [students, setStudents] = useState([
     {
-      name: 'zhang wei',
+      name: '张伟',
       sex: 'male',
       classes_id: 1,
       grade_id: 3,
@@ -26,7 +33,7 @@ export default function EnhancedTable() {
       uuid: '3fa85f64-5717-4562-b3fc-2c963f66afa1'
     },
     {
-      name: 'li fang',
+      name: '李芳',
       sex: 'female',
       classes_id: 2,
       grade_id: 2,
@@ -37,7 +44,7 @@ export default function EnhancedTable() {
       uuid: '3fa85f64-5717-4562-b3fc-2c963f66afa2'
     },
     {
-      name: 'wang dawei',
+      name: '王大伟',
       sex: 'male',
       classes_id: 6,
       grade_id: 5,
@@ -60,6 +67,16 @@ export default function EnhancedTable() {
 
   // Selected rows (for deletion)
   const [selected, setSelected] = useState([]);
+
+  // Find the names of selected students based on their UUIDs
+  const selectedStudentNames = students
+    .filter((student) => selected.includes(student.uuid))
+    .map((student) => `“${student.name}”`) 
+    .join(', ');
+
+  // States for deletion confirmation
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   // Filtering
   const [filters, setFilters] = useState([]);
@@ -119,13 +136,32 @@ export default function EnhancedTable() {
     fetchFilteredData();
   }, [order, orderBy, page, rowsPerPage, filters]);
 
-  const handleDeleteSelected = async () => {
-    console.log('Selected UUIDs:', selected); // Log the array of selected UUIDs
-  
+  // Function to open confirmation dialog
+  const handleOpenConfirmDialog = () => {
+    setOpenConfirmDialog(true);
+  };
+
+  // Function to close confirmation dialog
+  const handleCloseConfirmDialog = () => {
+    setOpenConfirmDialog(false);
+  };
+
+  // Function to show toast
+  const showToast = () => {
+    toast.success('删除成功！', {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  };
+
+
+  // Handle deletion after confirmation
+  const handleConfirmDelete = async () => {
+    setOpenConfirmDialog(false);
+    console.log('Selected UUIDs for deletion:', selected);
+    showToast();  // success message
+
     const token = localStorage.getItem('token');
-  
     try {
-      // Loop through each selected UUID and make a PUT request
       const promises = selected.map(async (uuid) => {
         const response = await fetch(`http://localhost:3011/v0/student/deactivate/${uuid}`, {
           method: 'PUT',
@@ -134,27 +170,23 @@ export default function EnhancedTable() {
             'Authorization': `Bearer ${token}`,
           },
         });
-  
         if (!response.ok) {
           throw new Error(`Failed to deactivate student with UUID: ${uuid}`);
         }
         return response;
       });
-  
-      // Wait for all the requests to complete
+
       await Promise.all(promises);
-  
-      console.log('Selected students deactivated successfully');
-
-      // Remove the deactivated students from the frontend
       setStudents((prev) => prev.filter((student) => !selected.includes(student.uuid)));
-      setSelected([]); // Clear selection after deactivation
-
-      // Refetch the data to update the total count
-      await fetchFilteredData();
+      setSelected([]);
     } catch (error) {
       console.error('Error:', error);
     }
+  };
+
+  const handleDeleteSelected = () => {
+    // Open the dialog instead of directly deleting
+    handleOpenConfirmDialog();
   };
 
   const handleRequestSort = (event, property) => {
@@ -195,7 +227,7 @@ export default function EnhancedTable() {
   };
   
 
-  const handleRowClick = (student) => {
+  const handleIconClick = (student) => {
     setSelectedStudent(student);
     setDrawerOpen(true);
   };
@@ -247,7 +279,7 @@ export default function EnhancedTable() {
                     key={row.uuid}
                     row={row}
                     isItemSelected={isItemSelected}
-                    handleRowClick={handleRowClick}
+                    handleIconClick={handleIconClick}
                     handleCheckboxClick={handleCheckboxClick}
                   />
                 );
@@ -263,13 +295,40 @@ export default function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[10, 25]}
           component="div"
-          count={100} // Use the total count from backend
+          count={3} // Total count from backend
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="每页行数"  // Chinese for "Rows per page"
+          labelDisplayedRows={({ from, to, count}) =>
+            `第 ${from}-${to} 条，共 ${count !== -1 ? count : `更多`} 条 `
+          }
         />
       </Paper>
+      {/* Deletion confirmation dialog */}
+      <Dialog
+        open={openConfirmDialog}
+        onClose={handleCloseConfirmDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">删除</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            确认删除 {selectedStudentNames} 的信息？
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDialog} variant="outlined" color="primary">
+            取消
+          </Button>
+          <Button onClick={handleConfirmDelete} variant="contained" color="primary" autoFocus>
+            删除
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <StudentDetailDrawer student={selectedStudent} open={drawerOpen} onClose={handleDrawerClose} />
     </Box>
   );

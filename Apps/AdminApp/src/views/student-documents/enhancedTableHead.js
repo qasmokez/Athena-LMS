@@ -16,8 +16,9 @@ const headCells = [
   { id: 'birth_date', numeric: false, disablePadding: false, label: '出生日期' },
   { id: 'ethnic', numeric: false, disablePadding: false, label: '民族' },
   { id: 'student_id', numeric: false, disablePadding: false, label: '学生ID' },
-  { id: '年龄', numeric: true, disablePadding: false, label: '年龄' }, // Add Age column
+  { id: '年龄', numeric: true, disablePadding: false, label: '年龄' }, 
   { id: 'enroll_date', numeric: false, disablePadding: false, label: '入学时间' },
+  { id: 'actions', numeric: false, disablePadding: false, label: '操作' }, 
 ];
 
 function EnhancedTableHead(props) {
@@ -46,7 +47,7 @@ function EnhancedTableHead(props) {
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id !== 'name' && headCell.id !== 'enroll_date' && headCell.id !== '年龄' && headCell.id !== 'student_id' && headCell.id !== 'ethnic' ? (
+            {headCell.id !== 'name' && headCell.id !== 'enroll_date' && headCell.id !== '年龄' && headCell.id !== 'student_id' && headCell.id !== 'ethnic' && headCell.id !== 'actions' ? (
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
