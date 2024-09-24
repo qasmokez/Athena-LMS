@@ -1,6 +1,7 @@
 const db = require('./student_db');
 const ExcelJS = require('exceljs');
 
+// Endpoint to get basic info of a student
 exports.getBasicStudentInfo = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -33,6 +34,7 @@ exports.getBasicStudentInfo = async (req, res, next) => {
   }
 };
 
+// Endpoint to get expand info of a student
 exports.getExpandStudentInfo = async (req, res, next) => {
   try {
     const studentUUId = req.params.uuid;
@@ -51,6 +53,7 @@ exports.getExpandStudentInfo = async (req, res, next) => {
   }
 };
 
+// Endpoint to add a basic info of a student
 exports.addBasicStudentInfo = async (req, res, next) => {
   try {
     const studentData = req.body;
@@ -81,6 +84,7 @@ exports.addBasicStudentInfo = async (req, res, next) => {
   }
 };
 
+// Endpoint to add an expand info of a student
 exports.addExpandStudentInfo = async (req, res, next) => {
   try {
     const studentExpandData = req.body;
@@ -110,6 +114,7 @@ exports.addExpandStudentInfo = async (req, res, next) => {
   }
 };
 
+// Endpoint to deactivate a student by student_uuid
 exports.deactivateStudent = async (req, res, next) => {
   try {
     const studentUUId = req.params.uuid;
