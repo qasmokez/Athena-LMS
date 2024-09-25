@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-
-/* import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import Popover from '@mui/material/Popover';
-import Box from '@mui/material/Box'; */
-import {Toolbar, Typography,IconButton,Tooltip, Popover,Box, Button, Dialog, DialogTitle, DialogContent, DialogActions,styled,} from '@mui/material/';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import Chip from '@mui/material/Chip';
+import { styled } from '@mui/material/styles';
+import {
+  Toolbar,
+  Typography,
+  IconButton,
+  Tooltip,
+  Popover,
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Chip,
+  Select,
+  MenuItem,
+  InputAdornment,
+} from '@mui/material/';
 import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import * as XLSX from 'xlsx';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function EnhancedTableToolbar({
   numSelected,
@@ -28,6 +36,7 @@ export default function EnhancedTableToolbar({
   const [anchorEl, setAnchorEl] = useState(null);
   const [newFilterField, setNewFilterField] = useState('');
   const [newFilterValue, setNewFilterValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleFilterClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -35,6 +44,45 @@ export default function EnhancedTableToolbar({
 
   const handleFilterClose = () => {
     setAnchorEl(null);
+  };
+
+  // Handle search input
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    // If you need to filter data based on search, you can call the filtering function here
+  };
+
+  const SearchBar = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+  
+    const handleSearchChange = (event) => {
+      setSearchQuery(event.target.value);
+    };
+  
+    return (
+      <TextField
+        value={searchQuery}
+        onChange={handleSearchChange}
+        size="small"
+        placeholder="搜索"
+        variant="outlined"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '30px',  
+            backgroundColor: '#F4F5FA',  
+            padding: '0px 8px',
+          },
+          width: '210px', 
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon fontSize="small" />
+            </InputAdornment>
+          ),
+        }}
+      />
+    );
   };
 
   const handleAddFilter = () => {
@@ -183,16 +231,13 @@ export default function EnhancedTableToolbar({
 
   return (
     <Toolbar>
-      <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-        学生信息
-      </Typography>
-      {numSelected > 0 && (
-        <Tooltip title="Delete">
-          <IconButton onClick={handleDeleteSelected}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+      <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+        <Typography variant="h6" id="tableTitle" component="div" sx={{ ml:3, mr: 6}}>
+          学生信息
+        </Typography>
+        <SearchBar />
+      </Box>
+
       {filters.map((filter, index) => (
         <Chip
           key={index}
@@ -206,6 +251,12 @@ export default function EnhancedTableToolbar({
           <FilterListIcon />
         </IconButton>
       </Tooltip>
+
+      <Tooltip title="Delete">
+        <IconButton onClick={handleDeleteSelected}>
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
@@ -215,7 +266,7 @@ export default function EnhancedTableToolbar({
           horizontal: 'left',
         }}
       >
-        <Box sx={{ p: 2, minWidth: 200 }}>
+        <Box sx={{ p: 2, minWidth: 200}}>
           <Typography variant="subtitle1" gutterBottom>
             添加筛选条件
           </Typography>
@@ -251,7 +302,7 @@ export default function EnhancedTableToolbar({
           </IconButton>
         </Box>
       </Popover>
-      <Button variant="contained" style={{whiteSpace: 'nowrap'}} onClick = {()=>{handleAddStudent()}}>添加学生</Button>
+      <Button variant="contained" style={{whiteSpace: 'nowrap'}} sx={{m:3}} onClick = {()=>{handleAddStudent()}}>添加学生</Button>
       <Dialog open={addStudentOpen} onClose={handleClose}>
         <DialogTitle>Add Student</DialogTitle>
         <DialogContent>

@@ -2,6 +2,8 @@ import React from 'react';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
+import MenuIcon from '@mui/icons-material/Menu';
+import IconButton from '@mui/material/IconButton';
 
 // Helper function to calculate age from birth_date
 const calculateAge = (birthDate) => {
@@ -28,7 +30,7 @@ const genderMap = {
   female: '女'
 };
 
-function StudentTableRow({ row, isItemSelected, handleRowClick, handleCheckboxClick }) {
+function StudentTableRow({ row, isItemSelected, handleIconClick, handleCheckboxClick }) {
   return (
     <TableRow
       hover
@@ -37,7 +39,7 @@ function StudentTableRow({ row, isItemSelected, handleRowClick, handleCheckboxCl
       tabIndex={-1}
       key={row.uuid} // Use uuid as the key
       selected={isItemSelected}
-      onClick={() => handleRowClick(row)}
+      onClick={() => handleCheckboxClick(event, row.uuid)}
       sx={{ cursor: 'pointer' }}
     >
       <TableCell padding="checkbox">
@@ -56,6 +58,12 @@ function StudentTableRow({ row, isItemSelected, handleRowClick, handleCheckboxCl
       <TableCell>{row.student_id}</TableCell>
       <TableCell align="right">{calculateAge(row.birth_date)}</TableCell>
       <TableCell>{row.enroll_date}</TableCell>
+      <TableCell align='left'>
+        <IconButton onClick={() => handleIconClick(row)} >
+          <MenuIcon sx={{marginRight:'60%'}}/>
+        </IconButton>
+      </TableCell>
+
     </TableRow>
   );
 }

@@ -7,7 +7,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 
 // ** Icons Imports
 import Menu from 'mdi-material-ui/Menu'
-import Magnify from 'mdi-material-ui/Magnify'
 
 // ** Components
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
@@ -33,17 +32,6 @@ const AppBarContent = props => {
             <Menu />
           </IconButton>
         ) : null}
-        <TextField
-          size='small'
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 } }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <Magnify fontSize='small' />
-              </InputAdornment>
-            )
-          }}
-        />
       </Box>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         <ModeToggler settings={settings} saveSettings={saveSettings} />
