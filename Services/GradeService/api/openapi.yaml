@@ -1,0 +1,95 @@
+openapi: '3.0.3'
+
+info:
+  description: Athena-LMS Grade Service
+  version: 0.0.1
+  title: Athena-LMS Grade Service
+
+servers:
+  - url: http://localhost:3012/v0
+
+paths:
+  /testEndpoint:
+    get:
+      security:
+        - bearerAuth: []         
+      description: Test GET endpoint
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/testObject'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+components:
+  schemas:
+    testObject:
+      type: object
+      additionalProperties: true
+
+    testArray:
+      type: array
+      items:
+        type: object
+        additionalProperties: true
+
+    UnexpectedError:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    StudentNotFound:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        accessToken:
+          type: string
+      required:
+        - name
+        - accessToken
+
+    Credentials:
+      type: object
+      properties:
+        studentid:
+          type: string
+          pattern: '^\d{7}$'
+          example: '1234567'
+        password:
+          type: string
+      required:
+        - studentid
+        - password
+      additionalProperties: false
+
+    DuplicateError:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

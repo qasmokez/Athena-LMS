@@ -24,6 +24,19 @@ services:
     networks:
       - backend
 
+  grade-service:
+    container_name: grade-service
+    build:
+      context: ./Services/GradeService
+      dockerfile: Dockerfile
+    ports:
+      - 3012:3012
+    depends_on:
+      - postgres
+      - account-service
+    networks:
+      - backend
+
   studentapp:
     container_name: studentapp
     build:
@@ -52,6 +65,9 @@ services:
       - ./Services/StudentService/sql/databases.sql:/docker-entrypoint-initdb.d/5.databases.sql
       - ./Services/StudentService/sql/schema.sql:/docker-entrypoint-initdb.d/6.schema.sql
       - ./Services/StudentService/sql/data.sql:/docker-entrypoint-initdb.d/7.data.sql
+      - ./Services/GradeService/sql/databases.sql:/docker-entrypoint-initdb.d/5.databases.sql
+      - ./Services/GradeService/sql/schema.sql:/docker-entrypoint-initdb.d/6.schema.sql
+      - ./Services/GradeService/sql/data.sql:/docker-entrypoint-initdb.d/7.data.sql
     networks:
       - backend
 
