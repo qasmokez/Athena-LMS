@@ -10,7 +10,7 @@ const pool = new Pool({
 
 exports.getProfile = async (userId) => {
   let select = `SELECT data FROM student`;
-  select += ` WHERE studentid = $1`;
+  select += ` WHERE student_uuid = $1`;
   const query = {
     text: select,
     values: [userId],
@@ -22,7 +22,7 @@ exports.getProfile = async (userId) => {
 
 exports.getHonors = async (userId) => {
   let select = `SELECT data FROM honors`;
-  select += ` WHERE studentid = $1`;
+  select += ` WHERE student_uuid = $1`;
   const query = {
     text: select,
     values: [userId],
@@ -34,7 +34,7 @@ exports.getHonors = async (userId) => {
 
 exports.getParents = async (userId) => {
   let select = `SELECT data FROM parents`;
-  select += ` WHERE studentid = $1`;
+  select += ` WHERE student_uuid = $1`;
   const query = {
     text: select,
     values: [userId],

@@ -2,13 +2,14 @@
 \connect studentdb
 
 DELETE FROM student;
-INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
+INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, chinese_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
     '2',
     '5',
     'zhang',
     'jason',
+    '张杰森',
     '09-04-2002',
     'male',
     'han',
@@ -20,13 +21,14 @@ VALUES (
         'updated_at', '09-04-2024'
     )
 );
-INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
+INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, chinese_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
 VALUES (
     '22222222-2222-2222-2222-222222222222',
     '5',
     '6',
     'wang',
     'tony',
+    '王托尼',
     '01-01-2002',
     'male',
     'han',
@@ -38,13 +40,14 @@ VALUES (
         'updated_at', '09-04-2024'
     )
 );
-INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
+INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, chinese_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
 VALUES (
     '33333333-3333-3333-3333-333333333333',
     '3',
     '11',
     'liu',
     'anna',
+    '刘安娜',
     '05-02-2004',
     'female',
     'han',
@@ -56,13 +59,14 @@ VALUES (
         'updated_at', '09-02-2024'
     )
 );
-INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
+INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, chinese_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
 VALUES (
     '44444444-4444-4444-4444-444444444444',
     '1',
     '10',
     'li',
     'john',
+    '李约翰',
     '09-02-2004',
     'male',
     'han',
@@ -74,13 +78,14 @@ VALUES (
         'updated_at', '09-02-2024'
     )
 );
-INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
+INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, chinese_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
 VALUES (
     '55555555-5555-5555-5555-555555555555',
     '3',
     '12',
     'chen',
     'lisa',
+    '陈莉萨',
     '09-02-2003',
     'female',
     'han',
@@ -92,13 +97,14 @@ VALUES (
         'updated_at', '09-02-2024'
     )
 );
-INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
+INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, chinese_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
 VALUES (
     '66666666-6666-6666-6666-666666666666',
     '2',
     '11',
     'zhao',
     'kevin',
+    '赵凯文',
     '09-02-2004',
     'male',
     'han',
@@ -110,13 +116,14 @@ VALUES (
         'updated_at', '09-02-2024'
     )
 );
-INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
+INSERT INTO student(student_uuid, classes_id, grade_id, last_name, first_name, chinese_name, birth_date, sex, ethnic, student_id, active, enroll_date, data)
 VALUES (
     '77777777-7777-7777-7777-777777777777',
     '1',
     '9',
     'liang',
     'amy',
+    '梁艾米',
     '09-02-2005',
     'female',
     'han',
@@ -130,7 +137,7 @@ VALUES (
 );
 
 DELETE FROM honors;
-INSERT INTO honors(studentid, data)
+INSERT INTO honors(student_uuid, data)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
     jsonb_build_object(
@@ -140,7 +147,7 @@ VALUES (
         'givenon', '2020-01-01'
     )
 );
-INSERT INTO honors(studentid, data)
+INSERT INTO honors(student_uuid, data)
 VALUES (
     '22222222-2222-2222-2222-222222222222',
     jsonb_build_object(
@@ -152,7 +159,7 @@ VALUES (
 );
 
 DELETE FROM parents;
-INSERT INTO parents(studentid, data)
+INSERT INTO parents(student_uuid, data)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
     jsonb_build_object(
@@ -162,7 +169,7 @@ VALUES (
         'govtID', '110101194501018618'
     )
 );
-INSERT INTO parents(studentid, data)
+INSERT INTO parents(student_uuid, data)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
     jsonb_build_object(
@@ -172,7 +179,7 @@ VALUES (
         'govtID', '1101011945091718618'
     )
 );
-INSERT INTO parents(studentid, data)
+INSERT INTO parents(student_uuid, data)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
     jsonb_build_object(
@@ -182,7 +189,7 @@ VALUES (
         'govtID', '110101196801018618'
     )
 );
-INSERT INTO parents(studentid, data)
+INSERT INTO parents(student_uuid, data)
 VALUES (
     '22222222-2222-2222-2222-222222222222',
     jsonb_build_object(
@@ -192,7 +199,7 @@ VALUES (
         'govtID', '110101194301018618'
     )
 );
-INSERT INTO parents(studentid, data)
+INSERT INTO parents(student_uuid, data)
 VALUES (
     '22222222-2222-2222-2222-222222222222',
     jsonb_build_object(

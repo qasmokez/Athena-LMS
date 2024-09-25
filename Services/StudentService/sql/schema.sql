@@ -11,6 +11,7 @@ CREATE TABLE student (
     grade_id   int default 0 not null, -- 年级id
     last_name  varchar(100)  not null, -- 姓
     first_name varchar(100)  not null, -- 名
+    chinese_name varchar(100) not null,         -- 中文名 (supports simplified Chinese characters)
     birth_date timestamp     null,     -- 生日
     sex        varchar(10)   null,     -- 性别
     ethnic     varchar(100)  not null, -- 民族
@@ -30,19 +31,19 @@ CREATE TABLE student_expand (
 DROP TABLE IF EXISTS parents;
 CREATE TABLE parents (
     id UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(),
-    studentid UUID, -- internal id
+    student_uuid UUID, -- internal id
     data jsonb
 );
 
 DROP TABLE IF EXISTS attendance;
 CREATE TABLE attendance (
-    studentid UUID, -- internal id
+    student_uuid UUID, -- internal id
     data jsonb
 );
 
 DROP TABLE IF EXISTS honors;
 CREATE TABLE honors (
-    studentid UUID, -- internal id
+    student_uuid UUID, -- internal id
     data jsonb
 );
 
