@@ -36,7 +36,6 @@ export default function EnhancedTableToolbar({
   const [anchorEl, setAnchorEl] = useState(null);
   const [newFilterField, setNewFilterField] = useState('');
   const [newFilterValue, setNewFilterValue] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
 
   const handleFilterClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -46,44 +45,93 @@ export default function EnhancedTableToolbar({
     setAnchorEl(null);
   };
 
-  // Handle search input
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-    // If you need to filter data based on search, you can call the filtering function here
-  };
+  const SearchBar = ({  }) => {
+      const [searchQuery, setSearchQuery] = useState('');
+      const [searchBy, setSearchBy] = useState('student_id'); // Default search by student ID
+    
+      // Handle search click or pressing Enter
+      const handleSearch = () => {
+        if (searchQuery.trim() !== '') {
+          const result = { [searchBy]: [searchQuery] };
+          console.log(JSON.stringify(result));  // Logs the search query in the required format
+        }
+      };
+    
+      // Handle Enter key press
+      const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();  // Prevents form submission or other default behavior
+          handleSearch();
+        }
+      };
 
-  const SearchBar = () => {
-    const [searchQuery, setSearchQuery] = useState('');
-  
-    const handleSearchChange = (event) => {
-      setSearchQuery(event.target.value);
+
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <TextField
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            onKeyDown={handleKeyDown}
+            size="small"
+            placeholder="搜索"
+            variant="outlined"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '30px',
+                backgroundColor: '#F4F5FA',
+                padding: '0px 8px',
+              },
+              width: '270px',  // Adjusted to fit both dropdown and input
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" sx={{ padding: 0, margin: 0 }}>
+                  {/* Embedded Dropdown */}
+                  <Select
+                    value={searchBy}
+                    onChange={(event) => setSearchBy(event.target.value)}
+                    size="small"
+                    sx={{
+                      fontSize: '0.875rem',
+                      color: '#000',
+                      width: '80px',  // Adjust width for select component
+                      ml: '-9px',     // Adjust margin to avoid too much space
+                      boxSizing: 'border-box',
+                      '& .MuiSelect-select': {
+                        display: 'flex',
+                        alignItems: 'center',  // Ensure the content is vertically centered
+                      },
+                      '& .MuiSelect-icon': {
+                        right: '8px',  // Adjust the position of the dropdown arrow
+                      },
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        border: 'none',  // Remove the border
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        border: 'none',  // No border on hover
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        border: 'none',  // No border on focus
+                      },
+                    }}
+                  
+                  >
+                    <MenuItem value="student_id">学号</MenuItem>
+                    <MenuItem value="student_name">姓名</MenuItem>
+                  </Select>
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon sx={{cursor:'pointer'}}fontSize="small" onClick={handleSearch}/>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+      );
     };
-  
-    return (
-      <TextField
-        value={searchQuery}
-        onChange={handleSearchChange}
-        size="small"
-        placeholder="搜索"
-        variant="outlined"
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: '30px',  
-            backgroundColor: '#F4F5FA',  
-            padding: '0px 8px',
-          },
-          width: '210px', 
-        }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon fontSize="small" />
-            </InputAdornment>
-          ),
-        }}
-      />
-    );
-  };
+    
 
   const handleAddFilter = () => {
     if (newFilterField && newFilterValue) {
