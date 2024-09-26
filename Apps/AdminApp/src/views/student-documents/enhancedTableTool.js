@@ -209,34 +209,50 @@ export default function EnhancedTableToolbar({
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
+  
     reader.onload = (e) => {
       const fileData = new Uint8Array(e.target.result);
       const workbook = XLSX.read(fileData, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const dataArray = XLSX.utils.sheet_to_json(sheet);
-      data[1](data[0].concat(parseStudentInfo(dataArray)));
+  
+      // Parse and log the data from the Excel file
+      const parsedData = parseStudentInfo(dataArray);
+      console.log("Parsed Excel Data: ", parsedData); // Log the parsed data
+  
+      // Reset form and close dialog
       setAddStudentOpen(false);
       setFormContent(defaultForm);
     };
+  
     reader.readAsArrayBuffer(file);
   };
+  
 
   const parseStudentInfo = (studentExcel) => {
-    return studentExcel.map((student) => ({
-      ...defaultForm,
-      id: student['学生号'],
-      name: student['姓'] + student['名'],
-      sex: student['性别'],
-      classes_id: student['班级'],
-      grade_id: student['年级'],
-      birth_date: student['出生日期'],
-      ethnic: student['民族'],
-      enroll_date: student['入学时间'],
-      id_number: student['身份证号'],
-      address: student['家庭住址'],
-    }));
+    return studentExcel.map((student) => {
+      const parsedStudent = {
+        id: student['学生号'],
+        name: student['姓'] + student['名'],
+        gender: student['性别'],
+        classes_id: student['班级'],
+        grade_id: student['年级'],
+        birth_date: student['出生日期'],
+        ethnic: student['民族'],
+        student_id: student['学生号'],
+        enroll_date: student['入学时间'],
+        id_number: student['身份证号'],
+        address: student['家庭住址'],
+      };
+  
+      // Log the parsed student data for each student
+      console.log("Student Data from Excel: ", parsedStudent);
+  
+      return parsedStudent;
+    });
   };
+  
 
   const handleDownloadTemplate = () => {
     // Replace 'template-url' with the actual path where your template is stored.
