@@ -246,6 +246,8 @@ export default function EnhancedTable() {
     setPage(0);  // Reset to first page when rows per page changes
   };
 
+  const totalPages = Math.ceil(totalStudents / rowsPerPage) +1;
+
   const isSelected = (uuid) => selected.indexOf(uuid) !== -1;
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - students.length) : 0;
@@ -301,8 +303,8 @@ export default function EnhancedTable() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="每页行数"  // Chinese for "Rows per page"
-          labelDisplayedRows={({ from, to, count}) =>
-            `第 ${from}-${to} 条，共 ${count !== -1 ? count : `更多`} 条 `
+          labelDisplayedRows={({ from, to, count }) =>
+            `第 ${page + 1} 页, 共 ${totalPages} 页`
           }
         />
       </Paper>

@@ -6,11 +6,9 @@ import {
   Typography,
   IconButton,
   Tooltip,
-  Popover,
   Box,
   Button,
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
@@ -18,20 +16,24 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  Grid,  // Added Grid for layout
+  InputLabel,
+  FormControl
 } from '@mui/material/';
-import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import * as XLSX from 'xlsx';
 import SearchIcon from '@mui/icons-material/Search';
+import Divider from '@mui/material/Divider';
 
 export default function EnhancedTableToolbar({
   numSelected,
   handleDeleteSelected,
   filters,
   setFilters,
-  data, //temp data used to test addStudent
+  data,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [newFilterField, setNewFilterField] = useState('');
@@ -45,93 +47,81 @@ export default function EnhancedTableToolbar({
     setAnchorEl(null);
   };
 
-  const SearchBar = ({  }) => {
-      const [searchQuery, setSearchQuery] = useState('');
-      const [searchBy, setSearchBy] = useState('student_id'); // Default search by student ID
-    
-      // Handle search click or pressing Enter
-      const handleSearch = () => {
-        if (searchQuery.trim() !== '') {
-          const result = { [searchBy]: [searchQuery] };
-          console.log(JSON.stringify(result));  // Logs the search query in the required format
-        }
-      };
-    
-      // Handle Enter key press
-      const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault();  // Prevents form submission or other default behavior
-          handleSearch();
-        }
-      };
+  const SearchBar = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchBy, setSearchBy] = useState('student_id');
 
-
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <TextField
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            onKeyDown={handleKeyDown}
-            size="small"
-            placeholder="搜索"
-            variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '30px',
-                backgroundColor: '#F4F5FA',
-                padding: '0px 8px',
-              },
-              width: '270px',  // Adjusted to fit both dropdown and input
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start" sx={{ padding: 0, margin: 0 }}>
-                  {/* Embedded Dropdown */}
-                  <Select
-                    value={searchBy}
-                    onChange={(event) => setSearchBy(event.target.value)}
-                    size="small"
-                    sx={{
-                      fontSize: '0.875rem',
-                      color: '#000',
-                      width: '80px',  // Adjust width for select component
-                      ml: '-9px',     // Adjust margin to avoid too much space
-                      boxSizing: 'border-box',
-                      '& .MuiSelect-select': {
-                        display: 'flex',
-                        alignItems: 'center',  // Ensure the content is vertically centered
-                      },
-                      '& .MuiSelect-icon': {
-                        right: '8px',  // Adjust the position of the dropdown arrow
-                      },
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        border: 'none',  // Remove the border
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        border: 'none',  // No border on hover
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        border: 'none',  // No border on focus
-                      },
-                    }}
-                  
-                  >
-                    <MenuItem value="student_id">学号</MenuItem>
-                    <MenuItem value="student_name">姓名</MenuItem>
-                  </Select>
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon sx={{cursor:'pointer'}}fontSize="small" onClick={handleSearch}/>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
-      );
+    const handleSearch = () => {
+      if (searchQuery.trim() !== '') {
+        const result = { [searchBy]: searchQuery };
+        console.log(JSON.stringify(result));
+      }
     };
-    
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleSearch();
+      }
+    };
+
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <TextField
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          onKeyDown={handleKeyDown}
+          size="small"
+          placeholder="搜索"
+          variant="outlined"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '30px',
+              backgroundColor: '#F4F5FA',
+              padding: '0px 8px',
+            },
+            width: '270px',
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start" sx={{ padding: 0, margin: 0 }}>
+                <Select
+                  value={searchBy}
+                  onChange={(event) => setSearchBy(event.target.value)}
+                  size="small"
+                  sx={{
+                    fontSize: '0.875rem',
+                    color: '#000',
+                    width: '80px',
+                    ml: '-9px',
+                    boxSizing: 'border-box',
+                    '& .MuiSelect-select': {
+                      display: 'flex',
+                      alignItems: 'center',
+                    },
+                    '& .MuiSelect-icon': {
+                      right: '8px',
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      border: 'none',
+                    },
+                  }}
+                >
+                  <MenuItem value="student_id">学号</MenuItem>
+                  <MenuItem value="student_name">姓名</MenuItem>
+                </Select>
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon sx={{ cursor: 'pointer' }} fontSize="small" onClick={handleSearch} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+    );
+  };
 
   const handleAddFilter = () => {
     if (newFilterField && newFilterValue) {
@@ -144,7 +134,7 @@ export default function EnhancedTableToolbar({
       handleFilterClose();
     }
   };
-  
+
   const handleDeleteFilter = (index) => {
     setFilters((prev) => {
       const newFilters = prev.filter((_, i) => i !== index);
@@ -152,62 +142,58 @@ export default function EnhancedTableToolbar({
     });
   };
 
-
-  // 添加学生
   const [addStudentOpen, setAddStudentOpen] = useState(false);
-
   const handleAddStudent = () => {
     setAddStudentOpen(true);
   };
 
   const handleClose = () => {
-    // reset form content to default student info
     setFormContent(defaultForm);
     setAddStudentOpen(false);
   };
 
-  const handleAdd = () =>{
-    //console.log(formContent)
-    data[1]([...data[0], formContent]);
-    setAddStudentOpen(false);
+  const handleAdd = () => {
+    // Log the specified fields
+    console.log({
+      name: formContent.name,
+      gender: formContent.gender,
+      classes_id: formContent.classes_id,
+      grade_id: formContent.grade_id,
+      birth_date: formContent.birth_date,
+      ethnic: formContent.ethnic,
+      student_id: formContent.student_id,
+      enroll_date: formContent.enroll_date,
+      id_number: formContent.id_number,
+      address: formContent.address,
+    });
+  
+    // Reset the form and close the dialog
     setFormContent(defaultForm);
-  }
-  const addStudentFields = ['id','姓名','性别','班级','年级','出生日期','民族','年龄','入学时间',];
-  const addStudentFieldsEng = ['name','sex','class','grade','birthday','race','student id','age','enrollment date',];
+    setAddStudentOpen(false);
+  };
+  
 
   const defaultForm = {
-    id: '',
-    姓名: '',
-    性别: '',
-    班级: '',
-    年级: '',
-    出生日期: '',
-    民族: '',
-    年龄: 0,
-    入学时间: '',
-    拓展信息: {
-      身份证号: '',
-      父亲姓名: '',
-      父亲联系手机号: '',
-      母亲姓名: '',
-      母亲联系手机号: '',
-      紧急联系人姓名: '',
-      紧急联系人手机号: '',
-      家庭住址: '',
-      个人照片: '/images/avatars/1.png',
-      体检报告: '',
-    },
-  }
+    name: '',
+    gender: '',
+    classes_id: '',
+    grade_id: '',
+    birth_date: '',
+    ethnic: '',
+    student_id: '',
+    enroll_date: '',
+    id_number: '',
+    address: '',
+  };
   const [formContent, setFormContent] = useState(defaultForm);
-  
+
   const handleChangeForm = (field) => (event) => {
     setFormContent((prevContent) => ({
       ...prevContent,
-      [field]: event.target.value, // Updates the field's value in the state object
+      [field]: event.target.value,
     }));
   };
 
-  // for file upload and processing for addStudent
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -220,67 +206,59 @@ export default function EnhancedTableToolbar({
     width: 1,
   });
 
-  const handleFileUpload = (event)=> {
-    const file = event.target.files[0]; // Get the file from the input
-  
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
       const fileData = new Uint8Array(e.target.result);
       const workbook = XLSX.read(fileData, { type: 'array' });
-  
-      // Assuming fileData is in the first sheet
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-  
-      // Convert sheet fileData to JSON
       const dataArray = XLSX.utils.sheet_to_json(sheet);
-  
-      console.log(dataArray); // Array of objects
-
-      //update current data part
-      //console.log(data[0].concat(parseStudentInfo(dataArray)))
       data[1](data[0].concat(parseStudentInfo(dataArray)));
       setAddStudentOpen(false);
       setFormContent(defaultForm);
     };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const parseStudentInfo = (studentExcel) => {
+    return studentExcel.map((student) => ({
+      ...defaultForm,
+      id: student['学生号'],
+      name: student['姓'] + student['名'],
+      sex: student['性别'],
+      classes_id: student['班级'],
+      grade_id: student['年级'],
+      birth_date: student['出生日期'],
+      ethnic: student['民族'],
+      enroll_date: student['入学时间'],
+      id_number: student['身份证号'],
+      address: student['家庭住址'],
+    }));
+  };
+
+  const handleDownloadTemplate = () => {
+    // Replace 'template-url' with the actual path where your template is stored.
+    const templateUrl = '/images/学生信息录入模板.xlsx'; 
   
-    reader.readAsArrayBuffer(file); // Read the file as array buffer
-  }
-
-  const parseStudentInfo = (studentExcel)=> {
-      const toAdd = [];
-      for(let index=0; index<studentExcel.length; index++){
-        let tempStudentInfo = { ...defaultForm }
-        tempStudentInfo['id'] = studentExcel[index]['学生号'];
-        tempStudentInfo['姓名'] = studentExcel[index]['姓'] + studentExcel[index]['名'];
-        tempStudentInfo['性别'] = studentExcel[index]['性别'];
-        tempStudentInfo['班级'] = studentExcel[index]['班级'];
-        tempStudentInfo['年级'] = studentExcel[index]['年级'];
-        tempStudentInfo['出生日期'] = studentExcel[index]['出生日期'];
-        tempStudentInfo['民族'] = studentExcel[index]['民族'];
-        tempStudentInfo['年龄'] = studentExcel[index]['年龄'];
-        tempStudentInfo['入学日期'] = studentExcel[index]['入学时间'];
-        tempStudentInfo['身份证号'] = studentExcel[index]['身份证号'];
-        tempStudentInfo['父亲姓名'] = studentExcel[index]['父亲姓名'];
-        tempStudentInfo['父亲联系手机号'] = studentExcel[index]['父亲手机号'];
-        tempStudentInfo['母亲姓名'] = studentExcel[index]['母亲姓名'];
-        tempStudentInfo['母亲联系手机号'] = studentExcel[index]['母亲手机号'];
-        tempStudentInfo['家庭住址'] = studentExcel[index]['家庭住址'];
-
-        /* tempStudentInfo['紧急联系人姓名'] = studentExcel[index][''];
-        tempStudentInfo['紧急联系人手机号'] = studentExcel[index][''];
-        tempStudentInfo['个人照片'] = studentExcel[index][''];
-        tempStudentInfo['体检报告'] = studentExcel[index]['']; */
-        toAdd.push(tempStudentInfo);
-      } 
-      
-      return toAdd;
-  }
+    // Create an invisible link element, simulate a click to trigger the download
+    const link = document.createElement('a');
+    link.href = templateUrl;
+    link.setAttribute('download', 'student_upload_template.xlsx'); // Set the desired file name for the download
+  
+    // Append the link to the document body and trigger the click
+    document.body.appendChild(link);
+    link.click();
+  
+    // Clean up by removing the link from the DOM
+    document.body.removeChild(link);
+  };
 
   return (
     <Toolbar>
       <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-        <Typography variant="h6" id="tableTitle" component="div" sx={{ ml:3, mr: 6}}>
+        <Typography variant="h6" id="tableTitle" component="div" sx={{ ml: 3, mr: 6 }}>
           学生信息
         </Typography>
         <SearchBar />
@@ -305,80 +283,219 @@ export default function EnhancedTableToolbar({
           <DeleteIcon />
         </IconButton>
       </Tooltip>
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handleFilterClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Box sx={{ p: 2, minWidth: 200}}>
-          <Typography variant="subtitle1" gutterBottom>
-            添加筛选条件
-          </Typography>
-          <Select
-            value={newFilterField}
-            onChange={(e) => setNewFilterField(e.target.value)}
-            displayEmpty
-            fullWidth
-            sx={{ mb: 2 }}
-          >
-            <MenuItem value="" disabled>
-              筛选条件...
-            </MenuItem>
-            <MenuItem value="sex">性别</MenuItem>
-            <MenuItem value="class_id">班级</MenuItem>
-            <MenuItem value="grade_id">年级</MenuItem>
-            <MenuItem value="ethnic">民族 </MenuItem>
-            <MenuItem value="birth_date">出生日期</MenuItem>
-            <MenuItem value="age">年龄</MenuItem>
-            <MenuItem value="enroll_date">入学时间 </MenuItem>
-            {/* Add more filter options as needed */}
-          </Select>
-          <TextField
-            label="输入筛选值"
-            value={newFilterValue}
-            onChange={(e) => setNewFilterValue(e.target.value)}
-            variant="outlined"
-            fullWidth
-            sx={{ mb: 2 }}
-          />
-          <IconButton onClick={handleAddFilter} color="primary">
-            <AddIcon />
-          </IconButton>
+      
+      <Button variant="contained" sx={{ m: 3 }} onClick={handleAddStudent}>
+        添加学生
+      </Button>
+      
+      <Dialog open={addStudentOpen} onClose={handleClose} fullWidth maxWidth="sm">
+        <Box sx={{display:'flex', justifyContent:"space-between", mt:3 }}>
+            <Typography variant="h6" sx={{paddingLeft:'20px'}}>
+              添加学生
+            </Typography>
+            <IconButton onClick={handleClose}> 
+              <CloseIcon sx={{mr:2}}/>
+            </IconButton>
         </Box>
-      </Popover>
-      <Button variant="contained" style={{whiteSpace: 'nowrap'}} sx={{m:3}} onClick = {()=>{handleAddStudent()}}>添加学生</Button>
-      <Dialog open={addStudentOpen} onClose={handleClose}>
-        <DialogTitle>Add Student</DialogTitle>
+        <Divider />
         <DialogContent>
-            <Button
-              component="label"
-              role={undefined}
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUploadIcon />}
-            >
-              Upload Excel File
-              <VisuallyHiddenInput
-                type="file"
-                onChange={(event) => handleFileUpload(event)}
-                multiple
-                accept=".xlsx, .xls" 
-              />
-            </Button>
-          {addStudentFields.map((field)=>(
-            <TextField margin="dense" label={field} key={field} onChange={handleChangeForm(field)} fullWidth />
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={()=>handleClose()} color="primary">
-            Cancel
+          <Button
+            component="label"
+            variant="contained"
+            startIcon={<CloudUploadIcon />}
+            sx={{ mb: 2, mt:-2 }}
+          >
+            上传Excel文件
+            <VisuallyHiddenInput
+              type="file"
+              onChange={handleFileUpload}
+              multiple
+              accept=".xlsx, .xls"
+            />
           </Button>
-          <Button onClick={(e)=>handleAdd(e)} color="primary">
-            Add
+          
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                label="学生姓名"
+                value={formContent.name}
+                onChange={handleChangeForm('name')}
+                fullWidth
+                margin="dense"
+                required
+                InputLabelProps={{
+                  sx: {
+                    '& .MuiInputLabel-asterisk': {
+                      color: 'red',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth margin="dense" required>
+                <InputLabel 
+                  sx={{
+                    '& .MuiInputLabel-asterisk': {
+                      color: 'red',
+                    },
+                  }}
+                >
+                  性别
+                </InputLabel>
+                <Select
+                  value={formContent.sex}
+                  onChange={handleChangeForm('sex')}
+                  label="性别"
+                >
+                  <MenuItem key={'male'} value={'男'}>
+                    男
+                  </MenuItem>
+                  <MenuItem key={'female'} value={'女'}>
+                    女
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* Add more fields in a similar way */}
+            {/* Grade and Class */}
+            <Grid item xs={6}>
+              <TextField
+                label="年级"
+                value={formContent.grade_id}
+                onChange={handleChangeForm('grade_id')}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="班级"
+                value={formContent.classes_id}
+                onChange={handleChangeForm('classes_id')}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
+
+            {/* Other fields */}
+            <Grid item xs={12}>
+              <TextField
+                label="出生日期"
+                value={formContent.birth_date}
+                onChange={handleChangeForm('birth_date')}
+                fullWidth
+                margin="dense"
+                required
+                InputLabelProps={{
+                  sx: {
+                    '& .MuiInputLabel-asterisk': {
+                      color: 'red',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+    
+            <Grid item xs={6}>
+              <TextField
+                label="民族"
+                value={formContent.ethnic}
+                onChange={handleChangeForm('ethnic')}
+                fullWidth
+                margin="dense"
+                required
+                InputLabelProps={{
+                  sx: {
+                    '& .MuiInputLabel-asterisk': {
+                      color: 'red',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="学生id"
+                value={formContent.id}
+                onChange={handleChangeForm('id')}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label="入学日期"
+                value={formContent.enroll_date}
+                onChange={handleChangeForm('enroll_date')}
+                fullWidth
+                margin="dense"
+                required
+                InputLabelProps={{
+                  sx: {
+                    '& .MuiInputLabel-asterisk': {
+                      color: 'red',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            {/* ID, Address */}
+            <Grid item xs={12}>
+              <TextField
+                label="身份证号"
+                value={formContent.id_number}
+                onChange={handleChangeForm('id_number')}
+                fullWidth
+                margin="dense"
+                required
+                InputLabelProps={{
+                  sx: {
+                    '& .MuiInputLabel-asterisk': {
+                      color: 'red',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="家庭住址"
+                value={formContent.address}
+                onChange={handleChangeForm('address')}
+                fullWidth
+                margin="dense"
+                required
+                InputLabelProps={{
+                  sx: {
+                    '& .MuiInputLabel-asterisk': {
+                      color: 'red',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <Divider />
+        <DialogActions sx={{mt:-2}}>
+          {/* Outline button for downloading the template */}
+          <Button onClick={handleDownloadTemplate} variant="outlined" color="primary">
+            下载上传模版
+          </Button>
+          
+          {/* Outline button for cancel */}
+          <Button onClick={handleClose} variant="outlined" color="primary">
+            取消
+          </Button>
+          
+          {/* Default button for adding */}
+          <Button onClick={handleAdd} variant="contained" color="primary">
+            添加
           </Button>
         </DialogActions>
       </Dialog>
