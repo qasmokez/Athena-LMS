@@ -9,7 +9,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { visuallyHidden } from '@mui/utils';
 
 const headCells = [
-  { id: 'name', numeric: false, disablePadding: true, label: '姓名' },
+  { id: 'name', numeric: false, disablePadding: true, label: '学生姓名' },
   { id: 'sex', numeric: false, disablePadding: false, label: '性别' },
   { id: 'classes_id', numeric: false, disablePadding: false, label: '班级' },
   { id: 'grade_id', numeric: false, disablePadding: false, label: '年级' },
@@ -25,12 +25,11 @@ function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort, onSelectAllClick, numSelected, rowCount } = props;
 
   const createSortHandler = (property) => (event) => {
-    if (property === '年级' || property === '班级' || property === '姓名') return;
     onRequestSort(event, property);
   };
 
   return (
-    <TableHead>
+    <TableHead sx={{backgroundColor:'#F6F7FB'}}>
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
