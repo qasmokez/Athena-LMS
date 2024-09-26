@@ -14,5 +14,9 @@
       "author": "Jason Zhang <https://github.com/qasmokez>"
     }
   ],
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@mui/x-date-pickers-pro": "^7.18.0",
+    "dayjs": "^1.11.13"
+  }
 }
