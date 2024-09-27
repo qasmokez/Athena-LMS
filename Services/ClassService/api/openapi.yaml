@@ -1,0 +1,94 @@
+openapi: '3.0.3'
+
+info:
+  description: Athena-LMS Class Service
+  version: 0.0.1
+  title: Athena-LMS Class Service
+
+servers:
+  - url: http://localhost:3013/v0
+
+paths:
+  /classes:
+    get:
+      security:
+        - bearerAuth: []
+      description: Retrieve a list of classes present in each grade
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassesByGradeResponse'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+components:
+  schemas:
+    ClassesByGradeResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+            msg:
+              type: string
+        data:
+          type: object
+          properties:
+            grades:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  classes:
+                    type: array
+                    items:
+                      type: string
+
+    UnexpectedError:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        accessToken:
+          type: string
+      required:
+        - name
+        - accessToken
+
+    Credentials:
+      type: object
+      properties:
+        studentid:
+          type: string
+          pattern: '^\d{7}$'
+          example: '1234567'
+        password:
+          type: string
+      required:
+        - studentid
+        - password
+      additionalProperties: false
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
