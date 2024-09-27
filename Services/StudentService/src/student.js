@@ -1,5 +1,6 @@
 const db = require('./student_db');
 const ExcelJS = require('exceljs');
+const { checkDuplicateStudentIdInFile } = require('./helper');
 
 // Endpoint to get basic info of a student
 exports.getBasicStudentInfo = async (req, res, next) => {
@@ -224,6 +225,18 @@ exports.uploadStudentXlsx = async (req, res, next) => {
         return res.status(400).json(response);
       }
 
+    // Check for duplicate student_id within the file
+    const duplicateIdsInFile = checkDuplicateStudentIdInFile(studentDataList);
+    if (duplicateIdsInFile.length > 0) {
+      return res.status(409).json({
+        status: {
+          code: 409,
+          msg: "Duplicate student_id(s) found in file!",
+          duplicateIds: duplicateIdsInFile
+        }
+      });
+    }
+
       // Array to store list of uuids being added
       let added_uuid = [];
       // Store the data into the database
@@ -251,4 +264,86 @@ exports.uploadStudentXlsx = async (req, res, next) => {
   }
 };
 
-// Endpoint to add a single student's basic and expand info
+// Endpoint to add both basic and expand info of a student
+exports.addStudentInfo = async (req, res, next) => {
+  const {
+    last_name,
+    first_name,
+    sex,
+    classes_id,
+    grade_id,
+    birth_date,
+    ethnic,
+    student_id,
+    enroll_date,
+    id_number,
+    address,
+    photo,
+    father,
+    father_number,
+    mother,
+    mother_number,
+    contact,
+    contact_number,
+  } = req.body;
+
+  try {
+    // Validation
+    if (!last_name || !first_name || !sex || !birth_date || !ethnic || !enroll_date || !id_number || !address) {
+      return res.status(400).json({
+        status: { code: 400, msg: 'Required fields are missing!' },
+      });
+    }
+
+    // Check if the student_id is duplicated
+    const isDuplicate = await db.checkStudentIdDuplicate(student_id);
+    if (isDuplicate) {
+      return res.status(409).json({
+        status: { code: 409, msg: 'Duplicate student_id!' },
+      });
+    }
+
+    // Add student basic info
+    const basicData = {
+      last_name,
+      first_name,
+      sex,
+      classes_id: classes_id || null,
+      grade_id: grade_id || null, 
+      birth_date,
+      ethnic,
+      student_id: student_id || null,
+      enroll_date,
+      active: true,
+    };
+
+    const basicInfoResult = await db.addBasicStudentInfo(basicData);
+
+    const expandData = {
+      student_uuid: basicInfoResult.data.student_uuid,
+      data: {
+        id_number,
+        address,
+        photo: photo || null,
+        father: father || null,
+        father_number: father_number || null,
+        mother: mother || null,
+        mother_number: mother_number || null,
+        contact: contact || null,
+        contact_number: contact_number || null,
+      },
+    };
+
+    // Add student expand info
+    await db.addExpandStudentInfo(expandData);
+
+    return res.status(201).json({
+      status: { code: 201, msg: 'Student added successfully!' },
+      data: {
+        student_uuid: basicInfoResult.data.student_uuid,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};

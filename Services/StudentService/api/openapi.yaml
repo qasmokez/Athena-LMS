@@ -142,8 +142,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DuplicateError'
-        # 400:
-        #   description: Bad Request - Invalid data
         403:
           description: Unauthorized
         default:
@@ -153,75 +151,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
 
-  # /student/expandInfo/{uuid}:
-  #   get:
-  #     security:
-  #       - bearerAuth: []
-  #     description: Get expanded student information by student UUID
-  #     parameters:
-  #       - name: uuid
-  #         in: path
-  #         required: true
-  #         schema:
-  #           type: string
-  #           format: uuid
-  #         description: The UUID of the student
-  #     responses:
-  #       200:
-  #         description: Success - Returns expanded student information
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ExpandStudentInfo'
-  #       403:
-  #         description: Student is deactivated and cannot access expanded info
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/DeactivatedStudent'
-  #       404:
-  #         description: Student not found
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/StudentNotFound'
-  #       default:
-  #         description: Unexpected Error
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/UnexpectedError'
-  #   post:
-  #     security:
-  #       - bearerAuth: []
-  #     summary: Add a new student's expand information
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/StudentExpandInfoRequest'
-  #     responses:
-  #       201:
-  #         description: Student expand info added successfully
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/StudentExpandInfoResponse'
-  #       404:
-  #         description: Bad Request - UUID does not exist in student table
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/StudentNotExist'
-  #       403:
-  #         description: Unauthorized
-  #       default:
-  #         description: Unexpected Error
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/UnexpectedError'
   /student/expandInfo/{uuid}:
     get:
       security:
@@ -374,10 +303,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UploadFileErrorResponse'
+        409:
+          description: Duplicate student_id(s) found in file!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DuplicateStudentIdInFileError'
         403:
           description: Unauthorized
         500:
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+  /student/add:
+    post:
+      security:
+        - bearerAuth: []
+      summary: Add a new student's basic and expand information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddStudentInfoRequest'
+      responses:
+        201:
+          description: Student added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddStudentInfoResponse'
+        409:
+          description: Duplicate student_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DuplicateError'
+        400:
+          description: Bad Request - Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
           content:
             application/json:
               schema:
@@ -474,9 +448,11 @@ components:
                 description: The full name of the student.
               classes_id:
                 type: integer
+                nullable: true
                 description: The class ID the student belongs to.
               grade_id:
                 type: integer
+                nullable: true
                 description: The grade ID of the student.
               birth_date:
                 type: string
@@ -678,6 +654,129 @@ components:
                 description: List of missing field names
       required:
         - status
+
+    AddStudentInfoRequest:
+      type: object
+      required:
+        - last_name
+        - first_name
+        - sex
+        - birth_date
+        - ethnic
+        - student_id
+        - enroll_date
+        - id_number
+        - address
+      properties:
+        last_name:
+          type: string
+          description: The last name of the student
+        first_name:
+          type: string
+          description: The first name of the student
+        sex:
+          type: string
+          description: The gender of the student
+        classes_id:
+          type: integer
+          description: ID of the class (optional)
+        grade_id:
+          type: integer
+          description: ID of the grade (optional)
+        birth_date:
+          type: string
+          format: date
+          description: The student's birth date
+        ethnic:
+          type: string
+          description: Ethnic group of the student
+        student_id:
+          type: string
+          description: The student's ID (optional)
+        enroll_date:
+          type: string
+          format: date
+          description: The student's enrollment date
+        id_number:
+          type: string
+          description: The student's government ID number
+        address:
+          type: string
+          description: The student's family address
+        photo:
+          type: string
+          description: URL of the student's photo (optional)
+        father:
+          type: string
+          description: Father's name (optional)
+        father_number:
+          type: string
+          description: Father's contact number (optional)
+        mother:
+          type: string
+          description: Mother's name (optional)
+        mother_number:
+          type: string
+          description: Mother's contact number (optional)
+        contact:
+          type: string
+          description: Emergency contact name (optional)
+        contact_number:
+          type: string
+          description: Emergency contact phone number (optional)
+
+    AddStudentInfoResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: HTTP status code for the response
+            msg:
+              type: string
+              description: Response message
+        data:
+          type: object
+          properties:
+            student_uuid:
+              type: string
+              format: uuid
+              description: The UUID of the newly created student
+
+    BadRequestError:
+      type: object
+      description: Bad request response due to missing required fields
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: HTTP status code
+            msg:
+              type: string
+              description: Error message for missing required fields
+
+    DuplicateStudentIdInFileError:
+      type: object
+      description: Response for duplicate student_id found in uploaded file.
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: HTTP status code
+            msg:
+              type: string
+              description: Error message
+        duplicateIds:
+          type: array
+          description: List of duplicated student IDs found in the uploaded file
+          items:
+            type: string
 
   securitySchemes:
     bearerAuth:
