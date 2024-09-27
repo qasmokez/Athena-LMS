@@ -16,9 +16,12 @@ import {
   Select,
   MenuItem,
   InputAdornment,
-  Grid,  // Added Grid for layout
+  Grid,  
+  Popover,
   InputLabel,
-  FormControl
+  FormControl,
+  Checkbox,
+  ListItemText,
 } from '@mui/material/';
 import CloseIcon from '@mui/icons-material/Close';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -27,6 +30,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import * as XLSX from 'xlsx';
 import SearchIcon from '@mui/icons-material/Search';
 import Divider from '@mui/material/Divider';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function EnhancedTableToolbar({
   numSelected,
@@ -124,15 +128,51 @@ export default function EnhancedTableToolbar({
   };
 
   const handleAddFilter = () => {
-    if (newFilterField && newFilterValue) {
+    if (newFilterField) {
+      let newFilterValueFormatted = newFilterValue;
+  
+      // Special case for 年级和班级
+      if (newFilterField === '年级和班级' && selectedGrade && selectedClasses.length > 0) {
+        // Combine selected grade and class into the format 一年级2班
+        newFilterValueFormatted = selectedClasses.map((className) => `${selectedGrade}${className}`);
+      }
+  
+      // Use the formatted value 
       setFilters((prev) => {
-        const newFilters = [...prev, { field: newFilterField, value: newFilterValue }];
+        const newFilters = [...prev, { field: newFilterField, value: newFilterValueFormatted }];
         return newFilters;
       });
+  
+      // Reset the fields after adding the filter
       setNewFilterField('');
       setNewFilterValue('');
+      setSelectedClasses([]);
+      setSelectedGrade('');
+      setSelectedGender('');
       handleFilterClose();
     }
+  };
+
+  const [selectedClasses, setSelectedClasses] = useState([]);
+  const [selectedGrade, setSelectedGrade] = useState('');
+  const [selectedGender, setSelectedGender] = useState('');
+
+
+  const handleClassChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedClasses(typeof value === 'string' ? value.split(',') : value);
+    setNewFilterValue(value); // Ensure that the selected value is used for filtering
+  };
+
+  const handleGradeChange = (event) => {
+    setSelectedGrade(event.target.value);
+  };
+
+  const handleGenderChange = (event) => {
+    setSelectedGender(event.target.value);
+    setNewFilterValue(event.target.value);
   };
 
   const handleDeleteFilter = (index) => {
@@ -153,6 +193,22 @@ export default function EnhancedTableToolbar({
   };
 
   const handleAdd = () => {
+    const errors = {};
+
+    // Check if required fields are empty
+    if (!formContent.name.trim()) errors.name = '学生姓名不能为空';
+    if (!formContent.gender) errors.gender = '性别不能为空';
+    if (!formContent.birth_date.trim()) errors.birth_date = '出生日期不能为空';
+    if (!formContent.ethnic.trim()) errors.ethnic = '民族不能为空';
+    if (!formContent.enroll_date.trim()) errors.enroll_date = '入学日期不能为空';
+    if (!formContent.id_number.trim()) errors.id_number = '身份证号不能为空';
+    if (!formContent.address.trim()) errors.address = '家庭住址不能为空';
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     // Log the specified fields
     console.log({
       name: formContent.name,
@@ -169,9 +225,11 @@ export default function EnhancedTableToolbar({
   
     // Reset the form and close the dialog
     setFormContent(defaultForm);
+    setFormErrors({});
     setAddStudentOpen(false);
   };
   
+  const [formErrors, setFormErrors] = useState({});
 
   const defaultForm = {
     name: '',
@@ -229,28 +287,41 @@ export default function EnhancedTableToolbar({
     reader.readAsArrayBuffer(file);
   };
   
-
   const parseStudentInfo = (studentExcel) => {
-    return studentExcel.map((student) => {
-      const parsedStudent = {
-        id: student['学生号'],
-        name: student['姓'] + student['名'],
-        gender: student['性别'],
-        classes_id: student['班级'],
-        grade_id: student['年级'],
-        birth_date: student['出生日期'],
-        ethnic: student['民族'],
-        student_id: student['学生号'],
-        enroll_date: student['入学时间'],
-        id_number: student['身份证号'],
-        address: student['家庭住址'],
-      };
-  
-      // Log the parsed student data for each student
-      console.log("Student Data from Excel: ", parsedStudent);
-  
-      return parsedStudent;
-    });
+    return studentExcel
+      .map((student) => {
+        const parsedStudent = {
+          id: student['学生号'],
+          name: student['姓'] + student['名'],
+          gender: student['性别'],
+          classes_id: student['班级'],
+          grade_id: student['年级'],
+          birth_date: student['出生日期'],
+          ethnic: student['民族'],
+          student_id: student['学生号'],
+          enroll_date: student['入学时间'],
+          id_number: student['身份证号'],
+          address: student['家庭住址'],
+        };
+    
+        // Validate the parsed student data to ensure all required fields are present
+        if (
+          !parsedStudent.name ||
+          !parsedStudent.gender ||
+          !parsedStudent.birth_date ||
+          !parsedStudent.ethnic ||
+          !parsedStudent.enroll_date ||
+          !parsedStudent.id_number ||
+          !parsedStudent.address
+        ) {
+          console.warn("Skipping invalid student: ", parsedStudent); // Log the invalid entry
+          return null;  // Return null for invalid students
+        }
+        // Log the parsed student data for each student
+        console.log("Student Data from Excel: ", parsedStudent);
+        return parsedStudent; // Return valid student data
+      })
+      .filter(Boolean); // Filter out null entries (invalid students)
   };
   
 
@@ -283,7 +354,11 @@ export default function EnhancedTableToolbar({
       {filters.map((filter, index) => (
         <Chip
           key={index}
-          label={`${filter.field}: ${filter.value}`}
+          label={
+            filter.field === '年级和班级'
+              ? `${filter.value.join(', ')}`
+              : `${filter.field}: ${filter.value}`
+          }
           onDelete={() => handleDeleteFilter(index)}
           sx={{ m: 1 }}
         />
@@ -293,6 +368,124 @@ export default function EnhancedTableToolbar({
           <FilterListIcon />
         </IconButton>
       </Tooltip>
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleFilterClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        slotProps={{
+          paper: {
+            sx: {
+              width: '250px',  // Constrain the width
+              maxHeight: '250px',  // Constrain the height
+              overflow: 'auto',    // Ensure content can scroll if too long
+            },
+          },
+        }}
+      >
+        <Box sx={{ p: 2, minWidth: 200 }}>
+          <Typography variant="subtitle1" gutterBottom>
+            添加筛选条件
+          </Typography>
+          <IconButton
+            onClick={handleAddFilter}
+            color="primary"
+            sx={{ position: 'absolute', top: 8, right: 8 }}
+          >
+            <AddIcon />
+          </IconButton>
+          <Select
+            value={newFilterField}
+            onChange={(e) => setNewFilterField(e.target.value)}
+            displayEmpty
+            fullWidth
+            sx={{ mb: 2 }}
+          >
+            <MenuItem value="" disabled>
+              筛选条件...
+            </MenuItem>
+            <MenuItem value="性别">性别</MenuItem>
+            <MenuItem value="民族">民族 </MenuItem>
+            <MenuItem value="出生日期">出生日期</MenuItem>
+            <MenuItem value="入学时间">入学时间 </MenuItem>
+            <MenuItem value="年级和班级">年级和班级</MenuItem>
+           
+            {/* Add more filter options as needed */}
+          </Select>
+          {newFilterField === '年级和班级' && (
+            <>
+              {/* Select 年级 */}
+              <Select
+                value={selectedGrade}
+                onChange={handleGradeChange}
+                displayEmpty
+                fullWidth
+                variant="outlined"
+                sx={{ mb: 2 }}
+              >
+                <MenuItem value="" disabled>
+                  选择年级
+                </MenuItem>
+                <MenuItem value="一年级">一年级</MenuItem>
+                <MenuItem value="二年级">二年级</MenuItem>
+                <MenuItem value="三年级">三年级</MenuItem>
+                <MenuItem value="四年级">四年级</MenuItem>
+                <MenuItem value="五年级">五年级</MenuItem>
+              </Select>
+
+              {/* Only show 班级 select if 年级 is selected */}
+              {selectedGrade && (
+                <Select
+                  multiple
+                  value={selectedClasses}
+                  onChange={handleClassChange}
+                  renderValue={(selected) => selected.join(', ')}
+                  fullWidth
+                  variant="outlined"
+                  sx={{ mb: 2 }}
+                >
+                  {/* these values should be received after user select a grade and calls backend */}
+                  {['1班', '2班', '3班', '4班', '5班'].map((className) => (
+                    <MenuItem key={className} value={className}>
+                      <Checkbox checked={selectedClasses.indexOf(className) > -1} />
+                      <ListItemText primary={className} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            </>
+          )}
+         {newFilterField === '性别' && (
+            <Select
+              value={selectedGender}
+              onChange={handleGenderChange}
+              fullWidth
+              variant="outlined"
+              sx={{ mb: 2 }}
+            >
+              <MenuItem value="男">男</MenuItem>
+              <MenuItem value="女">女</MenuItem>
+            </Select>
+          )}
+
+        {newFilterField === '民族' && (
+            <Select
+              value={selectedGender}
+              onChange={handleGenderChange}
+              fullWidth
+              variant="outlined"
+              sx={{ mb: 2 }}
+            >
+              <MenuItem value="汉">汉</MenuItem>
+              <MenuItem value="满">满</MenuItem>
+            </Select>
+          )}
+          
+        </Box>
+      </Popover>
 
       <Tooltip title="Delete">
         <IconButton onClick={handleDeleteSelected}>
@@ -339,6 +532,8 @@ export default function EnhancedTableToolbar({
                 fullWidth
                 margin="dense"
                 required
+                error={!!formErrors.name}
+                helperText={formErrors.name}
                 InputLabelProps={{
                   sx: {
                     '& .MuiInputLabel-asterisk': {
@@ -349,7 +544,7 @@ export default function EnhancedTableToolbar({
               />
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth margin="dense" required>
+              <FormControl fullWidth margin="dense" required error={!!formErrors.gender}>
                 <InputLabel 
                   sx={{
                     '& .MuiInputLabel-asterisk': {
@@ -360,8 +555,8 @@ export default function EnhancedTableToolbar({
                   性别
                 </InputLabel>
                 <Select
-                  value={formContent.sex}
-                  onChange={handleChangeForm('sex')}
+                  value={formContent.gender}
+                  onChange={handleChangeForm('gender')}
                   label="性别"
                 >
                   <MenuItem key={'male'} value={'男'}>
@@ -371,6 +566,7 @@ export default function EnhancedTableToolbar({
                     女
                   </MenuItem>
                 </Select>
+                {formErrors.gender && <span style={{ color: 'red', fontSize: '11.5px', marginTop:5 }}>{formErrors.gender}</span>}
               </FormControl>
             </Grid>
 
@@ -404,6 +600,8 @@ export default function EnhancedTableToolbar({
                 fullWidth
                 margin="dense"
                 required
+                error={!!formErrors.birth_date}
+                helperText={formErrors.birth_date}
                 InputLabelProps={{
                   sx: {
                     '& .MuiInputLabel-asterisk': {
@@ -450,6 +648,8 @@ export default function EnhancedTableToolbar({
                 fullWidth
                 margin="dense"
                 required
+                error={!!formErrors.enroll_date}
+                helperText={formErrors.enroll_date}
                 InputLabelProps={{
                   sx: {
                     '& .MuiInputLabel-asterisk': {
@@ -469,6 +669,8 @@ export default function EnhancedTableToolbar({
                 fullWidth
                 margin="dense"
                 required
+                error={!!formErrors.id_number}
+                helperText={formErrors.id_number}
                 InputLabelProps={{
                   sx: {
                     '& .MuiInputLabel-asterisk': {
@@ -486,6 +688,8 @@ export default function EnhancedTableToolbar({
                 fullWidth
                 margin="dense"
                 required
+                error={!!formErrors.address}
+                helperText={formErrors.address}
                 InputLabelProps={{
                   sx: {
                     '& .MuiInputLabel-asterisk': {
