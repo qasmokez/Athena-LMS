@@ -8,6 +8,7 @@ const pool = new Pool({
   password: process.env.POSTGRES_PASSWORD,
 });
 
+// Function to get a student's basic info
 exports.getBasicStudentInfo = async (page, limit, order, filter) => {
   const offset = (page - 1) * limit;
 
@@ -133,6 +134,7 @@ exports.getBasicStudentInfo = async (page, limit, order, filter) => {
   return { data: dbOutput.rows, total_student: parseInt(countResult.rows[0].total, 10) };
 };
 
+// Function to get a student's expand info
 exports.getExpandStudentInfo = async (student_uuid) => {
   // Check if the student is active
   const checkQuery = {
@@ -166,6 +168,7 @@ exports.getExpandStudentInfo = async (student_uuid) => {
   }
 };
 
+// Function to add a student's basic info
 exports.addBasicStudentInfo = async (studentData) => {
   const query = {
     text: `
@@ -200,6 +203,7 @@ exports.addBasicStudentInfo = async (studentData) => {
   return { data: dbOutput.rows[0] }
 };
 
+// Function to add a student's expand info
 exports.addExpandStudentInfo = async (studentExpandData) => {
   // Check if the student_uuid exists in the student table
   const checkQuery = {
@@ -230,6 +234,7 @@ exports.addExpandStudentInfo = async (studentExpandData) => {
   return dbOutput.rows[0];
 };
 
+// Function to delete a student by setting the status bit
 exports.deactivateStudent = async (student_uuid) => {
   const checkQuery = {
     text: 'SELECT 1 FROM student WHERE student_uuid = $1',

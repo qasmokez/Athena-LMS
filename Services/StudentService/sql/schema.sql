@@ -7,16 +7,16 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 DROP TABLE IF EXISTS student;
 CREATE TABLE student (
     student_uuid UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(), -- internal id
-    classes_id int default 0 not null, -- 班级id
-    grade_id   int default 0 not null, -- 年级id
+    classes_id int null, -- 班级id
+    grade_id   int null, -- 年级id
     last_name  varchar(100)  not null, -- 姓
     first_name varchar(100)  not null, -- 名
-    birth_date timestamp     null,     -- 生日
-    sex        varchar(10)   null,     -- 性别
+    birth_date timestamp     not null,     -- 生日
+    sex        varchar(10)   not null,     -- 性别
     ethnic     varchar(100)  not null, -- 民族
     student_id varchar(50)   null,     -- 学号
     active     boolean default true not null,
-    enroll_date timestamp    null,     -- 入学时间
+    enroll_date timestamp    not null,     -- 入学时间
     data jsonb
 );
 

@@ -250,3 +250,5 @@ exports.uploadStudentXlsx = async (req, res, next) => {
     next(err);
   }
 };
+
+// Endpoint to add a single student's basic and expand info
