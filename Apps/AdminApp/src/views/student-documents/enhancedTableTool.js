@@ -32,6 +32,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import Divider from '@mui/material/Divider';
 import AddIcon from '@mui/icons-material/Add';
 
+// calendar imports
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'; 
+
 export default function EnhancedTableToolbar({
   numSelected,
   handleDeleteSelected,
@@ -342,6 +348,14 @@ export default function EnhancedTableToolbar({
     document.body.removeChild(link);
   };
 
+  const handleDateChange = (field) => (date) => {
+    const formattedDate = date ? date.toISOString().substring(0, 10) : ''; // Format date to yyyy-MM-dd
+    setFormContent((prevContent) => ({
+      ...prevContent,
+      [field]: formattedDate,
+    }));
+  };
+
   return (
     <Toolbar>
       <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
@@ -593,23 +607,43 @@ export default function EnhancedTableToolbar({
 
             {/* Other fields */}
             <Grid item xs={12}>
-              <TextField
-                label="出生日期"
-                value={formContent.birth_date}
-                onChange={handleChangeForm('birth_date')}
-                fullWidth
-                margin="dense"
-                required
-                error={!!formErrors.birth_date}
-                helperText={formErrors.birth_date}
-                InputLabelProps={{
-                  sx: {
-                    '& .MuiInputLabel-asterisk': {
-                      color: 'red',
-                    },
-                  },
-                }}
-              />
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={formContent.birth_date ? new Date(formContent.birth_date) : null}
+                  onChange={handleDateChange('birth_date')}
+                  dateFormat="yyyy-MM-dd"
+                  customInput={
+                    <TextField
+                      label={
+                        <>
+                          出生日期<span style={{ color: 'red' }}> *</span>
+                        </>
+                      }
+                      value={formContent.birth_date}
+                      onChange={() => {}}
+                      fullWidth
+                      margin="dense"
+                      required
+                      error={!!formErrors.birth_date}
+                      helperText={formErrors.birth_date}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <CalendarTodayIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      InputLabelProps={{
+                        sx: {
+                          '& .MuiInputLabel-asterisk': {
+                            color: 'red',
+                          },
+                        },
+                      }}
+                    />
+                  }
+                />
+              </DatePickerWrapper>
             </Grid>
     
             <Grid item xs={6}>
@@ -641,23 +675,43 @@ export default function EnhancedTableToolbar({
             </Grid>
 
             <Grid item xs={12}>
-              <TextField
-                label="入学日期"
-                value={formContent.enroll_date}
-                onChange={handleChangeForm('enroll_date')}
-                fullWidth
-                margin="dense"
-                required
-                error={!!formErrors.enroll_date}
-                helperText={formErrors.enroll_date}
-                InputLabelProps={{
-                  sx: {
-                    '& .MuiInputLabel-asterisk': {
-                      color: 'red',
-                    },
-                  },
-                }}
-              />
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={formContent.enroll_date ? new Date(formContent.enroll_date) : null}
+                  onChange={handleDateChange('enroll_date')}
+                  dateFormat="yyyy-MM-dd"
+                  customInput={
+                    <TextField
+                      label={
+                        <>
+                          入学日期<span style={{ color: 'red' }}> *</span>
+                        </>
+                      }
+                      value={formContent.enroll_date}
+                      onChange={() => {}}
+                      fullWidth
+                      margin="dense"
+                      required
+                      error={!!formErrors.enroll_date}
+                      helperText={formErrors.enroll_date}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <CalendarTodayIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      InputLabelProps={{
+                        sx: {
+                          '& .MuiInputLabel-asterisk': {
+                            color: 'red',
+                          },
+                        },
+                      }}
+                    />
+                  }
+                />
+              </DatePickerWrapper>
             </Grid>
 
             {/* ID, Address */}
