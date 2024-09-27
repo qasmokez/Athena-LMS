@@ -142,6 +142,18 @@ export default function EnhancedTableToolbar({
         // Combine selected grade and class into the format 一年级2班
         newFilterValueFormatted = selectedClasses.map((className) => `${selectedGrade}${className}`);
       }
+      // Handle date ranges for 出生日期 and 入学时间
+      if (newFilterField === '出生日期' && birthStartDate && birthEndDate) {
+        newFilterValueFormatted = [
+          birthStartDate.toISOString().substring(0, 10),
+          birthEndDate.toISOString().substring(0, 10),
+        ];
+      } else if (newFilterField === '入学时间' && enrollStartDate && enrollEndDate) {
+        newFilterValueFormatted = [
+          enrollStartDate.toISOString().substring(0, 10),
+          enrollEndDate.toISOString().substring(0, 10),
+        ];
+      }
   
       // Use the formatted value 
       setFilters((prev) => {
@@ -155,14 +167,43 @@ export default function EnhancedTableToolbar({
       setSelectedClasses([]);
       setSelectedGrade('');
       setSelectedGender('');
+      setBirthStartDate(null);
+      setBirthEndDate(null);
+      setEnrollStartDate(null);
+      setEnrollEndDate(null);
       handleFilterClose();
     }
   };
 
+  // Mapping from Chinese values to English values
+  const ethnicMapping = {
+    "汉": "han",
+    "满": "man",
+  };
+  
   const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedGrade, setSelectedGrade] = useState('');
   const [selectedGender, setSelectedGender] = useState('');
+  const [birthStartDate, setBirthStartDate] = useState(null);
+  const [birthEndDate, setBirthEndDate] = useState(null);
+  const [enrollStartDate, setEnrollStartDate] = useState(null);
+  const [enrollEndDate, setEnrollEndDate] = useState(null);
 
+  const handleFilterDateChange = (field, dateType) => (date) => {
+    if (field === '出生日期') {
+      if (dateType === 'start') {
+        setBirthStartDate(date);
+      } else {
+        setBirthEndDate(date);
+      }
+    } else if (field === '入学时间') {
+      if (dateType === 'start') {
+        setEnrollStartDate(date);
+      } else {
+        setEnrollEndDate(date);
+      }
+    }
+  };
 
   const handleClassChange = (event) => {
     const {
@@ -393,9 +434,9 @@ export default function EnhancedTableToolbar({
         slotProps={{
           paper: {
             sx: {
-              width: '250px',  // Constrain the width
-              maxHeight: '250px',  // Constrain the height
-              overflow: 'auto',    // Ensure content can scroll if too long
+              width: '300px',  // Constrain the width
+              maxHeight: '300px',  // Constrain the height
+              overflow: 'visible',   // Ensure content can scroll if too long
             },
           },
         }}
@@ -441,7 +482,7 @@ export default function EnhancedTableToolbar({
                 sx={{ mb: 2 }}
               >
                 <MenuItem value="" disabled>
-                  选择年级
+                  选择年级 {/* Placeholder for 年级 */}
                 </MenuItem>
                 <MenuItem value="一年级">一年级</MenuItem>
                 <MenuItem value="二年级">二年级</MenuItem>
@@ -456,11 +497,20 @@ export default function EnhancedTableToolbar({
                   multiple
                   value={selectedClasses}
                   onChange={handleClassChange}
-                  renderValue={(selected) => selected.join(', ')}
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return '请选择班级';  // Placeholder text when nothing is selected
+                    }
+                    return selected.join(', ');  // Show selected classes when values are selected
+                  }}
                   fullWidth
+                  displayEmpty  
                   variant="outlined"
                   sx={{ mb: 2 }}
                 >
+                  <MenuItem value="" disabled>
+                    请选择班级 {/* Placeholder text */}
+                  </MenuItem>
                   {/* these values should be received after user select a grade and calls backend */}
                   {['1班', '2班', '3班', '4班', '5班'].map((className) => (
                     <MenuItem key={className} value={className}>
@@ -478,25 +528,134 @@ export default function EnhancedTableToolbar({
               onChange={handleGenderChange}
               fullWidth
               variant="outlined"
+              displayEmpty  
               sx={{ mb: 2 }}
             >
+              <MenuItem value="" disabled>
+                请选择性别 {/* Placeholder text */}
+              </MenuItem>
               <MenuItem value="男">男</MenuItem>
               <MenuItem value="女">女</MenuItem>
             </Select>
           )}
 
-        {newFilterField === '民族' && (
+          {newFilterField === '民族' && (
             <Select
               value={selectedGender}
               onChange={handleGenderChange}
               fullWidth
               variant="outlined"
+              displayEmpty  
               sx={{ mb: 2 }}
             >
+              <MenuItem value="" disabled>
+                请选择民族 {/* Placeholder text */}
+              </MenuItem>
               <MenuItem value="汉">汉</MenuItem>
               <MenuItem value="满">满</MenuItem>
             </Select>
           )}
+
+          {newFilterField === '出生日期' && (
+            <>
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={birthStartDate}
+                  onChange={handleFilterDateChange('出生日期', 'start')}
+                  dateFormat="yyyy-MM-dd"
+                  customInput={
+                    <TextField
+                      label="开始日期"
+                      value={birthStartDate ? birthStartDate.toISOString().substring(0, 10) : ''}
+                      fullWidth
+                      margin="dense"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <CalendarTodayIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  }
+                />
+              </DatePickerWrapper>
+
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={birthEndDate}
+                  onChange={handleFilterDateChange('出生日期', 'end')}
+                  dateFormat="yyyy-MM-dd"
+                  customInput={
+                    <TextField
+                      label="结束日期"
+                      value={birthEndDate ? birthEndDate.toISOString().substring(0, 10) : ''}
+                      fullWidth
+                      margin="dense"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <CalendarTodayIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  }
+                />
+              </DatePickerWrapper>
+            </>
+          )}
+
+          {newFilterField === '入学时间' && (
+            <>
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={enrollStartDate}
+                  onChange={handleFilterDateChange('入学时间', 'start')}
+                  dateFormat="yyyy-MM-dd"
+                  customInput={
+                    <TextField
+                      label="开始日期"
+                      value={enrollStartDate ? enrollStartDate.toISOString().substring(0, 10) : ''}
+                      fullWidth
+                      margin="dense"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <CalendarTodayIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  }
+                />
+              </DatePickerWrapper>
+
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={enrollEndDate}
+                  onChange={handleFilterDateChange('入学时间', 'end')}
+                  dateFormat="yyyy-MM-dd"
+                  customInput={
+                    <TextField
+                      label="结束日期"
+                      value={enrollEndDate ? enrollEndDate.toISOString().substring(0, 10) : ''}
+                      fullWidth
+                      margin="dense"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <CalendarTodayIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  }
+                />
+              </DatePickerWrapper>
+            </>
+          )}
+            
           
         </Box>
       </Popover>
