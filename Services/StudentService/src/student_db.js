@@ -271,3 +271,10 @@ exports.checkStudentIdDuplicate = async (student_id) => {
   const result = await pool.query(query);
   return result.rowCount > 0;
 };
+
+// Function to get all ethnic groups
+exports.getEthnicList = async () => {
+  const query = 'SELECT name FROM nation';
+  const result = await pool.query(query);
+  return result.rows;
+};

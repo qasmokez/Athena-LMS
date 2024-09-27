@@ -27,6 +27,13 @@ CREATE TABLE student_expand (
     CONSTRAINT fk_student FOREIGN KEY (student_uuid) REFERENCES student(student_uuid) ON DELETE CASCADE
 );
 
+CREATE TABLE nation (
+    id         BIGSERIAL PRIMARY KEY,
+    name       VARCHAR(50) null, -- '名称',
+    created_at TIMESTAMP null,
+    updated_at TIMESTAMP null
+);
+
 DROP TABLE IF EXISTS parents;
 CREATE TABLE parents (
     id UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -60,6 +67,10 @@ GRANT SELECT ON student_expand TO admin;
 GRANT UPDATE ON student_expand TO admin;
 GRANT INSERT ON student_expand TO admin;
 
+GRANT SELECT ON nation TO admin;
+GRANT INSERT ON nation TO admin;
+GRANT UPDATE ON nation TO admin;
+
 GRANT SELECT ON student_expand TO studentpool;
 GRANT UPDATE ON student_expand TO studentpool;
 GRANT INSERT ON student_expand TO studentpool;
@@ -75,3 +86,7 @@ GRANT UPDATE ON honors TO studentpool;
 GRANT SELECT ON parents TO studentpool;
 GRANT INSERT ON parents TO studentpool;
 GRANT UPDATE ON parents TO studentpool;
+
+GRANT SELECT ON nation TO studentpool;
+GRANT INSERT ON nation TO studentpool;
+GRANT UPDATE ON nation TO studentpool;

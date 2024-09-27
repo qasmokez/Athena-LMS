@@ -347,3 +347,29 @@ exports.addStudentInfo = async (req, res, next) => {
     next(err);
   }
 };
+
+// Endpoint to get the list of all ethnic groups
+exports.getEthnicList = async (req, res, next) => {
+  try {
+    const ethnicList = await db.getEthnicList();
+    if (ethnicList.length > 0) {
+      const ethnicNames = ethnicList.map(item => item.name);
+      res.status(200).json({
+        status: {
+          code: 200,
+          msg: 'Success'
+        },
+        data: ethnicNames 
+      });
+    } else {
+      res.status(404).json({
+        status: {
+          code: 404,
+          msg: 'No ethnic groups found!'
+        }
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+};

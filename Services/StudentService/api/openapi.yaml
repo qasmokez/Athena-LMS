@@ -357,6 +357,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
 
+  /nations:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Get the list of all ethnic groups
+      description: Retrieve the list of all 56 recognized ethnic groups.
+      responses:
+        200:
+          description: A list of ethnic groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EthnicListResponse'
+        404:
+          description: No ethnic groups found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoEthnicsError'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+          
 components:
   schemas:
     testObject:
@@ -777,6 +803,37 @@ components:
           description: List of duplicated student IDs found in the uploaded file
           items:
             type: string
+
+    EthnicListResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: HTTP status code
+            msg:
+              type: string
+              description: Status message
+        data:
+          type: array
+          items:
+            type: string
+            description: name of each ethnics group
+
+    NoEthnicsError:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: HTTP status code
+            msg:
+              type: string
+              description: Error message
 
   securitySchemes:
     bearerAuth:
