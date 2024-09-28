@@ -397,6 +397,13 @@ export default function EnhancedTableToolbar({
     }));
   };
 
+  // needs to be fetched from backend
+  const gradeToClasses = {
+    一年级: ['班级一', '班级二'],
+    二年级: ['班级三', '班级四'],
+  };
+
+
   return (
     <Toolbar>
       <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
@@ -746,22 +753,38 @@ export default function EnhancedTableToolbar({
             {/* Add more fields in a similar way */}
             {/* Grade and Class */}
             <Grid item xs={6}>
-              <TextField
-                label="年级"
-                value={formContent.grade_id}
-                onChange={handleChangeForm('grade_id')}
-                fullWidth
-                margin="dense"
-              />
+              <FormControl fullWidth margin="dense">
+                <InputLabel>年级</InputLabel>
+                <Select
+                  value={formContent.grade_id}
+                  onChange={handleChangeForm('grade_id')}
+                  label="年级"
+                >
+                  {Object.keys(gradeToClasses).map((grade) => (
+                    <MenuItem key={grade} value={grade}>
+                      {grade}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <TextField
-                label="班级"
-                value={formContent.classes_id}
-                onChange={handleChangeForm('classes_id')}
-                fullWidth
-                margin="dense"
-              />
+              <FormControl fullWidth margin="dense">
+                <InputLabel>班级</InputLabel>
+                <Select
+                  value={formContent.classes_id}
+                  onChange={handleChangeForm('classes_id')}
+                  label="班级"
+                  disabled={!formContent.grade_id} // Disable if no grade is selected
+                >
+                  {formContent.grade_id &&
+                    gradeToClasses[formContent.grade_id].map((classItem) => (
+                      <MenuItem key={classItem} value={classItem}>
+                        {classItem}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </Grid>
 
             {/* Other fields */}
