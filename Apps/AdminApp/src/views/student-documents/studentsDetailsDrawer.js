@@ -15,15 +15,16 @@ import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import {Divider, IconButton,MenuItem  } from '@mui/material';
+import {Divider, IconButton,MenuItem ,InputAdornment } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import UploadIcon from '@mui/icons-material/Upload';
 import { toast } from 'react-toastify';
 //date picker
-import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs'; // Import dayjs to convert string to Dayjs object
+// calendar imports
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'; 
 
 export default function StudentDetailDrawer({ student, open, onClose }) {
   const [expandInfo, setExpandInfo] = useState({});
@@ -31,6 +32,13 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
   const [editedFields, setEditedFields] = useState({}); // for expand info
   const [basicInfoField, setBasicInfoField] = useState({}); // for basic info
   const [file, setFile] = useState(null); // For the 体检报告 file
+  const [gradeList, setGradeList] = useState(['一年级','二年级','三年级','四年级','五年级']); // for 年级
+  const [classList, setClassList] = useState(['1班','2班','3班','4班','5班']); // for 班级
+  const [formErrors, setFormErrors] = useState({}); // for required fields check
+
+  // for 头像上传
+  const avatarPlaceholder = '/images/avatars/avatar_place_holder.png';
+  const [avatar, setAvatar] = useState(avatarPlaceholder);
 
   useEffect(() => {
     const fetchExpandInfo = async () => {
@@ -63,7 +71,8 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
     const initBasicInfo = () =>{
       if (student) {
         // When student is available, set basicInfoField to student data
-        setBasicInfoField({...student});
+        const name = student['name'];
+        setBasicInfoField({...student,['last_name']:name[0], ['first_name']:name.slice(1)});
         console.log('passed in')
         //console.log(student)
         //console.log(basicInfoField)
@@ -81,7 +90,30 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
     setEditedFields({ ...expandInfo });
   };
 
+
   const handleSaveAll = () => {
+    const errors = {};
+    // Check if required fields are empty
+    if (!basicInfoField.last_name?.trim()) errors.last_name = '学生姓不能为空';
+    if (!basicInfoField.first_name?.trim()) errors.first_name = '学生名不能为空';
+    if (!basicInfoField.sex) errors.sex = '性别不能为空';
+    if (!basicInfoField.birth_date?.trim()) errors.birth_date = '出生日期不能为空';
+    if (!basicInfoField.ethnic?.trim()) errors.ethnic = '民族不能为空';
+    if (!basicInfoField.enroll_date?.trim()) errors.enroll_date = '入学日期不能为空';
+    if (!editedFields['身份证号']?.trim()) {
+      errors.id_number = '身份证号不能为空';
+    }else if(editedFields['身份证号']?.trim().length != 18){
+      errors.id_number = '身份证号格式输入不正确（需要18位）';
+    }
+    if (!editedFields['家庭住址']?.trim()) errors.address = '家庭住址不能为空';
+    if (Object.keys(errors).length > 0) {
+      //console.log(errors)
+      setFormErrors(errors);
+      return;
+    }else{
+      setFormErrors({})
+    }
+    
     setIsEditingAll(false);
     Object.keys(editedFields).forEach(field => {
       expandInfo[field] = editedFields[field];
@@ -105,6 +137,13 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
       setBasicInfoField((prev)=>({
         ...prev,
         [field]: value
+      }))
+    }
+    //check last name or first name update
+    if(field == 'last_name' || field == 'first_name'){
+      setBasicInfoField((prev)=>({
+        ...prev,
+        ['name']: basicInfoField['last_name'] + basicInfoField['first_name'] 
       }))
     }
   };
@@ -194,13 +233,37 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
     "乌孜别克族", "门巴族", "鄂伦春族", "独龙族", "赫哲族", "塔塔尔族", "珞巴族"
   ];
   
+  const handleDateChange = (dateType,newDate) =>{
+    const parsedDate = newDate ? newDate.toLocaleDateString('en-CA').substring(0, 10) : '';
+    if(dateType == 'birth_date'){
+      setBasicInfoField((prev)=>({...prev, ['birth_date']: parsedDate}));
+    }else if(dateType == 'enroll_date'){
+      setBasicInfoField((prev)=>({...prev, ['enroll_date']: parsedDate}));
+    }
+    
+    /* console.log('new date:  ',newDate);
+    console.log('parsed: ',parsedDate);
+    console.log(basicInfoField['birth_date']); */
+  }
+
+  // managing user uploaded avatar
+  
+  const handleAvatarUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file); // Convert the file to a temporary URL
+      setAvatar(imageUrl); // Set the uploaded image as avatar
+    }
+  };
+
+
   return (
     <Drawer
       anchor="right"
       transitionDuration={{ enter: 500, exit: 500 }}
       open={open}
       onClose={onClose}
-      sx={{ width: 370, flexShrink: 0, '& .MuiDrawer-paper': { width: 370 } }}
+      sx={{ width: 370, flexShrink: 0, '& .MuiDrawer-paper': { width: 400 } }}
     >
       <Box sx={{ p: 2 }}>
         <Box sx={{display:'flex', justifyContent:"space-between"}}>
@@ -229,13 +292,31 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                 <Grid container alignItems="center" spacing={3}>
                   <Grid item xs={6}>
                     <TextField
-                        label={'姓名'}
-                        value={basicInfoField['name']}
+                        label={'姓'}
+                        value={basicInfoField['last_name']}
                         inputProps={isEditingAll?{}:{readOnly:true}}
-                        onChange={(e) => handleChange('name', e.target.value)}
+                        onChange={(e) => handleChange('last_name', e.target.value)}
                         required
+                        error={!!formErrors.last_name}
+                        helperText={formErrors.last_name}
                       />
                   </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                        label={'名'}
+                        value={basicInfoField['first_name']}
+                        inputProps={isEditingAll?{}:{readOnly:true}}
+                        onChange={(e) => handleChange('first_name', e.target.value)}
+                        required
+                        error={!!formErrors.first_name}
+                        helperText={formErrors.first_name}
+                      />
+                  </Grid>
+                </Grid>
+              </ListItem>
+
+              <ListItem>
+                <Grid container alignItems="center" spacing={3}>
                   <Grid item xs={6}>
                     <TextField
                         label={'性别'}
@@ -244,6 +325,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                         onChange={(e) => handleChange('sex', e.target.value)}
                         required
                         select
+                        fullWidth
                       >
                         <MenuItem key={'male'} value={'male'}>
                           男
@@ -253,54 +335,85 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                         </MenuItem>
                     </TextField>
                   </Grid>
-                </Grid>
-              </ListItem>
-
-              <ListItem>
-                <Grid container alignItems="center" spacing={3}>
                   <Grid item xs={6}>
                     <TextField
                         label={'年级'}
                         value={basicInfoField['grade_id']}
                         inputProps={isEditingAll?{}:{readOnly:true}}
                         onChange={(e) => handleChange('grade_id', e.target.value)}
-                      />
+                        select
+                      >
+                        {gradeList.map((grade,index)=>(
+                          <MenuItem key={gradeList[index]} value={index+1}>
+                            {gradeList[index]}
+                          </MenuItem>
+                        ))}
+                      </TextField>
                   </Grid>
+                </Grid>
+              </ListItem>
+
+              {/* date picker for birthdate */}
+              <ListItem>
+              <Grid container alignItems="center" spacing={3}>
                   <Grid item xs={6}>
                     <TextField
                         label={'班级'}
                         value={basicInfoField['classes_id']}
                         inputProps={isEditingAll?{}:{readOnly:true}}
                         onChange={(e) => handleChange('classes_id', e.target.value)}
+                        select
+                      >
+                        {classList.map((classes,index)=>(
+                          <MenuItem key={classList[index]} value={index+1}>
+                            {classList[index]}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <DatePickerWrapper>
+                      <DatePicker
+                        selected={new Date(`${basicInfoField['birth_date']}T00:00:00`)}
+                        onChange={(newDate)=>handleDateChange('birth_date',newDate)}
+                        dateFormat="yyyy-MM-dd"
+                        customInput={
+                          <TextField
+                            sx={{pointerEvents: !isEditingAll ? 'none' : 'auto'}}
+                            label={
+                              <>
+                                出生日期<span style={{ color: 'red' }}> *</span>
+                              </>
+                            }
+                            /* value={basicInfoField['birth_date']} */
+                            onChange={() => {}}
+                            fullWidth
+                            margin="dense"
+                            required
+                            /* error={!!formErrors.birth_date} */
+                            /* helperText={formErrors.birth_date} */
+                            InputProps={{
+                              readOnly: true,
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  <CalendarTodayIcon />
+                                </InputAdornment>
+                              ),
+                            }}
+                            InputLabelProps={{
+                              sx: {
+                                '& .MuiInputLabel-asterisk': {
+                                  color: 'red',
+                                },
+                              },
+                            }}
+                          />
+                        }
                       />
+                    </DatePickerWrapper>
                   </Grid>
                 </Grid>
-              </ListItem>
-
-              <ListItem>
-                <Grid container alignItems="center" spacing={3}>
-                  <Grid item xs={12}>
-                    <TextField
-                        label={'出生日期'}
-                        value={basicInfoField['birth_date']}
-                        inputProps={isEditingAll?{}:{readOnly:true}}
-                        onChange={(e) => handleChange('birth_date', e.target.value)}
-                        required
-                        fullWidth
-                      />
-                  </Grid>
-                </Grid>
-              </ListItem>
-              {/* date picker for birthdate */}
-              <ListItem>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={['DatePicker']}>
-                    <DatePicker value={dayjs(basicInfoField['birth_date'],'YYYY-MM-DD')} 
-                                onChange={(newValue) => {handleChange('birth_date',newValue.format('YYYY-MM-DD'),false)}} 
-                                inputFormat="YYYY-MM-DD"
-                                />
-                  </DemoContainer>
-                </LocalizationProvider>
+                
               </ListItem>
               
 
@@ -314,6 +427,9 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                         onChange={(e) => handleChange('ethnic', e.target.value)}
                         select
                         required
+                        fullWidth
+                        error={!!formErrors.ethnic}
+                        helperText={formErrors.ethnic}
                       >
                         {/* {chineseEthnicGroups.map((option)=>(
                           <MenuItem key={option} value={option}>
@@ -341,18 +457,51 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
               </ListItem>
               
               <ListItem>
-                <Grid container alignItems="center" spacing={3}>
+                <Grid container alignItems="center">
                   <Grid item xs={12}>
-                    <TextField
-                        label={'入学日期'}
-                        value={basicInfoField['enroll_date']}
-                        inputProps={isEditingAll?{}:{readOnly:true}}
-                        onChange={(e) => handleChange('enroll_date', e.target.value)}
-                        required
-                        fullWidth
-                      />
+                    <DatePickerWrapper>
+                      <DatePicker
+                        selected={new Date(`${basicInfoField['enroll_date']}T00:00:00`)}
+                        onChange={(newDate)=>handleDateChange('enroll_date',newDate)}
+                        dateFormat="yyyy-MM-dd"
+                        customInput={
+                            <TextField
+                              sx={{pointerEvents: !isEditingAll ? 'none' : 'auto'}}
+                              label={
+                                <>
+                                  入学日期<span style={{ color: 'red' }}> *</span>
+                                </>
+                              }
+                              /* value={basicInfoField['birth_date']} */
+                              onChange={() => {}}
+                              margin="dense"
+                              required
+                              fullWidth
+                              /* error={!!formErrors.birth_date} */
+                              /* helperText={formErrors.birth_date} */
+                              InputProps={{
+                                readOnly: true,
+                                endAdornment: (
+                                  <InputAdornment position="end">
+                                    <CalendarTodayIcon />
+                                  </InputAdornment>
+                                ),
+                              }}
+                              InputLabelProps={{
+                                sx: {
+                                  '& .MuiInputLabel-asterisk': {
+                                    color: 'red',
+                                  },
+                                },
+                              }}
+                            />
+                          }
+                        />
+                    </DatePickerWrapper>
                   </Grid>
+                  
                 </Grid>
+                
               </ListItem>
             </List>
             
@@ -387,6 +536,8 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                         value={editedFields['身份证号']}
                         inputProps={isEditingAll?{}:{readOnly:true}}
                         onChange={(e) => handleChange('身份证号', e.target.value,true)}
+                        error={!!formErrors.id_number}
+                        helperText={formErrors.id_number}
                         required
                         fullWidth
                       />
@@ -466,6 +617,9 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                         inputProps={isEditingAll?{}:{readOnly:true}}
                         required
                         fullWidth
+                        error={!!formErrors.address}
+                        helperText={formErrors.address}
+                        onChange={(e) => handleChange('家庭住址', e.target.value,true)}
                       />
                   </Grid>
                 </Grid>
@@ -485,7 +639,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
           </>
         )}
         
-        <Box>
+        {/* <Box>
             <Typography variant="subtitle1" sx={{paddingLeft:'20px'}}>
               个人照片
             </Typography>
@@ -494,23 +648,97 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
               src={expandInfo.个人照片}
               sx={{ width: 100, height: 100, ml:'20px' }}
             />
-        </Box>
+        </Box> */}
+
+        {isEditingAll && (
+          <Box
+            sx={{
+              position: 'relative',
+              width: 400,
+              height: 200,
+              borderRadius: 3,
+              overflow: 'hidden',
+              backgroundImage: `url(${avatar})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.9,
+              },
+            }}
+            >
+              <Typography variant="subtitle1" sx={{paddingLeft:'20px'}}>
+                  个人照片
+                </Typography>
+              {/* Hidden input for file selection */}
+              <input
+                accept="image/*"  // Accept only image files
+                type="file"
+                onChange={handleAvatarUpload}
+                style={{ display: 'none' }}  // Hide the input field
+                id="upload-button"
+              />
+
+              {/* Clickable upload button */}
+              <Box
+                sx={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  padding: 2,
+                  borderRadius: 2,
+                  textAlign: 'center',
+                  color: 'white',
+                }}
+              >
+                <UploadIcon fontSize="large" />
+                <Typography>将照片拖放至此处更换照片</Typography>
+                <label htmlFor="upload-button">
+                  <Button variant="outlined" sx={{ mt: 1, color: 'white', borderColor: 'white' }} component="span">
+                    点击上传
+                  </Button>
+                </label>
+              </Box>
+            </Box>
+        )}
+        {!isEditingAll && (
+          <>
+          <Typography variant="subtitle1" sx={{paddingLeft:'20px'}}>
+                  个人照片
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',  // Center horizontally
+              alignItems: 'center',      // Center vertically
+              height: 300,               // Height of the block
+              width: 300,                // Width of the block
+              border: '2px solid #ccc',  // Optional border for clarity
+              overflow: 'hidden',        // Ensure the image doesn’t overflow the box
+            }}
+          >
+            
+            <img
+              src={avatar}
+              alt="Avatar Placeholder"
+              style={{
+                width: '100%',           // Ensure the image covers the block size
+                height: '100%',          // Ensure the image covers the block size
+                objectFit: 'cover',      // Maintain the aspect ratio of the image and cover the block
+              }}
+            />
+          </Box>
+          </>
+        )}
+
+        
 
         {renderFileUpload()}
 
         {/* User Profile Section */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', mb: 2, ml: 2 }}>
-          {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar
-              alt="学生照片"
-              src={student.拓展信息.个人照片}
-              sx={{ width: 56, height: 56, mr: 2 }}
-            />
-            <Box>
-              <Typography variant="h6" component="div">{student.姓名}</Typography>
-              <Typography variant="body2" component="div">{student.id}</Typography>
-            </Box>
-          </Box> */}
+
           {/* Top-right buttons */}
           {!isEditingAll ? (
             <Button onClick={handleEditAll} variant="contained" size="small" sx={{ mr: 1 }}>
