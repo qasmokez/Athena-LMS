@@ -1,7 +1,7 @@
 {
   "name": "class-service",
   "version": "0.0.1",
-  "description": "Athena-LMS account-service dev build",
+  "description": "Athena-LMS class-service dev build",
   "main": "index.js",
   "devDependencies": {
     "eslint": "*",
