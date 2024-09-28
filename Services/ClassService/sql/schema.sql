@@ -1,5 +1,5 @@
 -- Setup Tables
-\connect gradedb
+\connect classdb
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 

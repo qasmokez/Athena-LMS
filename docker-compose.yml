@@ -24,6 +24,19 @@ services:
     networks:
       - backend
 
+  class-service:
+    container_name: class-service
+    build:
+      context: ./Services/ClassService
+      dockerfile: Dockerfile
+    ports:
+      - 3013:3013
+    depends_on:
+      - postgres
+      - account-service
+    networks:
+      - backend
+
   studentapp:
     container_name: studentapp
     build:
@@ -45,13 +58,16 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./sql/databases.sql:/docker-entrypoint-initdb.d/1.databases.sql
-      - ./Services/AccountService/sql/databases.sql:/docker-entrypoint-initdb.d/2.databases.sql
-      - ./Services/AccountService/sql/schema.sql:/docker-entrypoint-initdb.d/3.schema.sql
-      - ./Services/AccountService/sql/data.sql:/docker-entrypoint-initdb.d/4.data.sql
-      - ./Services/StudentService/sql/databases.sql:/docker-entrypoint-initdb.d/5.databases.sql
-      - ./Services/StudentService/sql/schema.sql:/docker-entrypoint-initdb.d/6.schema.sql
-      - ./Services/StudentService/sql/data.sql:/docker-entrypoint-initdb.d/7.data.sql
+      - ./sql/databases.sql:/docker-entrypoint-initdb.d/01.databases.sql
+      - ./Services/AccountService/sql/databases.sql:/docker-entrypoint-initdb.d/02.databases.sql
+      - ./Services/AccountService/sql/schema.sql:/docker-entrypoint-initdb.d/03.schema.sql
+      - ./Services/AccountService/sql/data.sql:/docker-entrypoint-initdb.d/04.data.sql
+      - ./Services/StudentService/sql/databases.sql:/docker-entrypoint-initdb.d/05.databases.sql
+      - ./Services/StudentService/sql/schema.sql:/docker-entrypoint-initdb.d/06.schema.sql
+      - ./Services/StudentService/sql/data.sql:/docker-entrypoint-initdb.d/07.data.sql
+      - ./Services/ClassService/sql/databases.sql:/docker-entrypoint-initdb.d/08.databases.sql
+      - ./Services/ClassService/sql/schema.sql:/docker-entrypoint-initdb.d/09.schema.sql
+      - ./Services/ClassService/sql/data.sql:/docker-entrypoint-initdb.d/10.data.sql
     networks:
       - backend
 

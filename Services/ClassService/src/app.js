@@ -7,6 +7,7 @@ const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 
 const auth = require('./auth');
+const classes = require('./classes');
 
 const app = express();
 app.use(cors());

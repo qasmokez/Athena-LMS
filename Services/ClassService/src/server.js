@@ -10,6 +10,6 @@ require('dotenv').config();
 const app = require('./app.js');
 
 app.listen(3013, () => {
-  console.log(`account-service server running on port 3013`);
-  console.log('account-service API Testing UI: http://localhost:3013/v0/api-docs/');
+  console.log(`class-service server running on port 3013`);
+  console.log('class-service API Testing UI: http://localhost:3013/v0/api-docs/');
 });
