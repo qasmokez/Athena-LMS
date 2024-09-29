@@ -373,3 +373,52 @@ exports.getEthnicList = async (req, res, next) => {
     next(err);
   }
 };
+
+// Endpoint to update student info
+exports.updateStudentInfo = async (req, res, next) => {
+  const { student_uuid, data } = req.body;
+
+  // Define fields belong to basic info
+  const basicInfoFields = ['last_name', 'first_name', 'sex', 'classes_id', 'grade_id', 'birth_date', 'ethnic', 'student_id', 'enroll_date'];
+
+  // Separate basic and expand info from `data`
+  const basicData = {};
+  const expandData = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    if (basicInfoFields.includes(key) && value !== null && value !== undefined) {
+      // If the field is for basic info and is not null, add it to basicData
+      basicData[key] = value;
+    } else if (value !== null && value !== undefined) {
+      // Otherwise, it's part of expandData
+      expandData[key] = value;
+    }
+  }
+
+  try {
+    // Check if the student exists
+    const studentExists = await db.checkStudentExists(student_uuid);
+    if (!studentExists) {
+      return res.status(404).json({
+        status: { code: 404, msg: `Student with uuid ${student_uuid} is not found` },
+      });
+    }
+
+    // Update basic student info
+    if (Object.keys(basicData).length > 0) {
+      await db.updateBasicStudentInfo(student_uuid, basicData);
+    }
+
+    // Update expand student info
+    if (Object.keys(expandData).length > 0) {
+      await db.updateExpandStudentInfo(student_uuid, expandData);
+    }
+
+    res.status(200).json({
+      status: { code: 200, msg: 'Success' },
+      data: { msg: `Student with uuid ${student_uuid}'s info has been successfully updated` },
+    });
+  } catch (err) {
+    next(err);
+  }
+};

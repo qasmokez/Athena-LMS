@@ -382,6 +382,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnexpectedError'
+
+  /student/edit:
+    put:
+      security:
+        - bearerAuth: []
+      summary: Update student's basic and expanded information
+      description: Update both basic and expanded student information. Basic info is mandatory for fields that are not null, and expanded info can be dynamically updated using JSONB storage.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStudentInfoRequest'
+      responses:
+        200:
+          description: Student information updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateStudentInfoResponse'
+        404:
+          description: Student not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentNotFound'
+        403:
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+        default:
+          description: Unexpected Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
           
 components:
   schemas:
@@ -770,6 +808,69 @@ components:
               type: string
               format: uuid
               description: The UUID of the newly created student
+
+    UpdateStudentInfoRequest:
+      type: object
+      required:
+        - student_uuid
+      properties:
+        student_uuid:
+          type: string
+          format: uuid
+          description: The UUID of the student.
+        data:
+          type: object
+          properties:
+            last_name:
+              type: string
+              description: The last name of the student.
+            first_name:
+              type: string
+              description: The first name of the student.
+            sex:
+              type: string
+              description: The gender of the student.
+            classes_id:
+              type: integer
+              description: The class ID the student belongs to.
+            grade_id:
+              type: integer
+              description: The grade ID of the student.
+            birth_date:
+              type: string
+              format: date
+              description: The birth date of the student.
+            ethnic:
+              type: string
+              description: The ethnic group of the student.
+            student_id:
+              type: string
+              description: The student ID.
+            enroll_date:
+              type: string
+              format: date
+              description: The enrollment date of the student.
+          additionalProperties: true
+
+    UpdateStudentInfoResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          description: The status of the response.
+          properties:
+            code:
+              type: integer
+              description: HTTP status code for the response.
+            msg:
+              type: string
+              description: A message describing the result.
+        data:
+          type: object
+          properties:
+            msg:
+              type: string
+              description: Message confirming the student's information was updated.
 
     BadRequestError:
       type: object

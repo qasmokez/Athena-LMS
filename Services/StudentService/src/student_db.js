@@ -278,3 +278,64 @@ exports.getEthnicList = async () => {
   const result = await pool.query(query);
   return result.rows;
 };
+
+// Function to check if a student exists
+exports.checkStudentExists = async (student_uuid) => {
+  const query = {
+    text: 'SELECT 1 FROM student WHERE student_uuid = $1',
+    values: [student_uuid],
+  };
+  const result = await pool.query(query);
+  return result.rowCount > 0;
+};
+
+// Function to update a student's basic info
+exports.updateBasicStudentInfo = async (student_uuid, studentData) => {
+  // Build query only for fields that are provided
+  let queryText = 'UPDATE student SET ';
+  const queryValues = [];
+  let idx = 1;
+
+  // Append updates for fields provided in studentData
+  for (const [key, value] of Object.entries(studentData)) {
+    if (value !== undefined && value !== null) {
+      queryText += `${key} = $${idx}, `;
+      queryValues.push(value);
+      idx++;
+    }
+  }
+
+  // Add the condition for student_uuid
+  queryText = queryText.slice(0, -2);
+  queryText += ` WHERE student_uuid = $${idx}`;
+  queryValues.push(student_uuid);
+
+  const query = {
+    text: queryText,
+    values: queryValues,
+  };
+
+  await pool.query(query);
+};
+
+// Function to update a student's expand info (JSONB)
+exports.updateExpandStudentInfo = async (student_uuid, expandData) => {
+  // Add the updated_at field
+  expandData.updated_at = new Date().toISOString();
+
+  // Convert expandData to JSON string
+  const updateDataJson = JSON.stringify(expandData);
+
+  const values = [updateDataJson, student_uuid];
+
+  const query = {
+    text: `
+      UPDATE student_expand
+      SET data = data || $1::jsonb
+      WHERE student_uuid = $2
+    `,
+    values: values,
+  };
+
+  await pool.query(query);
+};
