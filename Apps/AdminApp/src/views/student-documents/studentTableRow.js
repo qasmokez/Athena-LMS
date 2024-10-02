@@ -19,25 +19,17 @@ const calculateAge = (birthDate) => {
   return age;
 };
 
-// Ethnic and gender mapping
-const ethnicMap = {
-  man: '满族',
-  han: '汉族'
-};
+function StudentTableRow({ row, isItemSelected, handleIconClick, handleCheckboxClick, gradeMapping }) {
+  const grade = gradeMapping[row.grade_id]?.name || 'Unknown Grade';
+  const className = gradeMapping[row.grade_id]?.classes[row.classes_id] || 'Unknown Class';
 
-const genderMap = {
-  male: '男',
-  female: '女'
-};
-
-function StudentTableRow({ row, isItemSelected, handleIconClick, handleCheckboxClick }) {
   return (
     <TableRow
       hover
       role="checkbox"
       aria-checked={isItemSelected}
       tabIndex={-1}
-      key={row.uuid} // Use uuid as the key
+      key={row.uuid}
       selected={isItemSelected}
       onClick={() => handleCheckboxClick(event, row.uuid)}
       sx={{ cursor: 'pointer' }}
@@ -50,20 +42,19 @@ function StudentTableRow({ row, isItemSelected, handleIconClick, handleCheckboxC
         />
       </TableCell>
       <TableCell component="th" scope="row" padding="none">{row.name}</TableCell>
-      <TableCell>{genderMap[row.sex] || row.sex}</TableCell> {/* Map gender */}
-      <TableCell>{row.classes_id}</TableCell>
-      <TableCell>{row.grade_id}</TableCell>
+      <TableCell>{row.gender}</TableCell>
+      <TableCell>{className}</TableCell>  {/* Display class name */}
+      <TableCell>{grade}</TableCell>      {/* Display grade name */}
       <TableCell>{row.birth_date}</TableCell>
-      <TableCell>{ethnicMap[row.ethnic] || row.ethnic}</TableCell>
+      <TableCell>{row.ethnic}</TableCell>
       <TableCell>{row.student_id}</TableCell>
       <TableCell align="right">{calculateAge(row.birth_date)}</TableCell>
       <TableCell>{row.enroll_date}</TableCell>
-      <TableCell align='left'>
-        <IconButton onClick={() => handleIconClick(row)} >
-          <MenuIcon sx={{marginRight:'60%'}}/>
+      <TableCell align="left">
+        <IconButton onClick={() => handleIconClick(row)}>
+          <MenuIcon sx={{ marginRight: '60%' }} />
         </IconButton>
       </TableCell>
-
     </TableRow>
   );
 }
