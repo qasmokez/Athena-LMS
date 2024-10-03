@@ -21,8 +21,8 @@ class CustomDocument extends Document {
             rel='stylesheet'
             href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
           />
-          <link rel='apple-touch-icon' sizes='180x180' href='/images/athena.png' />
-          <link rel='shortcut icon' href='/images/athena.png' />
+          <link rel='athena-logo' sizes='180x180' href='/images/athena.svg' />
+          <link rel='athena-logo' href='/images/athena.svg' />
         </Head>
         <body>
           <Main />
