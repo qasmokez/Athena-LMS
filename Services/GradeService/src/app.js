@@ -33,6 +33,7 @@ app.use(
 
 // Your routes go here
 app.get('/v0/testEndpoint', auth.check, test.testFunc);
+app.get('/v0/grade/distribution', auth.check, grade.distrubution);
 
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;
