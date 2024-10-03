@@ -9,7 +9,7 @@ servers:
   - url: http://localhost:3013/v0
 
 paths:
-  /classes:
+  /classes/getClassesByGrade:
     get:
       security:
         - bearerAuth: []
@@ -21,6 +21,72 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClassesByGradeResponse'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+  /classes/getClassText:
+    post:
+      security:
+        - bearerAuth: []
+      description: Retrieve class names based on class IDs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetClassTextRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetClassTextResponse'
+        400:
+          description: Bad Request - Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        403:
+          description: Unauthorized
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+
+  /classes/getGradeText:
+    post:
+      security:
+        - bearerAuth: []
+      description: Retrieve grade names based on grade IDs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetGradeTextRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGradeTextResponse'
+        400:
+          description: Bad Request - Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
         403:
           description: Unauthorized
         default:
@@ -55,12 +121,80 @@ components:
                     items:
                       type: string
 
+    GetClassTextRequest:
+      type: object
+      required:
+        - classes_ids
+      properties:
+        classes_ids:
+          type: array
+          items:
+            type: integer
+          description: Array of class IDs to retrieve names
+
+    GetClassTextResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+            msg:
+              type: string
+        data:
+          type: array
+          items:
+            type: string
+            nullable: true
+          description: Array of class names corresponding to the input class IDs
+
+    GetGradeTextRequest:
+      type: object
+      required:
+        - grade_ids
+      properties:
+        grade_ids:
+          type: array
+          items:
+            type: integer
+          description: Array of grade IDs to retrieve names
+
+    GetGradeTextResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+            msg:
+              type: string
+        data:
+          type: array
+          items:
+            type: string
+            nullable: true
+          description: Array of grade names corresponding to the input grade IDs
+
     UnexpectedError:
       required:
         - message
       properties:
         message:
           type: string
+
+    BadRequestError:
+      type: object
+      description: Bad request response due to invalid input
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+            msg:
+              type: string
 
     User:
       type: object

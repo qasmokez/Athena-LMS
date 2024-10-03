@@ -32,7 +32,9 @@ app.use(
 );
 
 // Your routes go here
-app.get('/v0/classes', auth.check, classes.getClassesByGrade);
+app.get('/v0/classes/getClassesByGrade', auth.check, classes.getClassesByGrade);
+app.post('/v0/classes/getClassText', auth.check, classes.getClassText);
+app.post('/v0/classes/getGradeText', auth.check, classes.getGradeText);
 
 app.use((err, req, res, next) => {
   res.status(err.status).json({
