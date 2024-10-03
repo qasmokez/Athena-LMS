@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
 import Paper from '@mui/material/Paper';
 import EnhancedTableHead from './enhancedTableHead';
@@ -23,39 +21,57 @@ export default function EnhancedTable() {
   const [students, setStudents] = useState([
     {
       name: '张伟',
-      sex: 'male',
+      gender: '男',
       classes_id: 1,
       grade_id: 3,
       birth_date: '2010-05-12', // YYYY-MM-DD format
       enroll_date: '2017-09-01',
       student_id: 'S001',
-      ethnic: 'han',
+      ethnic: '汉族',
       uuid: '3fa85f64-5717-4562-b3fc-2c963f66afa1'
     },
     {
       name: '李芳',
-      sex: 'female',
+      gender: '女',
       classes_id: 2,
       grade_id: 2,
       birth_date: '2012-08-25',
       enroll_date: '2018-09-01',
       student_id: 'S002',
-      ethnic: 'man',
+      ethnic: '满族',
       uuid: '3fa85f64-5717-4562-b3fc-2c963f66afa2'
     },
     {
       name: '王大伟',
-      sex: 'male',
+      gender: '男',
       classes_id: 6,
       grade_id: 5,
       birth_date: '2012-05-12',
       enroll_date: '2019-09-01',
       student_id: 'S003',
-      ethnic: 'han',
+      ethnic: '汉族',
       uuid: '3fa85f64-5717-4562-b3fc-2c963f66afa3'
     }
   ]);  // Empty array initially
-  const [totalStudents, setTotalStudents] = useState(0);  // Total student count from backend
+  const [totalStudents, setTotalStudents] = useState(3);  // Total student count from backend
+
+  // Example Mapping for grades and classes that is from /grade_nation/list
+  const [gradeMapping, setGradeMapping] = useState({
+    1: { name: '一年级', classes: { 1: '1班', 2: '2班' } },
+    2: { name: '二年级', classes: { 1: '1班', 2: '2班' } },
+    3: { name: '三年级', classes: { 1: '1班', 2: '2班', 3: '3班' } },
+    5: { name: '五年级', classes: { 6: '6班', 7: '7班' } }
+  });
+
+
+  // /grade_nation/list
+  const handleGradeMappingData = () => {
+    // update the gradeMapping by calling backend
+  };
+
+  useEffect(() => {
+    handleGradeMappingData();
+  }, []); 
 
   // Sorting
   const [order, setOrder] = useState('asc');
@@ -76,7 +92,6 @@ export default function EnhancedTable() {
 
   // States for deletion confirmation
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   // Filtering
   const [filters, setFilters] = useState([]);
@@ -246,11 +261,9 @@ export default function EnhancedTable() {
     setPage(0);  // Reset to first page when rows per page changes
   };
 
-  const totalPages = Math.ceil(totalStudents / rowsPerPage) +1;
+  const totalPages = Math.ceil(totalStudents / rowsPerPage);
 
   const isSelected = (uuid) => selected.indexOf(uuid) !== -1;
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - students.length) : 0;
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -261,6 +274,7 @@ export default function EnhancedTable() {
           filters={filters}
           setFilters={setFilters}
           fetchFilteredData={fetchFilteredData}
+          gradeMapping={gradeMapping}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -276,6 +290,7 @@ export default function EnhancedTable() {
             <TableBody>
               {students.map((row) => {
                 const isItemSelected = isSelected(row.uuid);
+                
                 return (
                   <StudentTableRow
                     key={row.uuid}
@@ -283,21 +298,18 @@ export default function EnhancedTable() {
                     isItemSelected={isItemSelected}
                     handleIconClick={handleIconClick}
                     handleCheckboxClick={handleCheckboxClick}
+                    gradeMapping={gradeMapping} 
                   />
                 );
               })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={11} />
-                </TableRow>
-              )}
             </TableBody>
+
           </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[10, 25]}
           component="div"
-          count={3} // Total count from backend
+          count={totalStudents} // Total count from backend
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -331,7 +343,7 @@ export default function EnhancedTable() {
         </DialogActions>
       </Dialog>
 
-      <StudentDetailDrawer student={selectedStudent} open={drawerOpen} onClose={handleDrawerClose} />
+      <StudentDetailDrawer student={selectedStudent} open={drawerOpen} onClose={handleDrawerClose} gradeMapping={gradeMapping} />
     </Box>
   );
 }

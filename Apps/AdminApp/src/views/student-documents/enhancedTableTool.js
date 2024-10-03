@@ -37,13 +37,13 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'; 
+import zhCN from 'date-fns/locale/zh-CN';
 
 export default function EnhancedTableToolbar({
-  numSelected,
   handleDeleteSelected,
   filters,
   setFilters,
-  data,
+  gradeMapping,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [newFilterField, setNewFilterField] = useState('');
@@ -63,8 +63,11 @@ export default function EnhancedTableToolbar({
 
     const handleSearch = () => {
       if (searchQuery.trim() !== '') {
-        const result = { [searchBy]: searchQuery };
-        console.log(JSON.stringify(result));
+        setFilters((prevFilters) => {
+          const newFilters = [...prevFilters, { field: searchBy, value: searchQuery }];
+          return newFilters;
+        });
+        
       }
     };
 
@@ -137,29 +140,58 @@ export default function EnhancedTableToolbar({
     if (newFilterField) {
       let newFilterValueFormatted = newFilterValue;
   
-      // Special case for 年级和班级
-      if (newFilterField === '年级和班级' && selectedGrade && selectedClasses.length > 0) {
-        // Combine selected grade and class into the format 一年级2班
-        newFilterValueFormatted = selectedClasses.map((className) => `${selectedGrade}${className}`);
-      }
-      // Handle date ranges for 出生日期 and 入学时间
-      if (newFilterField === '出生日期' && birthStartDate && birthEndDate) {
-        newFilterValueFormatted = [
-          birthStartDate.toISOString().substring(0, 10),
-          birthEndDate.toISOString().substring(0, 10),
-        ];
-      } else if (newFilterField === '入学时间' && enrollStartDate && enrollEndDate) {
-        newFilterValueFormatted = [
-          enrollStartDate.toISOString().substring(0, 10),
-          enrollEndDate.toISOString().substring(0, 10),
-        ];
+      // Handle special case for grade_id and class_id
+      if (newFilterField === 'grade_id' && selectedGrade && selectedClasses.length > 0) {
+        // First, add the grade_id filter
+        setFilters((prevFilters) => [
+          ...prevFilters,
+          { field: 'grade_id', value: selectedGrade }   // Add grade_id as a single value
+        ]);
+
+        // Then, add each class_id one by one
+        selectedClasses.forEach((className) => {
+          const classId = Object.keys(gradeMapping[selectedGrade].classes).find(
+            (key) => gradeMapping[selectedGrade].classes[key] === className
+          );
+          if (classId) {
+            setFilters((prevFilters) => [
+              ...prevFilters,
+              { field: 'class_id', value: classId }      // Add each class_id as an individual filter
+            ]);
+          }
+        });
       }
   
-      // Use the formatted value 
-      setFilters((prev) => {
-        const newFilters = [...prev, { field: newFilterField, value: newFilterValueFormatted }];
-        return newFilters;
-      });
+      // Handle date ranges for 出生日期 (birth_date) and 入学时间 (enroll_date)
+      else if (newFilterField === 'birth_date' && birthStartDate && birthEndDate) {
+        newFilterValueFormatted = [
+          birthStartDate.toISOString().substring(0, 10),
+          birthEndDate.toISOString().substring(0, 10)
+        ];
+  
+        setFilters((prevFilters) => [
+          ...prevFilters,
+          { field: 'birth_date', value: newFilterValueFormatted } // Date ranges as an array
+        ]);
+      } else if (newFilterField === 'enroll_date' && enrollStartDate && enrollEndDate) {
+        newFilterValueFormatted = [
+          enrollStartDate.toISOString().substring(0, 10),
+          enrollEndDate.toISOString().substring(0, 10)
+        ];
+  
+        setFilters((prevFilters) => [
+          ...prevFilters,
+          { field: 'enroll_date', value: newFilterValueFormatted } // Date ranges as an array
+        ]);
+      }
+  
+      // Use the formatted value for other filters without nested arrays
+      else {
+        setFilters((prev) => [
+          ...prev,
+          { field: newFilterField, value: newFilterValueFormatted } // Single values or arrays directly
+        ]);
+      }
   
       // Reset the fields after adding the filter
       setNewFilterField('');
@@ -173,13 +205,7 @@ export default function EnhancedTableToolbar({
       setEnrollEndDate(null);
       handleFilterClose();
     }
-  };
-
-  // Mapping from Chinese values to English values
-  const ethnicMapping = {
-    "汉": "han",
-    "满": "man",
-  };
+  };  
   
   const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedGrade, setSelectedGrade] = useState('');
@@ -190,13 +216,13 @@ export default function EnhancedTableToolbar({
   const [enrollEndDate, setEnrollEndDate] = useState(null);
 
   const handleFilterDateChange = (field, dateType) => (date) => {
-    if (field === '出生日期') {
+    if (field === 'birth_date') {
       if (dateType === 'start') {
         setBirthStartDate(date);
       } else {
         setBirthEndDate(date);
       }
-    } else if (field === '入学时间') {
+    } else if (field === 'enroll_date') {
       if (dateType === 'start') {
         setEnrollStartDate(date);
       } else {
@@ -243,22 +269,28 @@ export default function EnhancedTableToolbar({
     const errors = {};
 
     // Check if required fields are empty
-    if (!formContent.name.trim()) errors.name = '学生姓名不能为空';
+    if (!formContent.firstname?.trim()) errors.firstname = '名不能为空';
+    if (!formContent.lastname?.trim()) errors.lastname = '姓不能为空';
     if (!formContent.gender) errors.gender = '性别不能为空';
-    if (!formContent.birth_date.trim()) errors.birth_date = '出生日期不能为空';
-    if (!formContent.ethnic.trim()) errors.ethnic = '民族不能为空';
-    if (!formContent.enroll_date.trim()) errors.enroll_date = '入学日期不能为空';
-    if (!formContent.id_number.trim()) errors.id_number = '身份证号不能为空';
-    if (!formContent.address.trim()) errors.address = '家庭住址不能为空';
+    if (!formContent.birth_date?.trim()) errors.birth_date = '出生日期不能为空';
+    if (!formContent.ethnic?.trim()) errors.ethnic = '民族不能为空';
+    if (!formContent.enroll_date?.trim()) errors.enroll_date = '入学日期不能为空';
+    if (!formContent.id_number?.trim()) {
+      errors.id_number = '身份证号不能为空';
+    } else if (formContent.id_number.trim().length !== 18) {
+        errors.id_number = '身份证号格式输入不正确（需要18位';
+    }
+    if (!formContent.address?.trim()) errors.address = '家庭住址不能为空';
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
     }
-
+    // add the student to the database
     // Log the specified fields
     console.log({
-      name: formContent.name,
+      firstname: formContent.firstname,
+      lastname: formContent.lastname,
       gender: formContent.gender,
       classes_id: formContent.classes_id,
       grade_id: formContent.grade_id,
@@ -279,7 +311,8 @@ export default function EnhancedTableToolbar({
   const [formErrors, setFormErrors] = useState({});
 
   const defaultForm = {
-    name: '',
+    firstname: '',
+    lastname: '',
     gender: '',
     classes_id: '',
     grade_id: '',
@@ -324,6 +357,7 @@ export default function EnhancedTableToolbar({
   
       // Parse and log the data from the Excel file
       const parsedData = parseStudentInfo(dataArray);
+      // take parsedData and send it to the backend
       console.log("Parsed Excel Data: ", parsedData); // Log the parsed data
   
       // Reset form and close dialog
@@ -339,7 +373,8 @@ export default function EnhancedTableToolbar({
       .map((student) => {
         const parsedStudent = {
           id: student['学生号'],
-          name: student['姓'] + student['名'],
+          firstname: student['名'],  // Assume that '名' is in a separate column
+          lastname: student['姓'],    // Assume that '姓' is in a separate column
           gender: student['性别'],
           classes_id: student['班级'],
           grade_id: student['年级'],
@@ -350,10 +385,11 @@ export default function EnhancedTableToolbar({
           id_number: student['身份证号'],
           address: student['家庭住址'],
         };
-    
+  
         // Validate the parsed student data to ensure all required fields are present
         if (
-          !parsedStudent.name ||
+          !parsedStudent.firstname ||
+          !parsedStudent.lastname ||
           !parsedStudent.gender ||
           !parsedStudent.birth_date ||
           !parsedStudent.ethnic ||
@@ -361,14 +397,13 @@ export default function EnhancedTableToolbar({
           !parsedStudent.id_number ||
           !parsedStudent.address
         ) {
-          console.warn("Skipping invalid student: ", parsedStudent); // Log the invalid entry
+          console.warn("Skipping invalid student: ", parsedStudent);
           return null;  // Return null for invalid students
         }
-        // Log the parsed student data for each student
-        console.log("Student Data from Excel: ", parsedStudent);
-        return parsedStudent; // Return valid student data
+  
+        return parsedStudent;  // Return valid student data
       })
-      .filter(Boolean); // Filter out null entries (invalid students)
+      .filter(Boolean);  // Filter out null entries (invalid students)
   };
   
 
@@ -397,12 +432,40 @@ export default function EnhancedTableToolbar({
     }));
   };
 
-  // needs to be fetched from backend
-  const gradeToClasses = {
-    一年级: ['班级一', '班级二'],
-    二年级: ['班级三', '班级四'],
+  const ethnicGroups = [
+    '汉族', '壮族', '满族', '回族', '苗族', '维吾尔族', '土家族', '彝族', '蒙古族', 
+    '藏族', '布依族', '侗族', '瑶族', '朝鲜族', '白族', '哈尼族', '哈萨克族', '黎族', 
+    '傣族', '畲族', '傈僳族', '仡佬族', '东乡族', '高山族', '拉祜族', '水族', '佤族', 
+    '纳西族', '羌族', '土族', '仫佬族', '锡伯族', '柯尔克孜族', '达斡尔族', '景颇族', 
+    '毛南族', '撒拉族', '布朗族', '塔吉克族', '阿昌族', '普米族', '鄂温克族', '怒族', 
+    '京族', '基诺族', '德昂族', '保安族', '俄罗斯族', '裕固族', '乌孜别克族', '门巴族', 
+    '鄂伦春族', '独龙族', '赫哲族', '珞巴族'
+  ];
+  
+  // for displaying filters in chinese
+  const fieldMapping = {
+    grade_id: '年级',
+    class_id: '班级',
+    birth_date: '出生日期',
+    enroll_date: '入学时间',
+    gender: '性别',
+    ethnic: '民族'
   };
 
+  const valueMapping = (field, value) => {
+    if (field === 'grade_id') {
+      // Map grade ID to grade name
+      return gradeMapping[value]?.name || value;
+    } else if (field === 'class_id') {
+      // Handle class mapping based on selected grade
+      const selectedGrade = filters.find((f) => f.field === 'grade_id')?.value;
+      
+      if (selectedGrade && gradeMapping[selectedGrade]) {
+        return gradeMapping[selectedGrade]?.classes[value] || value;
+      }
+    }
+    return value;  // Default case for other fields
+  };
 
   return (
     <Toolbar>
@@ -413,18 +476,17 @@ export default function EnhancedTableToolbar({
         <SearchBar />
       </Box>
 
-      {filters.map((filter, index) => (
+      {/* Container for filters */}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mt: 1 }}>
+        {filters.map((filter, index) => (
         <Chip
           key={index}
-          label={
-            filter.field === '年级和班级'
-              ? `${filter.value.join(', ')}`
-              : `${filter.field}: ${filter.value}`
-          }
+          label={`${fieldMapping[filter.field] || filter.field}: ${valueMapping(filter.field, filter.value)}`}
           onDelete={() => handleDeleteFilter(index)}
-          sx={{ m: 1 }}
+          sx={{ m: 0.5 }}
         />
-      ))}
+        ))}
+      </Box>
       <Tooltip title="Add filter">
         <IconButton onClick={handleFilterClick}>
           <FilterListIcon />
@@ -469,15 +531,15 @@ export default function EnhancedTableToolbar({
             <MenuItem value="" disabled>
               筛选条件...
             </MenuItem>
-            <MenuItem value="性别">性别</MenuItem>
-            <MenuItem value="民族">民族 </MenuItem>
-            <MenuItem value="出生日期">出生日期</MenuItem>
-            <MenuItem value="入学时间">入学时间 </MenuItem>
-            <MenuItem value="年级和班级">年级和班级</MenuItem>
+            <MenuItem value="gender">性别</MenuItem>
+            <MenuItem value="ethnic">民族 </MenuItem>
+            <MenuItem value="birth_date">出生日期</MenuItem>
+            <MenuItem value="enroll_date">入学时间 </MenuItem>
+            <MenuItem value="grade_id">年级和班级</MenuItem>
            
             {/* Add more filter options as needed */}
           </Select>
-          {newFilterField === '年级和班级' && (
+          {newFilterField === 'grade_id' && (
             <>
               {/* Select 年级 */}
               <Select
@@ -491,11 +553,12 @@ export default function EnhancedTableToolbar({
                 <MenuItem value="" disabled>
                   选择年级 {/* Placeholder for 年级 */}
                 </MenuItem>
-                <MenuItem value="一年级">一年级</MenuItem>
-                <MenuItem value="二年级">二年级</MenuItem>
-                <MenuItem value="三年级">三年级</MenuItem>
-                <MenuItem value="四年级">四年级</MenuItem>
-                <MenuItem value="五年级">五年级</MenuItem>
+                {/* Dynamically populate grade options from gradeMapping */}
+                {Object.keys(gradeMapping).map((gradeKey) => (
+                  <MenuItem key={gradeKey} value={gradeKey}>
+                    {gradeMapping[gradeKey].name}
+                  </MenuItem>
+                ))}
               </Select>
 
               {/* Only show 班级 select if 年级 is selected */}
@@ -518,18 +581,20 @@ export default function EnhancedTableToolbar({
                   <MenuItem value="" disabled>
                     请选择班级 {/* Placeholder text */}
                   </MenuItem>
-                  {/* these values should be received after user select a grade and calls backend */}
-                  {['1班', '2班', '3班', '4班', '5班'].map((className) => (
-                    <MenuItem key={className} value={className}>
-                      <Checkbox checked={selectedClasses.indexOf(className) > -1} />
-                      <ListItemText primary={className} />
+
+                  {/* Dynamically populate classes based on selected grade */}
+                  {Object.keys(gradeMapping[selectedGrade].classes).map((classKey) => (
+                    <MenuItem key={classKey} value={gradeMapping[selectedGrade].classes[classKey]}>
+                      <Checkbox checked={selectedClasses.indexOf(gradeMapping[selectedGrade].classes[classKey]) > -1} />
+                      <ListItemText primary={gradeMapping[selectedGrade].classes[classKey]} />
                     </MenuItem>
                   ))}
                 </Select>
               )}
             </>
           )}
-         {newFilterField === '性别' && (
+
+         {newFilterField === 'gender' && (
             <Select
               value={selectedGender}
               onChange={handleGenderChange}
@@ -546,7 +611,7 @@ export default function EnhancedTableToolbar({
             </Select>
           )}
 
-          {newFilterField === '民族' && (
+          {newFilterField === 'ethnic' && (
             <Select
               value={selectedGender}
               onChange={handleGenderChange}
@@ -558,18 +623,22 @@ export default function EnhancedTableToolbar({
               <MenuItem value="" disabled>
                 请选择民族 {/* Placeholder text */}
               </MenuItem>
-              <MenuItem value="汉">汉</MenuItem>
-              <MenuItem value="满">满</MenuItem>
+              {ethnicGroups.map((ethnicGroup, index) => (
+                <MenuItem key={index} value={ethnicGroup}>
+                  {ethnicGroup}
+                </MenuItem>
+              ))}
             </Select>
           )}
 
-          {newFilterField === '出生日期' && (
+          {newFilterField === 'birth_date' && (
             <>
               <DatePickerWrapper>
                 <DatePicker
                   selected={birthStartDate}
-                  onChange={handleFilterDateChange('出生日期', 'start')}
+                  onChange={handleFilterDateChange('birth_date', 'start')}
                   dateFormat="yyyy-MM-dd"
+                  locale={zhCN}
                   customInput={
                     <TextField
                       label="开始日期"
@@ -591,8 +660,9 @@ export default function EnhancedTableToolbar({
               <DatePickerWrapper>
                 <DatePicker
                   selected={birthEndDate}
-                  onChange={handleFilterDateChange('出生日期', 'end')}
+                  onChange={handleFilterDateChange('birth_date', 'end')}
                   dateFormat="yyyy-MM-dd"
+                  locale={zhCN}
                   customInput={
                     <TextField
                       label="结束日期"
@@ -613,13 +683,14 @@ export default function EnhancedTableToolbar({
             </>
           )}
 
-          {newFilterField === '入学时间' && (
+          {newFilterField === 'enroll_date' && (
             <>
               <DatePickerWrapper>
                 <DatePicker
                   selected={enrollStartDate}
-                  onChange={handleFilterDateChange('入学时间', 'start')}
+                  onChange={handleFilterDateChange('enroll_date', 'start')}
                   dateFormat="yyyy-MM-dd"
+                  locale={zhCN}
                   customInput={
                     <TextField
                       label="开始日期"
@@ -641,8 +712,9 @@ export default function EnhancedTableToolbar({
               <DatePickerWrapper>
                 <DatePicker
                   selected={enrollEndDate}
-                  onChange={handleFilterDateChange('入学时间', 'end')}
+                  onChange={handleFilterDateChange('enroll_date', 'end')}
                   dateFormat="yyyy-MM-dd"
+                  locale={zhCN}
                   customInput={
                     <TextField
                       label="结束日期"
@@ -706,14 +778,33 @@ export default function EnhancedTableToolbar({
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <TextField
-                label="学生姓名"
-                value={formContent.name}
-                onChange={handleChangeForm('name')}
+                label="姓"
+                value={formContent.lastname}
+                onChange={handleChangeForm('lastname')}
                 fullWidth
                 margin="dense"
                 required
-                error={!!formErrors.name}
-                helperText={formErrors.name}
+                error={!!formErrors.lastname}
+                helperText={formErrors.lastname}
+                InputLabelProps={{
+                  sx: {
+                    '& .MuiInputLabel-asterisk': {
+                      color: 'red',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="名"
+                value={formContent.firstname}
+                onChange={handleChangeForm('firstname')}
+                fullWidth
+                margin="dense"
+                required
+                error={!!formErrors.firstname}
+                helperText={formErrors.firstname}
                 InputLabelProps={{
                   sx: {
                     '& .MuiInputLabel-asterisk': {
@@ -746,12 +837,11 @@ export default function EnhancedTableToolbar({
                     女
                   </MenuItem>
                 </Select>
-                {formErrors.gender && <span style={{ color: 'red', fontSize: '11.5px', marginTop:5 }}>{formErrors.gender}</span>}
+                {formErrors.gender && <span style={{ color: 'red', fontSize: '11.5px', marginTop:5,  marginLeft:15 }}>{formErrors.gender}</span>}
               </FormControl>
             </Grid>
 
-            {/* Add more fields in a similar way */}
-            {/* Grade and Class */}
+            {/* Grade Selection */}
             <Grid item xs={6}>
               <FormControl fullWidth margin="dense">
                 <InputLabel>年级</InputLabel>
@@ -760,14 +850,19 @@ export default function EnhancedTableToolbar({
                   onChange={handleChangeForm('grade_id')}
                   label="年级"
                 >
-                  {Object.keys(gradeToClasses).map((grade) => (
-                    <MenuItem key={grade} value={grade}>
-                      {grade}
+                  <MenuItem value="" disabled>
+                    请选择年级 {/* Placeholder text */}
+                  </MenuItem>
+                  {Object.keys(gradeMapping).map((gradeKey) => (
+                    <MenuItem key={gradeKey} value={gradeKey}>
+                      {gradeMapping[gradeKey].name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
+
+            {/* Class Selection */}
             <Grid item xs={6}>
               <FormControl fullWidth margin="dense">
                 <InputLabel>班级</InputLabel>
@@ -777,10 +872,13 @@ export default function EnhancedTableToolbar({
                   label="班级"
                   disabled={!formContent.grade_id} // Disable if no grade is selected
                 >
+                  <MenuItem value="" disabled>
+                    请选择班级 {/* Placeholder text */}
+                  </MenuItem>
                   {formContent.grade_id &&
-                    gradeToClasses[formContent.grade_id].map((classItem) => (
-                      <MenuItem key={classItem} value={classItem}>
-                        {classItem}
+                    Object.keys(gradeMapping[formContent.grade_id].classes).map((classKey) => (
+                      <MenuItem key={classKey} value={classKey}>
+                        {gradeMapping[formContent.grade_id].classes[classKey]}
                       </MenuItem>
                     ))}
                 </Select>
@@ -788,12 +886,13 @@ export default function EnhancedTableToolbar({
             </Grid>
 
             {/* Other fields */}
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <DatePickerWrapper>
                 <DatePicker
                   selected={formContent.birth_date ? new Date(formContent.birth_date) : null}
                   onChange={handleDateChange('birth_date')}
                   dateFormat="yyyy-MM-dd"
+                  locale={zhCN}
                   customInput={
                     <TextField
                       label={
@@ -829,21 +928,29 @@ export default function EnhancedTableToolbar({
             </Grid>
     
             <Grid item xs={6}>
-              <TextField
-                label="民族"
-                value={formContent.ethnic}
-                onChange={handleChangeForm('ethnic')}
-                fullWidth
-                margin="dense"
-                required
-                InputLabelProps={{
-                  sx: {
+              <FormControl fullWidth margin="dense" required error={!!formErrors.ethnic}>
+                <InputLabel 
+                  sx={{
                     '& .MuiInputLabel-asterisk': {
                       color: 'red',
                     },
-                  },
-                }}
-              />
+                  }}
+                >
+                  民族
+                </InputLabel>
+                <Select
+                  value={formContent.ethnic}
+                  onChange={handleChangeForm('ethnic')}
+                  label="民族"
+                >
+                  {ethnicGroups.map((ethnicGroup, index) => (
+                    <MenuItem key={index} value={ethnicGroup}>
+                      {ethnicGroup}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {formErrors.ethnic && <span style={{ color: 'red', fontSize: '11.5px', marginTop:5, marginLeft:15 }}>{formErrors.ethnic}</span>}
+              </FormControl>
             </Grid>
 
             <Grid item xs={6}>
@@ -862,6 +969,7 @@ export default function EnhancedTableToolbar({
                   selected={formContent.enroll_date ? new Date(formContent.enroll_date) : null}
                   onChange={handleDateChange('enroll_date')}
                   dateFormat="yyyy-MM-dd"
+                  locale={zhCN}
                   customInput={
                     <TextField
                       label={
@@ -964,4 +1072,5 @@ EnhancedTableToolbar.propTypes = {
   filters: PropTypes.array.isRequired,
   setFilters: PropTypes.func.isRequired,
   fetchFilteredData: PropTypes.func.isRequired,
+  gradeMapping: PropTypes.object.isRequired,
 };

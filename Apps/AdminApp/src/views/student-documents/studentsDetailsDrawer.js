@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -10,10 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import BadgeIcon from '@mui/icons-material/Badge';
-import PersonIcon from '@mui/icons-material/Person';
-import PhoneIcon from '@mui/icons-material/Phone';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import {Divider, IconButton,MenuItem ,InputAdornment } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -25,15 +20,14 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'; 
+import zhCN from 'date-fns/locale/zh-CN';
 
-export default function StudentDetailDrawer({ student, open, onClose }) {
+export default function StudentDetailDrawer({ student, open, onClose, gradeMapping }) {
   const [expandInfo, setExpandInfo] = useState({});
   const [isEditingAll, setIsEditingAll] = useState(false);
   const [editedFields, setEditedFields] = useState({}); // for expand info
   const [basicInfoField, setBasicInfoField] = useState({}); // for basic info
   const [file, setFile] = useState(null); // For the 体检报告 file
-  const [gradeList, setGradeList] = useState(['一年级','二年级','三年级','四年级','五年级']); // for 年级
-  const [classList, setClassList] = useState(['1班','2班','3班','4班','5班']); // for 班级
   const [formErrors, setFormErrors] = useState({}); // for required fields check
 
   // for 头像上传
@@ -68,6 +62,22 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
       }
     };
 
+    // Simulate mock data for expandInfo
+    const mockExpandInfo = {
+      '身份证号': '123456789012345678',
+      '父亲姓名': '王大明',
+      '父亲联系手机号': '13812345678',
+      '母亲姓名': '李小红',
+      '母亲联系手机号': '13987654321',
+      '紧急联系人姓名': '张三',
+      '紧急联系人手机号': '13712345678',
+      '家庭住址': '北京市朝阳区某某街道'
+    };
+
+    // Set the mock data
+    setExpandInfo(mockExpandInfo);
+    setEditedFields(mockExpandInfo);
+
     const initBasicInfo = () =>{
       if (student) {
         // When student is available, set basicInfoField to student data
@@ -96,7 +106,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
     // Check if required fields are empty
     if (!basicInfoField.last_name?.trim()) errors.last_name = '学生姓不能为空';
     if (!basicInfoField.first_name?.trim()) errors.first_name = '学生名不能为空';
-    if (!basicInfoField.sex) errors.sex = '性别不能为空';
+    if (!basicInfoField.gender) errors.gender = '性别不能为空';
     if (!basicInfoField.birth_date?.trim()) errors.birth_date = '出生日期不能为空';
     if (!basicInfoField.ethnic?.trim()) errors.ethnic = '民族不能为空';
     if (!basicInfoField.enroll_date?.trim()) errors.enroll_date = '入学日期不能为空';
@@ -118,6 +128,15 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
     Object.keys(editedFields).forEach(field => {
       expandInfo[field] = editedFields[field];
     });
+
+    // Combine both basic info and expanded info into one object
+    const combinedData = {
+      ...basicInfoField,  // Basic information fields
+      ...editedFields,    // Expanded information fields
+    };
+
+    // Log the combined data
+    console.log('Saved Student Data:', combinedData);
     toast.success('修改成功!');
   };
 
@@ -151,47 +170,6 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
-
-  const renderListItem = (icon, label, field, isLongText = false) => (
-    <ListItem>
-      <ListItemIcon>{icon}</ListItemIcon>
-      <Grid container alignItems="center">
-        <Grid item xs={12}>
-          <ListItemText
-            primary={
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }} component="span">
-                {label}:
-              </Typography>
-            }
-            secondary={
-              isEditingAll ? (
-                isLongText ? (
-                  <TextField
-                    value={editedFields[field] || ''}
-                    onChange={(e) => handleChange(field, e.target.value)}
-                    multiline
-                    minRows={3}
-                    fullWidth
-                  />
-                ) : (
-                  <TextField
-                    value={editedFields[field] || ''}
-                    onChange={(e) => handleChange(field, e.target.value)}
-                    variant="standard"
-                    fullWidth
-                  />
-                )
-              ) : (
-                <Typography component="span" sx={{ display: 'block' }}>{expandInfo[field]}</Typography>
-              )
-            }
-            primaryTypographyProps={{ component: 'span' }} // Ensure primary is a <span>
-            secondaryTypographyProps={{ component: 'span' }} // Ensure secondary is a <span>
-          />
-        </Grid>
-      </Grid>
-    </ListItem>
-  );
 
   const renderFileUpload = () => (
     <ListItem>
@@ -240,10 +218,6 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
     }else if(dateType == 'enroll_date'){
       setBasicInfoField((prev)=>({...prev, ['enroll_date']: parsedDate}));
     }
-    
-    /* console.log('new date:  ',newDate);
-    console.log('parsed: ',parsedDate);
-    console.log(basicInfoField['birth_date']); */
   }
 
   // managing user uploaded avatar
@@ -320,35 +294,45 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                   <Grid item xs={6}>
                     <TextField
                         label={'性别'}
-                        value={basicInfoField['sex']}
+                        value={basicInfoField['gender']}
                         inputProps={isEditingAll?{}:{readOnly:true}}
-                        onChange={(e) => handleChange('sex', e.target.value)}
+                        onChange={(e) => handleChange('gender', e.target.value)}
                         required
                         select
                         fullWidth
                       >
-                        <MenuItem key={'male'} value={'male'}>
+                        <MenuItem key={'male'} value={'男'}>
                           男
                         </MenuItem>
-                        <MenuItem key={'female'} value={'female'}>
+                        <MenuItem key={'female'} value={'女'}>
                           女
                         </MenuItem>
                     </TextField>
                   </Grid>
                   <Grid item xs={6}>
                     <TextField
-                        label={'年级'}
-                        value={basicInfoField['grade_id']}
-                        inputProps={isEditingAll?{}:{readOnly:true}}
-                        onChange={(e) => handleChange('grade_id', e.target.value)}
-                        select
-                      >
-                        {gradeList.map((grade,index)=>(
-                          <MenuItem key={gradeList[index]} value={index+1}>
-                            {gradeList[index]}
-                          </MenuItem>
-                        ))}
-                      </TextField>
+                      label={'年级'}
+                      value={basicInfoField['grade_id']}
+                      inputProps={isEditingAll ? {} : { readOnly: true }}
+                      onChange={(e) => {
+                        const selectedGrade = e.target.value;
+                        handleChange('grade_id', selectedGrade);
+                        setBasicInfoField((prev) => ({
+                          ...prev,
+                          // Clear the classes_id when grade_id changes
+                          classes_id: '',
+                        }));
+                      }}
+                      select
+                      fullWidth
+                    >
+                      {/* Dynamically populate the grade options */}
+                      {Object.keys(gradeMapping).map((gradeKey) => (
+                        <MenuItem key={gradeKey} value={gradeKey}>
+                          {gradeMapping[gradeKey].name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
                   </Grid>
                 </Grid>
               </ListItem>
@@ -356,20 +340,27 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
               {/* date picker for birthdate */}
               <ListItem>
               <Grid container alignItems="center" spacing={3}>
-                  <Grid item xs={6}>
+                <Grid item xs={6}>
                     <TextField
-                        label={'班级'}
-                        value={basicInfoField['classes_id']}
-                        inputProps={isEditingAll?{}:{readOnly:true}}
-                        onChange={(e) => handleChange('classes_id', e.target.value)}
-                        select
-                      >
-                        {classList.map((classes,index)=>(
-                          <MenuItem key={classList[index]} value={index+1}>
-                            {classList[index]}
+                      label={'班级'}
+                      value={basicInfoField['classes_id']}
+                      inputProps={isEditingAll ? {} : { readOnly: true }}
+                      onChange={(e) => handleChange('classes_id', e.target.value)}
+                      select
+                      disabled={!basicInfoField['grade_id']} // Disable class selection if no grade is selected
+                      fullWidth
+                    >
+                      <MenuItem value="" disabled>
+                        请选择班级 {/* Placeholder text */}
+                      </MenuItem>
+                      {/* Dynamically populate the class options based on the selected grade */}
+                      {basicInfoField['grade_id'] &&
+                        Object.keys(gradeMapping[basicInfoField['grade_id']].classes).map((classKey) => (
+                          <MenuItem key={classKey} value={classKey}>
+                            {gradeMapping[basicInfoField['grade_id']].classes[classKey]}
                           </MenuItem>
                         ))}
-                      </TextField>
+                    </TextField>
                   </Grid>
                   <Grid item xs={6}>
                     <DatePickerWrapper>
@@ -377,6 +368,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                         selected={new Date(`${basicInfoField['birth_date']}T00:00:00`)}
                         onChange={(newDate)=>handleDateChange('birth_date',newDate)}
                         dateFormat="yyyy-MM-dd"
+                        locale={zhCN}
                         customInput={
                           <TextField
                             sx={{pointerEvents: !isEditingAll ? 'none' : 'auto'}}
@@ -431,18 +423,11 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                         error={!!formErrors.ethnic}
                         helperText={formErrors.ethnic}
                       >
-                        {/* {chineseEthnicGroups.map((option)=>(
-                          <MenuItem key={option} value={option}>
-                            {option}
+                        {chineseEthnicGroups.map((group) => (
+                          <MenuItem key={group} value={group}>
+                            {group}
                           </MenuItem>
-                        ))} */}
-                        {/* 临时用只有两个选项 后续根据英文parse成中文民族 */}
-                        <MenuItem key={'han'} value={'han'}>
-                            汉族
-                        </MenuItem>
-                        <MenuItem key={'man'} value={'man'}>
-                            满族
-                        </MenuItem>
+                        ))}
                       </TextField>
                   </Grid>
                   <Grid item xs={6}>
@@ -464,6 +449,7 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                         selected={new Date(`${basicInfoField['enroll_date']}T00:00:00`)}
                         onChange={(newDate)=>handleDateChange('enroll_date',newDate)}
                         dateFormat="yyyy-MM-dd"
+                        locale={zhCN}
                         customInput={
                             <TextField
                               sx={{pointerEvents: !isEditingAll ? 'none' : 'auto'}}
@@ -504,17 +490,6 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
                 
               </ListItem>
             </List>
-            
-
-
-              {/* {renderListItem(<PersonIcon />,'姓名', '姓名', false,false,6)}
-              {renderListItem(<PersonIcon />,'性别', '性别', false,false,6)}
-              {renderListItem(<PersonIcon />,'年级', '年级', false,false,6)}
-              {renderListItem(<PersonIcon />,'班级', '班级', false,false,6)}
-              {renderListItem(<PersonIcon />,'出生日期', '出生日期', false,false,12)}
-              {renderListItem(<PersonIcon />,'民族', '民族', false,false,6)}
-              {renderListItem(<PersonIcon />,'学生id', 'id', false,false,6)}
-              {renderListItem(<PersonIcon />,'入学日期', '入学时间', false,false,12)} */}
 
           </Box>
           <Box>
@@ -626,29 +601,9 @@ export default function StudentDetailDrawer({ student, open, onClose }) {
               </ListItem>
             </List>
             
-              {/* {renderListItem(<BadgeIcon />, '身份证号', '身份证号',12)}
-              {renderListItem(<PersonIcon />, '父亲姓名', '父亲姓名',6)}
-              {renderListItem(<PhoneIcon />, '父亲联系手机号', '父亲联系手机号',6)}
-              {renderListItem(<PersonIcon />, '母亲姓名', '母亲姓名',6)}
-              {renderListItem(<PhoneIcon />, '母亲联系手机号', '母亲联系手机号',6)}
-              {renderListItem(<PersonIcon />, '紧急联系人姓名', '紧急联系人姓名',6)}
-              {renderListItem(<PhoneIcon />, '紧急联系人手机号', '紧急联系人手机号',12)}
-              {renderListItem(<LocationOnIcon />, '家庭住址', '家庭住址', true)}
-              {renderFileUpload()}  */}
           </Box>
           </>
         )}
-        
-        {/* <Box>
-            <Typography variant="subtitle1" sx={{paddingLeft:'20px'}}>
-              个人照片
-            </Typography>
-            <Avatar
-              alt="学生照片"
-              src={expandInfo.个人照片}
-              sx={{ width: 100, height: 100, ml:'20px' }}
-            />
-        </Box> */}
 
         {isEditingAll && (
           <Box
